@@ -1,7 +1,8 @@
 import express from "express";
 import bodyParser from 'body-parser'
 import {log} from "console";
-
+import env from "dotenv";
+env.config();
 import session from "express-session";
 import MySQLStore from "express-mysql-session";
 import cors from "cors";
@@ -17,11 +18,10 @@ const corsOptions = {
     origin: 'http://localhost:60002',
     credentials: true,
 }
-const PORT = 60002;
 var options = {
     host: "localhost",
-    user: "dbid232",
-    password: "dbpass232",
+    user: process.env.DBID, 
+    password: process.env.DBPASS,
     port:"3306",
     database: "db23202",
   };
@@ -55,6 +55,6 @@ app.use(session({
 app.use("/", indexRouter);
 app.use("/", managerRouter);
 
-app.listen(PORT, function() {
-    log(`express server on port ${PORT}`)
+app.listen(process.env.PORT, function() {
+    log(`express server on port ${process.env.PORT}`)
 });

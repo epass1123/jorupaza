@@ -1,10 +1,12 @@
 import { log } from "console";
 import mariadb from "mariadb";
+import env from "dotenv";
+env.config();
 
 const pool = mariadb.createPool({
      host: 'localhost',
-     user: 'dbid232', 
-     password: 'dbpass232',
+     user: process.env.DBID, 
+     password: process.env.DBPASS,
      connectionLimit: 5,
      port:"3306",
      database: 'db23202',
