@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+        function handleCredentialResponse(response) {
+            var form = document.createElement('form');
+            form.setAttribute('method', 'post');
+            form.setAttribute('target', '_blank');
+            form.setAttribute('action', 'http://localhost:3000/login');
+
+            const data_1 = document.createElement('input'); // input 태그 생성
+            data_1.setAttribute('type', 'hidden'); // type = hidden
+            data_1.setAttribute('name', 'jwt_token'); // 데이터의 key
+            data_1.setAttribute('value', response.credential); // 데이터의 value (여기서는 data1)
+            form.appendChild(data_1);
+
+            document.charset = "UTF-8";
+            document.body.appendChild(form);
+
+            form.submit();
+          console.log("Encoded JWT ID token: " + response.credential);
+        }
+        window.onload = function () {
+          google.accounts.id.initialize({
+            client_id: "624874289825-pmv0utcdk1vjispneka2bug54sb567a2.apps.googleusercontent.com",
+            callback: handleCredentialResponse
+          });
+          google.accounts.id.renderButton(
+            document.getElementById("buttonDiv"),
+            { theme: "outline", size: "large" }  // customization attributes
+          );
+          google.accounts.id.prompt(); // also display the One Tap dialog
+        }
+    </script>
+    <div id="buttonDiv"></div> 
+    </div>
+</body>
+</html>

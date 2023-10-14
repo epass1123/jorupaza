@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="login.css" type="text/css" rel="stylesheet">
+    <link href="../Component/footer.css" type="text/css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Login</title>
+    <script>
+      function checkLogin() {
+            const adminId = document.querySelector("#id").value;
+            const password = document.querySelector("#pw").value;
+            var data = {
+            "adminid": adminId,
+            "password": password
+            };
+            fetch("http://localhost:60002/login/jorupaza", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            }).then(res=>{
+                return res.json()
+            }).then(res=>{
+                console.log(res)
+            })
+            // $.ajax({
+            // url: "http://ceprj.gachon.ac.kr:60002/manage/jorupaza",
+            // method: "POST",
+            // data: JSON.stringify(data),
+            // contentType: "application/json",
+            // complete:function (response) {
+                
+            //     if (response.status === 200) {
+            //         console.log("로그인 성공");
+            //     }
+            //     else{
+            //         console.log("로그인 실패")
+            //     }
+
+            // }
+        //});
+        }
+    </script>
+</head>
+<body class="wrapper">
+    <form class="loginForm" onsubmit="return checkLogin()">
+        <h1 class="title">관리자 페이지</h1>
+        <div class="idWrapper">
+            <label for="id">로그인 이름</label>
+            <input type="text" placeholder="아이디를 입력해주세요." id="id">
+        </div>
+        <div class="pwWrapper">
+            <label for="id">로그인 암호</label>
+            <input type="password" placeholder="암호를 입력해주세요." id="pw">
+        </div>
+        <button type="button" class="loginBtn" onclick="checkLogin()">로그인</button>
+    </form>
+    <footer id="footer">
+        
+    </footer>
+    <script>
+        $(document).ready(function () {
+            $("#footer").load("../Component/footer.html");
+        });
+        
+    </script>
+</body>
+</html>
