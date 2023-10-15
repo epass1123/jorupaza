@@ -1,8 +1,10 @@
-// import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import { log } from 'console';
-// import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import * as db from "../database/db.js";
 
+
+  
 let userInfoGet = async(req,res)=>{
     const userid = req.params.userid;
     // log(userid);
@@ -130,14 +132,17 @@ let loginPost = async (req, res) => {
 };
   
 let logoutGet = async(req, res)=>{
+        log("Post adminLogin", req.session)
+
         if(req.session.user){
-          req.session.destroy(() => {
-            if (err) {
-                console.log("세션 삭제시에 에러가 발생했습니다.");
-                return;
-              }
-          });
-          console.log(req.session);
+            // log(req.session.user);
+            req.session.destroy((err) => {
+                if (err) {
+                    console.log("세션 삭제시에 에러가 발생했습니다.");
+                    return;
+                }
+            });
+            console.log(req.session);
         }
       }
 
@@ -179,7 +184,8 @@ let youvidGet = async (req,res)=>{
 
 let youvidPost = async (req,res)=>{
     log("youvidPost",req.ip)
-    const userid = req.params.userid; //userid
+    const requserid = req.params.userid; //userid
+    const userid = req.body.id;
     const vID = req.body.vidList;
     const groupSet = req.body.settingList;
     const timestamp = Date.now()
@@ -190,7 +196,7 @@ let youvidPost = async (req,res)=>{
     let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
 
     let values = [];
-    values.push(userid, vID[0], groupSet[0], now);
+    values.push(requserid, vID[0], groupSet[0], now);
 
     let query = `INSERT INTO marked_youvid (userID,vID,groupSet,timestamp) VALUES (?,?,?,?)`
     db.putData(query, values)

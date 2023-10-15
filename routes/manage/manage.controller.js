@@ -6,7 +6,7 @@ const __dirname = path.resolve();
 
 
 let manageGet = async(req,res)=>{
-    res.sendFile(path.join(__dirname, './login.html'));
+    res.sendFile(path.join(__dirname, 'views/html/index.html'));
 }   
 
 let adminLogin = async (req,res)=>{

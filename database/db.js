@@ -34,7 +34,7 @@ async function createTable(){
         `CREATE TABLE users (userID VARCHAR(25) NOT NULL, email VARCHAR(30) NOT NULL,regiTime DATETIME NOT NULL, useSet VARCHAR(255) NOT NULL,timestamp DATETIME, PRIMARY KEY (userID));
         `);
         res = await conn.query(
-        `CREATE TABLE specification (contentsID integer(255) NOT NULL, title VARCHAR(30) NOT NULL, rawtitle VARCHAR(30), casts VARCHAR(255), genre VARCHAR(30), jwimg VARCHAR(10), Offers VARCHAR(30), directer VARCHAR(15), relConts VARCHAR(255), jwURL VARCHAR(255), disneyURL VARCHAR(255), wavveURL VARCHAR(255), PRIMARY KEY(contentsID));
+        `CREATE TABLE specification (contentsID integer(255) NOT NULL, title VARCHAR(30) NOT NULL, rawtitle VARCHAR(30), casts VARCHAR(255), genre VARCHAR(30), jwimg VARCHAR(10), Offers VARCHAR(30), director VARCHAR(15), relConts VARCHAR(255), jwURL VARCHAR(255), disneyURL VARCHAR(255), wavveURL VARCHAR(255), PRIMARY KEY(contentsID));
         `);
         res = await conn.query(
         `CREATE TABLE marked_youvid (userID VARCHAR(25) NOT NULL, vID VARCHAR(30) NOT NULL, groupSet VARCHAR(4) NOT NULL, timestamp datetime NOT NULL, PRIMARY KEY(userID, vID), FOREIGN KEY(userID) REFERENCES users(userID));
