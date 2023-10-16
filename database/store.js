@@ -9,7 +9,7 @@ import * as db from './db.js'
 //     jw_contents_links.push(texts[i].split("|"));
 // }
 let resultList = [];
-const csv = fs.readFileSync("../offerlinks.csv");
+const csv = fs.readFileSync("./offerlinks.csv");
 let links = csv.toString().split('\n');
 let offerlinks = []
 for(let i in links){
@@ -49,10 +49,10 @@ for(let i in resultList){
             a[2].push("wavve")
             a[4] = resultList[i][k]
         }
-        else if(resultList[i][k].includes("netflix")){
-            // if(a[2])
-            a[2].push("netflix")
-        }
+        // else if(resultList[i][k].includes("netflix")){
+        //     // if(a[2])
+        //     a[2].push("netflix")
+        // }
     }
     inputs.push(a)
 }

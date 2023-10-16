@@ -57,6 +57,9 @@ async function createTable(){
         res = await conn.query(
         `CREATE TABLE user_behavior (logID INTEGER(255) NOT NULL, userID VARCHAR(20) NOT NULL, url VARCHAR(30) NOT NULL, event_type VARCHAR(10) NOT NULL, event_target VARCHAR(255) NOT NULL, timestamp datetime NOT NULL, PRIMARY KEY(logID), FOREIGN KEY(userID) REFERENCES users(userID));
         `);
+        res = await conn.query(
+        `CREATE TABLE logs (ID varchar(255) NOT NULL, userID VARCHAR(255) not null, url VARCHAR(20) NOT NULL, url VARCHAR(255) NOT NULL, method VARCHAR(10) NOT NULL, day VARCHAR(20) NOT NULL, date VARCHAR(20) NOT NULL, time VARCHAR(255) not null, resCode VARCHAR(10) not null, PRIMARY KEY(ID));
+        `);
     
     } catch (err) {
 		throw err
@@ -105,19 +108,5 @@ async function putData(query,values){
         return rows
 	}
 }
-
-// async function addUser(query, values){
-//     let conn, rows;
-// 	try {
-//         conn = await pool.getConnection();
-// 		rows = await conn.query(query,values);
-// 	} catch (err) {
-// 		throw err
-// 	} finally {
-// 		if (conn) conn.release();
-//         return rows
-// 	}
-// }
-
 
 export {getData,setDB,createTable, putData, chkUser};

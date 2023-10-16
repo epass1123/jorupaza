@@ -5,7 +5,10 @@ import env from "dotenv";
 env.config();
 import session from "express-session";
 import MySQLStore from "express-mysql-session";
-// import cors from "cors";
+import morgan from "morgan";
+import morganBody from "morgan-body";
+import {writer} from "./utils/writeable.js"
+
 import path from 'path';
 const __dirname = path.resolve();
 const mySQLStore = MySQLStore(session);
@@ -14,12 +17,7 @@ import indexRouter from "./routes/index.js"
 // import mypageRouter from "./routes/user/index.js";
 import managerRouter from "./routes/manage/index.js"
 
-// const corsOptions = {
-//     origin: 'http://localhost:60002',
-//     credentials: true,
-// }
-
-//json.stringify typeerror 해결
+//BigInt json.stringify typeerror 해결
 BigInt.prototype.toJSON = function () {
     return this.toString();
   };
@@ -38,9 +36,13 @@ let app = express();
 // express 는 함수이므로, 반환값을 변수에 저장한다.
 
 //middleware
-// app.use(cors({
-//     origin: '*'
-// }));
+
+// 백엔드 로그 남기기
+// morganBody(app);
+
+morgan.token('body', (req, res) => JSON.stringify(req.body));
+morgan.token('param', (req, res) => JSON.stringify(req.params));
+app.use(morgan(':param|:method|:url|:date[web]|:status|:body|', {stream: writer}));
 app.use(express.static('.'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
