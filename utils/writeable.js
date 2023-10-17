@@ -24,7 +24,7 @@ class MyStream extends Writable {
         if(input[0].includes("user") || input[0].includes("admin")){
             db.putData(sql, input)
                 .then(res=>{
-                    log("put data done",res);
+                    log("put log done",res);
                 })
         }
     }

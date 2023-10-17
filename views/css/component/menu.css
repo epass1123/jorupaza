@@ -1,0 +1,43 @@
+.menuWrapper{
+    width: 20vw;
+    height: 70vh;
+    background-color: yellow;
+    border-radius: 20px;
+    padding-top: 1%;
+    background-color: #D9D9D9;
+    margin-left: 30px;
+    margin-top: 7vh;
+}
+
+.menu1{
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.menu1, .menu2, .menu3, .menu4{
+    border-bottom: 1px solid black;
+    width: 80%;
+    margin-top: 12px;
+    padding-bottom: 5px ;
+    margin-left: 10%;
+}
+
+.menu2-1, .menu3-1, .menu4-1{
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.menu2-2, .menu3-2, .menu3-3, .menu4-2, .menu4-3{
+    margin-left: 0.8rem;
+    margin-top: 0.3rem;
+}
+
+a{
+    color: black;
+    text-decoration: none;
+}
+
+.out{
+    margin-left: 10%;
+    cursor: pointer;
+}

@@ -1,0 +1,43 @@
+body{
+    background-color: #F5F5F5;
+}
+
+.wrapper{
+    display: flex;
+}
+
+.left{
+    width: 25vw;
+    height: 88vh;
+}
+
+.right{
+    width: 75vw;
+    height: 88vh;
+}
+
+table{
+    margin-top: 120px;
+    margin-left: 100px;
+    width: 60%;
+    border-collapse:collapse;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+td,tr{
+    padding: 10px;
+    height: 55px;
+}
+
+.td1{
+    background-color: #D9D9D9
+}
+
+.td2{
+    background-color: rgb(195, 193, 193)
+}
+
+.td3{
+    background-color: aliceblue;
+}

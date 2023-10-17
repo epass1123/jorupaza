@@ -34,19 +34,19 @@ async function createTable(){
         `CREATE TABLE users (userID VARCHAR(25) NOT NULL, email VARCHAR(30) NOT NULL,regiTime DATETIME NOT NULL, useSet VARCHAR(255) NOT NULL,timestamp DATETIME, PRIMARY KEY (userID));
         `);
         res = await conn.query(
-        `CREATE TABLE specification (contentsID integer(255) NOT NULL, title VARCHAR(30) NOT NULL, rawtitle VARCHAR(30), casts VARCHAR(255), genre VARCHAR(30), jwimg VARCHAR(10), Offers VARCHAR(30), director VARCHAR(15), relConts VARCHAR(255), jwURL VARCHAR(255), disneyURL VARCHAR(255), wavveURL VARCHAR(255), PRIMARY KEY(contentsID));
+        `CREATE TABLE specification (contentsID integer(255) NOT NULL, title VARCHAR(255) NOT NULL, rawtitle VARCHAR(255), casts text, genre VARCHAR(255), jwimg VARCHAR(10), Offers VARCHAR(255), director VARCHAR(255), relConts VARCHAR(255), jwURL text, disneyURL text, wavveURL text, summary text PRIMARY KEY(contentsID));
         `);
         res = await conn.query(
-        `CREATE TABLE marked_youvid (userID VARCHAR(25) NOT NULL, vID VARCHAR(30) NOT NULL, groupSet VARCHAR(4) NOT NULL, timestamp datetime NOT NULL, PRIMARY KEY(userID, vID), FOREIGN KEY(userID) REFERENCES users(userID));
+        `CREATE TABLE marked_youvid (userID VARCHAR(25) NOT NULL, vID text NOT NULL, groupSet text NOT NULL, timestamp datetime NOT NULL, PRIMARY KEY(userID), FOREIGN KEY(userID) REFERENCES users(userID));
          `);
         res = await conn.query(
-        `CREATE TABLE marked_channel (userID VARCHAR(25) NOT NULL, channelID VARCHAR(30) NOT NULL, title VARCHAR(10) NOT NULL, groupSet VARCHAR(4) NOT NULL, timestamp datetime NOT NULL, PRIMARY KEY(userID, channelID), FOREIGN KEY(userID) REFERENCES users(userID));
+        `CREATE TABLE marked_channel (userID VARCHAR(25) NOT NULL, channelID text NOT NULL, title text NOT NULL, groupSet text NOT NULL, timestamp datetime NOT NULL, PRIMARY KEY(userID), FOREIGN KEY(userID) REFERENCES users(userID));
          `);
         res = await conn.query(
-        `CREATE TABLE marked_ott (userID VARCHAR(25) NOT NULL, contentsID INTEGER(255), ottID VARCHAR(30) NOT NULL, title VARCHAR(30) NOT NULL, img VARCHAR(255), url VARCHAR(255), groupSet VARCHAR(4) NOT NULL, timestamp datetime NOT NULL, PRIMARY KEY(userID, ottID), FOREIGN KEY(userID) REFERENCES users(userID), FOREIGN KEY(contentsID) REFERENCES specification(contentsID));
+        `CREATE TABLE marked_ott (userID VARCHAR(25) NOT NULL, contentsID INTEGER(255), ottID text NOT NULL, title text NOT NULL, img text, url text, groupSet text NOT NULL, timestamp datetime NOT NULL, PRIMARY KEY(userID), FOREIGN KEY(userID) REFERENCES users(userID));
          `);
         res = await conn.query(
-        `CREATE TABLE marked_streamer (userID VARCHAR(25) NOT NULL, streamerID VARCHAR(30) NOT NULL, groupSet VARCHAR(4) NOT NULL, timestamp datetime NOT NULL, PRIMARY KEY(userID, streamerID), FOREIGN KEY(userID) REFERENCES users(userID));
+        `CREATE TABLE marked_streamer (userID VARCHAR(25) NOT NULL, streamerID text NOT NULL, groupSet text NOT NULL, timestamp datetime NOT NULL, PRIMARY KEY(userID), FOREIGN KEY(userID) REFERENCES users(userID));
          `);
         res = await conn.query(
         `CREATE TABLE admin (adminID VARCHAR(15) NOT NULL, pw VARCHAR(20) NOT NULL, permission VARCHAR(30) NOT NULL, timestamp DATETIME NOT NULL, PRIMARY KEY(adminID));
@@ -103,10 +103,11 @@ async function putData(query,values){
 	} catch (err) {
 		log(err);
 	} finally {
-        log(query, values);
+        // log(query, values);
 		if (conn) conn.release();
         return rows
 	}
 }
+
 
 export {getData,setDB,createTable, putData, chkUser};

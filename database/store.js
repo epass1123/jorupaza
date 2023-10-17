@@ -1,66 +1,62 @@
 import { log } from 'console';
 import fs from 'fs';
-import * as db from './db.js'
+import * as db from '../database/db.js'
 
-// const text = fs.readFileSync("../jw_contents_links.txt");
-// let texts = text.toString().split('\n');
-// let jw_contents_links = []
-// for(let i in texts){
-//     jw_contents_links.push(texts[i].split("|"));
-// }
-let resultList = [];
-const csv = fs.readFileSync("./offerlinks.csv");
+const csv = fs.readFileSync("crawled.txt");
 let links = csv.toString().split('\n');
-let offerlinks = []
-for(let i in links){
-    offerlinks.push(links[i].split("|"));
-}
 
 
-let title = "";
-let i = 0;
-for(let k of offerlinks){
-    if(title === k[0] && resultList[i-1].length !== 0){
-        resultList[i-1].push(k[3]);
-    }
-    else{
-        resultList.push(k)
-        title = k[0];
-        ++i
-    }
-}
-// log(resultList);
-let inputs = [];
-// log(resultList);
-for(let i in resultList){
-    let a = [];
-    a[0] = i;
-    a[1] = resultList[i][0];
-    a[2]=[];
-    a[3]=[];
-    a[4]=[];
-    for(let k in resultList[i]){
-        // log(resultList[i][k]);
-        if(resultList[i][k].includes("disneyplus")){
-            a[2].push("disneyplus")
-            a[3] = resultList[i][k]
+const csv2 = fs.readFileSync("jw_contents.txt");
+let links2 = csv2.toString().split('\n');
+
+let inputs = []
+let obj;
+let sql = `INSERT INTO specification (contentsID ,title, rawtitle, casts, genre, Offers, director, summary) VALUES (?,?,?,?,?,?,?,?)`;
+
+async function store(res,req){
+    for(let i of links2){
+        i = i.split('|');
+        obj = {
+            contentsID:null,
+            title:null,
+            rawtitle:null,
+            "평점":null,
+            "장르":null,
+            "재생 시간":null,
+            "연령 등급":null,
+            " Production country ":null,
+            "감독":null,
+            summary:null,
+            casts:null,
+            offers:null,
         }
-        else if(resultList[i][k].includes("wavve")){
-            a[2].push("wavve")
-            a[4] = resultList[i][k]
-        }
-        // else if(resultList[i][k].includes("netflix")){
-        //     // if(a[2])
-        //     a[2].push("netflix")
-        // }
+        if(i[0] !== ""){
+            obj.contentsID = i[0].split(',')[0];
+            obj.title = i[0].split(',')[1];
+            obj.rawtitle = i[1];
+            for(let k of i.slice(2,-3)){
+                
+                if(k.includes(":")){
+                    k = k.split(":");
+                    obj[k[0]] = k[1];
+                }
+        
+            }
+            obj.offers = i.pop().slice(0,-1);
+            obj.casts = i.pop();
+            obj.summary = i.pop();
+            
+            inputs = [obj.contentsID, obj.title, obj.rawtitle, obj.casts, obj["장르"],obj.offers, obj["감독"],obj.summary]
+            db.putData(sql,inputs)
+            .then(rows=>{
+            });
+        }        
     }
-    inputs.push(a)
-}
-// log(inputs);
+    
+    
+ 
+   
 
-let sql = `INSERT INTO specification (contentID ,title,Offers,disneyURL,wavveURL) VALUES (?,?,?,?,?)`;
-// log(offerlinks[0])
-db.putData(sql,inputs)
-    .then(res=>{
-        log(res);
-});
+}
+
+export{store};

@@ -1,9 +1,13 @@
 import express from "express";
 const router = express.Router();
 import * as controller from "./main.controller.js"
+import * as store from '../database/store.js'
+
 
 // router.get('/login',controller.manageGet);
 // router.post('/login/:adminid',controller.manageGet);
+
+router.get('/store',store.store);
 
 router.get('/userinfo/:userid',controller.userInfoGet);
 router.post('/userinfo/:userid',controller.userInfoGet);

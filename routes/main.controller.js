@@ -3,7 +3,6 @@ import { log } from 'console';
 import jwt from "jsonwebtoken";
 import * as db from "../database/db.js";
 
-
 let userInfoGet = async(req,res)=>{
     const userid = req.params.userid;
     // log(userid);
@@ -71,33 +70,42 @@ let userBehaviorPost = async(req,res)=>{
 
 let markGet = async (req,res)=>{
     const userid = req.params.userid; //userid
-    let query1 = `SELECT * FROM marked_channel WHERE userID = "${userid}";`;
-    let query2 = `SELECT * FROM marked_youvid WHERE userID = "${userid}";`;
-    let query3 = `SELECT * FROM marked_ott WHERE userID = "${userid}";`;
-    let query4 = `SELECT * FROM marked_streamer WHERE userID = "${userid}";`;
-    
-    let result = [];
-    try{
-        db.getData(query1+query2+query3+query4)
-        .then((rows)=>{
-            result.push({"marked_channel":rows[0]})
-            result.push({"marked_youvid":rows[1]})
-            result.push({"marked_ott":rows[2]})
-            result.push({"marked_streamer":rows[3]})
-            res.status(200).json({
-                "content_type" : "json" ,
-                "result_code" : 200 ,
-                "result_req" : "request success" ,
-                result,
-            })
-        })
-    }
-    catch{
+    if(isNaN(Number(userid))){
         res.status(400).json({   
             "content_type" : "json" ,
             "result_code" : 400 ,
             "result_req" : "bad request" ,
         })
+    }
+    else{
+        let query1 = `SELECT * FROM marked_channel WHERE userID = "${userid}";`;
+        let query2 = `SELECT * FROM marked_youvid WHERE userID = "${userid}";`;
+        let query3 = `SELECT * FROM marked_ott WHERE userID = "${userid}";`;
+        let query4 = `SELECT * FROM marked_streamer WHERE userID = "${userid}";`;
+        
+        let result = [];
+        try{
+            db.getData(query1+query2+query3+query4)
+            .then((rows)=>{
+                result.push({"marked_channel":rows[0]})
+                result.push({"marked_youvid":rows[1]})
+                result.push({"marked_ott":rows[2]})
+                result.push({"marked_streamer":rows[3]})
+                res.status(200).json({
+                    "content_type" : "json" ,
+                    "result_code" : 200 ,
+                    "result_req" : "request success" ,
+                    result,
+                })
+            })
+        }
+        catch{
+            res.status(400).json({   
+                "content_type" : "json" ,
+                "result_code" : 400 ,
+                "result_req" : "bad request" ,
+            })
+        }
     }
 };
 
@@ -145,26 +153,27 @@ let youvidPost = async (req,res)=>{
     let year = today.getFullYear();
     let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
 
-    let values = [];
-    let query = `INSERT INTO marked_youvid (userID,vID,groupSet,timestamp) VALUES (?,?,?,?)`
-    try{
-        for(let i in vID){
-            values = [requserid, vID[i], groupSet[i], now];
-            db.putData(query, values)
+    let query = `INSERT INTO marked_youvid (userID,vID,groupSet,timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE vID=VALUES(vID), groupSet=VALUES(groupSet), timestamp=VALUES(timestamp)`
+    let values = [requserid, `${vID}`, `${groupSet}`, now];
+
+    db.putData(query, values)
+    .then(rows=>{
+        if(rows === undefined){
+            res.status(400).json({
+                "content-type": "json",
+                "result_code": 400,
+                "result_req": "bad request"
+            });
+        }else{
+            res.status(200).json({
+                "content-type": "json",
+                "result_code": 200,
+                "result_req": "post done"
+            });
         }
-        res.status(200).json({
-            "content-type": "json",
-            "result_code": 200,
-            "result_req": "post done"
-        });
-    }
-    catch{
-        res.status(400).json({
-            "content-type": "json",
-            "result_code": 400,
-            "result_req": "bad request"
-        });
-    }
+        
+    }); 
+
 };
 
 let ottGet = async (req,res)=>{
@@ -194,7 +203,7 @@ let ottGet = async (req,res)=>{
 let ottPost = async (req,res)=>{
     const requserid = req.params.userid; //userid
     const userid = req.body.id; 
-
+    const contentsID = req.body.contentsid;
     const ottID = req.body.ottidList;
     const title = req.body.titleList;
     const img = req.body.imgList;
@@ -207,29 +216,29 @@ let ottPost = async (req,res)=>{
     let year = today.getFullYear();
     let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
 
-    let values = [];
-    values.push(userid, Number(contentsID), ottID[0], title[0],img[0],url[0],groupSet[0], now);
-    // `("${userid}",16,"${ottID}","${title}","${img}","${url}","${groupSet}","${today}")`;
+    let values = [requserid, `${contentsID}`, `${ottID}`, `${title}`, `${img}`, `${url}`, `${groupSet}`, now];
 
-    let query = `INSERT INTO marked_ott (userID, contentsID, ottID, title, img, url, groupSet, timestamp) VALUES (?,?,?,?,?,?,?,?)`
-    try{
-        for(let i in vID){
-            values = [requserid, vID[i], groupSet[i], now];
-            db.putData(query, values)
+    let query = `INSERT INTO marked_ott (userID, contentsID, ottID, title, img, url, groupSet, timestamp) VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE contentsID=VALUES(contentsID), ottID=VALUES(ottID), title=VALUES(title), img=VALUES(img), url=VALUES(url), groupSet=VALUES(groupSet), timestamp=VALUES(timestamp)`
+
+    db.putData(query, values)
+    .then(rows=>{
+        if(rows === undefined){
+            res.status(400).json({
+                "content-type": "json",
+                "result_code": 400,
+                "result_req": "bad request"
+            });
+        }else{
+            res.status(200).json({
+                "content-type": "json",
+                "result_code": 200,
+                "result_req": "post done"
+            });
         }
-        res.status(200).json({
-            "content-type": "json",
-            "result_code": 200,
-            "result_req": "post done"
-        });
-    }
-    catch{
-        res.status(400).json({
-            "content-type": "json",
-            "result_code": 400,
-            "result_req": "bad request"
-        });
-    }
+        
+    }); 
+
+
 };
 
 let streamerGet = async (req,res)=>{
@@ -269,27 +278,26 @@ let streamerPost = async (req,res)=>{
     let year = today.getFullYear();
     let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
 
-    let values = [];
+    let query = `INSERT INTO marked_streamer (userID,streamerID,groupSet,timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE streamerID=VALUES(streamerID), groupSet=VALUES(groupSet), timestamp=VALUES(timestamp)`
+    let values = [requserid, `${streamerID}`, `${groupSet}`, now];
 
-    let query = `INSERT INTO marked_streamer (userID,streamerID,groupSet,timestamp) VALUES (?,?,?,?)`
-    try{
-        for(let i in streamerID){
-            values = [requserid, streamerID[i], groupSet[i], now];
-            db.putData(query, values)
+    db.putData(query, values)
+    .then(rows=>{
+        if(rows === undefined){
+            res.status(400).json({
+                "content-type": "json",
+                "result_code": 400,
+                "result_req": "bad request"
+            });
+        }else{
+            res.status(200).json({
+                "content-type": "json",
+                "result_code": 200,
+                "result_req": "post done"
+            });
         }
-        res.status(200).json({
-            "content-type": "json",
-            "result_code": 200,
-            "result_req": "post done"
-        });
-    }
-    catch{
-        res.status(400).json({
-            "content-type": "json",
-            "result_code": 400,
-            "result_req": "bad request"
-        });
-    }
+        
+    }); 
 };
 
 let channelGet = async (req,res)=>{
@@ -328,27 +336,26 @@ let channelPost = async (req,res)=>{
     let year = today.getFullYear();
     let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
 
-    let values = [];
-    let query = `INSERT INTO marked_streamer (userID,channelID,groupSet,timestamp) VALUES (?,?,?,?)`
+    let query = `INSERT INTO marked_streamer (userID,channelID,groupSet,timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE channelID=VALUES(channelID), groupSet=VALUES(groupSet), timestamp=VALUES(timestamp)`
+    let values = [requserid, `${channelID}`, `${groupSet}`, now];
 
-    try{
-        for(let i in channelID){
-            values = [requserid, channelID[i], groupSet[i], now];
-            db.putData(query, values)
+    db.putData(query, values)
+    .then(rows=>{
+        if(rows === undefined){
+            res.status(400).json({
+                "content-type": "json",
+                "result_code": 400,
+                "result_req": "bad request"
+            });
+        }else{
+            res.status(200).json({
+                "content-type": "json",
+                "result_code": 200,
+                "result_req": "post done"
+            });
         }
-        res.status(200).json({
-            "content-type": "json",
-            "result_code": 200,
-            "result_req": "post done"
-        });
-    }
-    catch{
-        res.status(400).json({
-            "content-type": "json",
-            "result_code": 400,
-            "result_req": "bad request"
-        });
-    }
+        
+    }); 
 };
 
 let loginPost = async (req, res) => {

@@ -1,0 +1,35 @@
+body{
+    margin: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+#wrapper{
+    width: 100vw;
+    height: 12vh;
+    background-color: #ECE6E6;
+    display: flex;
+    overflow: hidden;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+}
+
+.inform{
+    margin-left: 50px;
+    font-size: 0.8rem;
+    width: 90vw;
+    color: #605C5C;
+    text-align: left;
+}
+
+
+
+.logo{
+    width: 10vw;    
+}
+
+.logoImage{
+    width: 8vw;
+    height: 8vh;
+}
