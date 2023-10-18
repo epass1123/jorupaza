@@ -8,9 +8,12 @@ import * as store from '../database/store.js'
 // router.post('/login/:adminid',controller.manageGet);
 
 router.get('/store',store.store);
+router.get('/store/jwlinks',store.jwlinks);
+router.get('/store/wdlinks',store.wdLinks);
 
 router.get('/userinfo/:userid',controller.userInfoGet);
-router.post('/userinfo/:userid',controller.userInfoGet);
+router.post('/userinfo/:userid',controller.userInfoPost);
+router.put('/userinfo/:userid',controller.userInfoPost);
 
 router.get('/userinfo/userbehavior/:start/:end',controller.userBehaviorGet);
 router.post('/userinfo/userbehavior/:userid',controller.userBehaviorPost);

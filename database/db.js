@@ -109,5 +109,19 @@ async function putData(query,values){
 	}
 }
 
+async function updateData(query,values){
+    let conn, rows;
+	try {
+        conn = await pool.getConnection();
+		rows = await conn.query(query,values);
+	} catch (err) {
+		log(err);
+	} finally {
+        // log(query, values);
+		if (conn) conn.release();
+        return rows
+	}
+}
 
-export {getData,setDB,createTable, putData, chkUser};
+
+export {getData,setDB,createTable, putData, chkUser,updateData};

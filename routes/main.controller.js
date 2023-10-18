@@ -6,7 +6,7 @@ import * as db from "../database/db.js";
 let userInfoGet = async(req,res)=>{
     const userid = req.params.userid;
     // log(userid);
-    let query = `SELECT * FROM userbehavior WHERE userID= ?`
+    let query = `SELECT * FROM users WHERE userID= ?`
     try{
         db.getData(query,`${userid}`)
         .then(rows=>{
@@ -14,7 +14,7 @@ let userInfoGet = async(req,res)=>{
                 "content_type" : "json" ,
                 "result_code" : 200 ,
                 "result_req" : "request success" ,
-                "user_behavior" : rows[0].useSet
+                "user_setting" : rows[0].useSet
             })
         });
     }
@@ -26,6 +26,80 @@ let userInfoGet = async(req,res)=>{
         })
     }
 }
+
+let userInfoPost = async (req, res) => {
+    const userid = req.params.userid;
+    let query = ``;
+    const timestamp = Date.now()
+    const today = new Date(timestamp);
+    let day = today.getDate();
+    let month = today.getMonth() + 1;
+    let year = today.getFullYear();
+    let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
+    let useSet = [
+        {
+            "type" : "ottGroups",
+            "setting" : ["최근 추가된 OTT 콘텐츠"]
+        },
+        {
+            "type" : "channelGroups",
+            "setting" : ["최근 추가된 채널"]
+        },
+        {
+            "type" : "youvidGroups",
+            "setting" : ["최근 추가된 유튜브 영상"]
+        },
+        {
+            "type" : "streamerGroups",
+            "setting" : ["최근 추가된 스트리머"]
+        },
+        {
+            "type" : "darkmode",
+            "setting" : 0
+        },
+        {
+            "type" : "subscription",
+            "setting" : "netflix,disneyplus,wavve,watcha,youtube,twitch"
+        }
+        ]
+        log(typeof(JSON.stringify(useSet)));
+    try {
+        db.chkUser(userid)
+        .then((rows)=>{
+            if(rows.length === 0){
+                query = `INSERT INTO users (userID,email,regiTime,useSet,timestamp) VALUES (?,?,?,?,?)`
+                let values = [userid, req.body.email, now, `${JSON.stringify(useSet)}`, now];
+                db.putData(query,values)
+                .then(p=>{
+                    log(p);
+                    res.status(200).json({
+                        "content_type" : "json" ,
+                        "result_code" : 200 ,
+                        "result_req" : "request success" ,
+                        "login" : "register success"
+                        })
+                });
+            }
+            else{
+                res.status(200).json({
+                "content_type" : "json" ,
+                "result_code" : 200 ,
+                "result_req" : "request success" ,
+                "login" : "login success"
+                })
+            }
+        })
+    }catch(err){
+        console.log(err);
+        res.status(400).json({
+            "content_type" : "json" ,
+            "result_code" : 400 ,
+            "result_req" : "request success" ,
+            "login" : "login failed"
+            })
+    }
+};
+
 
 let userBehaviorGet = async(req,res)=>{
     const start = req.params.start;
@@ -39,7 +113,7 @@ let userBehaviorGet = async(req,res)=>{
                 "content_type" : "json" ,
                 "result_code" : 200 ,
                 "result_req" : "request success" ,
-                "user_setting" : rows
+                "user_behavior" : rows
             })
         })
     }
@@ -83,14 +157,16 @@ let markGet = async (req,res)=>{
         let query3 = `SELECT * FROM marked_ott WHERE userID = "${userid}";`;
         let query4 = `SELECT * FROM marked_streamer WHERE userID = "${userid}";`;
         
-        let result = [];
+        let result = {};
         try{
             db.getData(query1+query2+query3+query4)
             .then((rows)=>{
-                result.push({"marked_channel":rows[0]})
-                result.push({"marked_youvid":rows[1]})
-                result.push({"marked_ott":rows[2]})
-                result.push({"marked_streamer":rows[3]})
+                result = {
+                    "marked_channel":rows[0][0],
+                    "marked_youvid":rows[1][0],
+                    "marked_ott":rows[2][0],
+                    "marked_streamer":rows[3][0]
+                }
                 res.status(200).json({
                     "content_type" : "json" ,
                     "result_code" : 200 ,
@@ -154,7 +230,8 @@ let youvidPost = async (req,res)=>{
     let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
 
     let query = `INSERT INTO marked_youvid (userID,vID,groupSet,timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE vID=VALUES(vID), groupSet=VALUES(groupSet), timestamp=VALUES(timestamp)`
-    let values = [requserid, `${vID}`, `${groupSet}`, now];
+    //구분 용이하게 하기위해 |로 join
+    let values = [requserid, `${vID.join("|")}`, `${groupSet.join("|")}`, now];
 
     db.putData(query, values)
     .then(rows=>{
@@ -204,6 +281,7 @@ let ottPost = async (req,res)=>{
     const requserid = req.params.userid; //userid
     const userid = req.body.id; 
     const contentsID = req.body.contentsid;
+    
     const ottID = req.body.ottidList;
     const title = req.body.titleList;
     const img = req.body.imgList;
@@ -216,7 +294,7 @@ let ottPost = async (req,res)=>{
     let year = today.getFullYear();
     let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
 
-    let values = [requserid, `${contentsID}`, `${ottID}`, `${title}`, `${img}`, `${url}`, `${groupSet}`, now];
+    let values = [requserid, `${contentsID}`, `${ottID.join("|")}`, `${title.join("|")}`, `${img.join("|")}`, `${url.join("|")}`, `${groupSet.join("|")}`, now];
 
     let query = `INSERT INTO marked_ott (userID, contentsID, ottID, title, img, url, groupSet, timestamp) VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE contentsID=VALUES(contentsID), ottID=VALUES(ottID), title=VALUES(title), img=VALUES(img), url=VALUES(url), groupSet=VALUES(groupSet), timestamp=VALUES(timestamp)`
 
@@ -269,8 +347,9 @@ let streamerPost = async (req,res)=>{
     const requserid = req.params.userid; //userid
     const userid = req.params.userid; //
 
-    const streamerID = req.body.vidList;
+    const streamerID = req.body.idList;
     const groupSet = req.body.settingList;
+    const title = req.body.titleList;
     const timestamp = Date.now()
     const today = new Date(timestamp);
     let day = today.getDate();
@@ -278,8 +357,8 @@ let streamerPost = async (req,res)=>{
     let year = today.getFullYear();
     let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
 
-    let query = `INSERT INTO marked_streamer (userID,streamerID,groupSet,timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE streamerID=VALUES(streamerID), groupSet=VALUES(groupSet), timestamp=VALUES(timestamp)`
-    let values = [requserid, `${streamerID}`, `${groupSet}`, now];
+    let query = `INSERT INTO marked_streamer (userID,streamerID,groupSet,title,timestamp) VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE streamerID=VALUES(streamerID), groupSet=VALUES(groupSet),title=VALUES(title), timestamp=VALUES(timestamp)`
+    let values = [requserid, `${streamerID.join("|")}`, `${groupSet.join("|")}`,`${title.join("|")}`, now];
 
     db.putData(query, values)
     .then(rows=>{
@@ -325,9 +404,10 @@ let channelGet = async (req,res)=>{
 };
 
 let channelPost = async (req,res)=>{
-    const userid = req.params.userid; //userid
-    const channelID = req.body.vidList;
-    const title = req.body.title;
+    const requserid = req.params.userid; //userid
+    const channelID = req.body.cidList;
+    const img = req.body.imgList;
+    const title = req.body.cnameList;
     const groupSet = req.body.settingList;
     const timestamp = Date.now()
     const today = new Date(timestamp);
@@ -336,8 +416,8 @@ let channelPost = async (req,res)=>{
     let year = today.getFullYear();
     let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
 
-    let query = `INSERT INTO marked_streamer (userID,channelID,groupSet,timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE channelID=VALUES(channelID), groupSet=VALUES(groupSet), timestamp=VALUES(timestamp)`
-    let values = [requserid, `${channelID}`, `${groupSet}`, now];
+    let query = `INSERT INTO marked_channel (userID,channelID,title,img,groupSet,timestamp) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE channelID=VALUES(channelID), groupSet=VALUES(groupSet), timestamp=VALUES(timestamp), title=VALUES(title), img=VALUES(img)`
+    let values = [requserid, `${channelID.join("|")}`, `${title.join("|")}`,`${img.join("|")}`,`${groupSet.join("|")}`, now];
 
     db.putData(query, values)
     .then(rows=>{
@@ -356,31 +436,6 @@ let channelPost = async (req,res)=>{
         }
         
     }); 
-};
-
-let loginPost = async (req, res) => {
-    const userid = req.params.userid;
-    let values;
-    log(userData);
-    let query = ``;
-    const today = new Date(timestamp);
-    let day = today.getDate();
-    let month = today.getMonth() + 1;
-    let year = today.getFullYear();
-    let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
-    try {
-        db.chkUser(userid)
-        .then((res)=>{
-            if(res.length === 0){
-                values.push(userid, req.body.email, now, "default", now);
-                query = `INSERT INTO users (userID,email,regiTime,useSet,timestamp) VALUES= ?`
-                db.putData(query,values);
-            }
-        })
-    }catch(err){
-        console.log(err);
-        return res.status(400).send({ err: err.message });
-    }
 };
   
 let logoutGet = async(req, res)=>{
@@ -432,4 +487,5 @@ let searchPost = async (req,res)=>{
     });
 };
 
-export {userBehaviorGet,searchPost,userInfoGet,loginPost,logoutGet,markGet,markPost,youvidGet,youvidPost,ottGet,ottPost,channelGet,channelPost,streamerGet,streamerPost,searchGet,userBehaviorPost}
+export {userBehaviorGet,searchPost,userInfoGet,userInfoPost,logoutGet,markGet,markPost,youvidGet,youvidPost,ottGet,ottPost,channelGet,channelPost,streamerGet,streamerPost,searchGet,userBehaviorPost}
+  
