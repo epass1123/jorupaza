@@ -8,6 +8,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>Login</title>
     <script>
+
       function checkLogin() {
             const adminId = document.querySelector("#id").value;
             const password = document.querySelector("#pw").value;
@@ -38,22 +39,20 @@
                         if (response.status === 200) {
                             sessionStorage.setItem("adminId",adminId)
                             alert("성공")
-                            window.location.href="http://ceprj.gachon.ac.kr:60002/views/html/main/main.html"
                             document.body.querySelector('.wrapper').style.opacity="0"
                         }
                         else{
                             alert("로그인실패")
-                            window.location.href="http://ceprj.gachon.ac.kr:60002/views/html/main/main.html"
+                            document.body.querySelector('.wrapper').style.opacity="0"
+                            window.location.href= "http://ceprj.gachon.ac.kr:60002/views/html/main/main.html"
+
                         }
                 }
             });
         }       
     }
-    const wrapper = document.body.querySelector(".wrapper")
-    wrapper.addEventListener("transitionend",function(){
-        wrapper.style.display="none"
-        alert("성공")
-    })
+    
+    
     </script>
 </head>
 <body>

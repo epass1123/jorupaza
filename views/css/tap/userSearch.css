@@ -1,0 +1,80 @@
+body{
+    background-color: #F5F5F5;
+}
+
+.wrapper{
+    display: flex;
+}
+
+
+
+
+table{
+    width: 90%;
+    margin-top: 120px;
+    margin-left: 100px;
+    border-collapse:collapse;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-align: left;
+    text-align: center;
+}
+
+
+td,tr,th{
+    padding: 10px;
+    height: 20px;
+}
+
+.td1{
+    background-color: aliceblue;;
+}
+
+.td2{
+    background-color: #D9D9D9
+}
+
+.td3{
+    background-color: rgb(195, 193, 193)
+}
+
+.rightUp{
+    display: flex;
+    width: 80%;
+    height: 25vh;
+    margin-top: 11vh;
+    margin-left: 15%;
+}
+
+.search{
+    background-color: rgb(157, 203, 247);
+    border: none;
+    height: 35px;
+    width: 60px;
+    border-radius: 5px;
+}
+
+.idSearchInput, .emailSearchInput{
+    width: 300px;
+    height: 25px;
+}
+
+.idWrapper{
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+
+.emailWrapper{
+    margin-left: 10px;
+}
+
+.searchText{
+    margin-right: 20px;
+    margin-top: 5px;
+    font-weight: 400;
+    font-size: 1.1rem;
+}
+
+.deleteBtn{
+    width: 50px;
+}

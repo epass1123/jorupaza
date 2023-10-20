@@ -5,7 +5,6 @@ import * as db from '../database/db.js'
 const csv2 = fs.readFileSync("jw_contents.txt");
 let links2 = csv2.toString().split('\n');
 
-
 async function store(req,res){
     let inputs = []
     let obj;
@@ -108,17 +107,20 @@ async function jwlinks(req,res){
 const csv3 = fs.readFileSync("offerlinks.csv");
 let links3 = csv3.toString().split("\n");
 
-async function wdLinks(req,res){
+async function platlinks(req,res){
     let query = "";
     try{
         for(let i in links3){
             let title = links3[i].split('|').shift();
             let url = links3[i].split('|').pop().slice(0, -1);
             if(url.includes("disney")){
-                query = `UPDATE specification SET disneyURL=? WHERE title=?`
+                query = `UPDATE specification SET disneyURL=? WHERE title=? and Offers like "%Disney%" and disneyURL is null`
             }
             else if(url.includes("wavve")){
-                query = `UPDATE specification SET wavveURL=? WHERE title=?`
+                query = `UPDATE specification SET wavveURL=? WHERE title=? and Offers like "%wavve%" and wavveURL is null`
+            }
+            else if(url.includes("watcha")){
+                query = `UPDATE specification SET watchaURL=? WHERE title=? and Offers like "%Watcha%" and watchaURL is null`
             }
             else{
                 continue;
@@ -146,4 +148,4 @@ async function wdLinks(req,res){
 }
 
 
-export{store, jwlinks, wdLinks};
+export{store, jwlinks, platlinks};

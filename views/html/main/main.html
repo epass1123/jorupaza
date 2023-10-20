@@ -7,18 +7,39 @@
     <link href="http://ceprj.gachon.ac.kr:60002/views/css/component/menu.css" type="text/css" rel="stylesheet">
     <link href="http://ceprj.gachon.ac.kr:60002/views/css/main/main.css" type="text/css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dongle&family=Stylish&display=swap" rel="stylesheet">
 
 </head>
 <body>
     <div class="wrapper">
         <!--메뉴 -->
         <div class="left">
-            
+            <div class="menuWrapper">
+                <div class="menu1">
+                    <img src="http://ceprj.gachon.ac.kr:60002/views/img/menu.png" alt="logo" class="menuLogo"><span  onclick="outlineClick();">개요</span>
+                </div>
+                <div class="menu2">
+                    <div class="menu2-1">사용자 관리</div>
+                    <span onclick="userSearchClick();"><div class="menu2-2">사용자 조회</div></span>
+                </div>
+                <div class="menu3">
+                    <div class="menu3-1">데이터 관리</div>
+                    <span onclick="ottSearchClick();"><div class="menu3-2">OTT 콘텐츠 데이터 조회</div></span>
+                    <span onclick="ottAddClick();"><div class="menu3-3">OTT 콘텐츠 데이터 추가</div></span>
+                </div>
+                <div class="menu4">
+                    <div class="menu4-1">학습 관리</div>
+                    <div class="menu4-2">데이터 학습</div>
+                    <div class="menu4-3">학습 성능 모니터링</div>
+                </div>
+                <span class="out">나가기</span>
+            </div>
         </div>
 
         <!--메인 -->
         <div class="right">
-asfsa
             <!--개요-->
 
         </div>
@@ -28,17 +49,54 @@ asfsa
         
     </footer>
     <script>
+        const outlineTable=document.getElementsByClassName("outlineTable")
+        const userSearchTable=document.getElementsByClassName("userSearchTable")
+        const ottSearchTable=document.getElementsByClassName("ottSearchTable")
+        const ottAddTable=document.getElementsByClassName("ottAddTable")
+        var keyword=outlineTable
+        function outlineClick(){
+            keyword[0].style.display="none"
+            keyword=outlineTable
+            $(".right").load("../tap/outline.html");
+            // $(".right").load("http://ceprj.gachon.ac.kr:60002/views/html/tap/outline.html");
+        }
+
+
+        function userSearchClick(){
+            keyword[0].style.display="none"
+            keyword=userSearchTable
+            $(".right").load("../tap/userSearch.html");
+            // $(".right").load("http://ceprj.gachon.ac.kr:60002/views/html/tap/userSearch.html");
+
+        }
+
+        function ottSearchClick(){
+            keyword[0].style.display="none"
+            keyword=ottSearchTable
+            $(".right").load("../tap/ottSearch.html");
+            // $(".right").load("http://ceprj.gachon.ac.kr:60002/views/html/tap/ottSearch.html");
+
+        }
+
+
+        function ottAddClick(){
+            keyword[0].style.display="none"
+            keyword=ottAddTable
+            
+            $(".right").load("../tap/ottAdd.html");
+            // $(".right").load("http://ceprj.gachon.ac.kr:60002/views/html/tap/ottAdd.html");
+
+        }
+
         $(document).ready(function () {
-            $("#footer").load("http://ceprj.gachon.ac.kr:60002/views/html/component/footer.html");
+            $("#footer").load("../component/footer.html");
         });
         
+        $(document).ready(function () {
+            $(".right").load("../tap/outline.html");
+        });
     </script>
 
-<script>
-    $(document).ready(function () {
-        $(".left").load("http://ceprj.gachon.ac.kr:60002/views/html/component/menu.html");
-    });
-    
-</script>
+   
 </body>
 </html>

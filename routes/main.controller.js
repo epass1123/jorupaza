@@ -10,19 +10,28 @@ let userInfoGet = async(req,res)=>{
     try{
         db.getData(query,`${userid}`)
         .then(rows=>{
-            res.status(200).json({
-                "content_type" : "json" ,
-                "result_code" : 200 ,
-                "result_req" : "request success" ,
-                "user_setting" : rows[0].useSet
-            })
+            if(rows.length !== 0){
+                res.status(200).json({
+                    "content_type" : "json" ,
+                    "result_code" : 200 ,
+                    "result_req" : "request success" ,
+                    "user_setting" : rows[0]?rows[0].useSet:"none"
+                });
+            }
+            else{
+                res.status(400).json({   
+                    "content_type" : "json" ,
+                    "result_code" : 400 ,
+                    "result_req" : "no user" ,
+                })
+            }
         });
     }
     catch{
         res.status(400).json({   
             "content_type" : "json" ,
             "result_code" : 400 ,
-            "result_req" : "wrong userid" ,
+            "result_req" : "bad request" ,
         })
     }
 }
@@ -71,13 +80,21 @@ let userInfoPost = async (req, res) => {
                 let values = [userid, req.body.email, now, `${JSON.stringify(useSet)}`, now];
                 db.putData(query,values)
                 .then(p=>{
-                    log(p);
-                    res.status(200).json({
-                        "content_type" : "json" ,
-                        "result_code" : 200 ,
-                        "result_req" : "request success" ,
-                        "login" : "register success"
+                    if(p.length !==0){
+                        res.status(200).json({
+                            "content_type" : "json" ,
+                            "result_code" : 200 ,
+                            "result_req" : "request success" ,
+                            "user_setting":useSet
+                            })
+                    }
+                    else{
+                        res.status(400).json({
+                            "content_type" : "json" ,
+                            "result_code" : 400 ,
+                            "result_req" : "bad request" ,
                         })
+                    }
                 });
             }
             else{
@@ -94,27 +111,117 @@ let userInfoPost = async (req, res) => {
         res.status(400).json({
             "content_type" : "json" ,
             "result_code" : 400 ,
-            "result_req" : "request success" ,
-            "login" : "login failed"
+            "result_req" : "bad request" ,
+            })
+    }
+};
+
+let userInfoPut = async (req, res) => {
+    const userid = req.params.userid;
+    let query = ``;
+    const timestamp = Date.now()
+    const today = new Date(timestamp);
+    let day = today.getDate();
+    let month = today.getMonth() + 1;
+    let year = today.getFullYear();
+    let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
+    let useSet = [
+        {
+            "type" : "ottGroups",
+            "setting" : ["최근 추가된 OTT 콘텐츠"]
+        },
+        {
+            "type" : "channelGroups",
+            "setting" : ["최근 추가된 채널"]
+        },
+        {
+            "type" : "youvidGroups",
+            "setting" : ["최근 추가된 유튜브 영상"]
+        },
+        {
+            "type" : "streamerGroups",
+            "setting" : ["최근 추가된 스트리머"]
+        },
+        {
+            "type" : "darkmode",
+            "setting" : 0
+        },
+        {
+            "type" : "subscription",
+            "setting" : "netflix,disneyplus,wavve,watcha,youtube,twitch"
+        }
+        ]
+        log(typeof(JSON.stringify(useSet)));
+    try {
+        db.chkUser(userid)
+        .then((rows)=>{
+            if(rows.length === 0){
+                query = `INSERT INTO users (userID,email,regiTime,useSet,timestamp) VALUES (?,?,?,?,?)`
+                let values = [userid, req.body.email, now, `${JSON.stringify(useSet)}`, now];
+                db.putData(query,values)
+                .then(p=>{
+                    if(p.length !==0){
+                        res.status(200).json({
+                            "content_type" : "json" ,
+                            "result_code" : 200 ,
+                            "result_req" : "request success" ,
+                            "user_setting":useSet
+                            })
+                    }
+                    else{
+                        res.status(400).json({
+                            "content_type" : "json" ,
+                            "result_code" : 400 ,
+                            "result_req" : "bad request" ,
+                        })
+                    }
+                });
+            }
+            else{
+                res.status(200).json({
+                "content_type" : "json" ,
+                "result_code" : 200 ,
+                "result_req" : "request success" ,
+                "login" : "login success"
+                })
+            }
+        })
+    }catch(err){
+        console.log(err);
+        res.status(400).json({
+            "content_type" : "json" ,
+            "result_code" : 400 ,
+            "result_req" : "bad request" ,
             })
     }
 };
 
 
 let userBehaviorGet = async(req,res)=>{
-    const start = req.params.start;
+    const userID = req.params.userid;
+    const start = new Date(req.params.start);
     const end = req.params.end;
+    log(req.params);
     // log(userid);
-    let query = `SELECT * FROM users WHERE userID= ?`
+    let query = `SELECT * FROM user_behavior WHERE userID= ? and timestamp between ? and ?`
     try{
-        db.getData(query,`${userid}`)
+        db.getData(query,[`${userID}`,`${start}`,`${end}`])
         .then(rows=>{
-            res.status(200).json({
-                "content_type" : "json" ,
-                "result_code" : 200 ,
-                "result_req" : "request success" ,
-                "user_behavior" : rows
-            })
+            if(rows !== undefined){
+                res.status(200).json({
+                    "content_type" : "json" ,
+                    "result_code" : 200 ,
+                    "result_req" : "request success" ,
+                    "user_behavior" : rows
+                })
+            }
+            else{
+                res.status(400).json({   
+                    "content_type" : "json" ,
+                    "result_code" : 400 ,
+                    "result_req" : "no data" ,
+                })
+            }
         })
     }
     catch{
@@ -127,18 +234,34 @@ let userBehaviorGet = async(req,res)=>{
 }
 
 let userBehaviorPost = async(req,res)=>{
-    const start = req.params.start;
-    const end = req.params.end;
-    // log(userid);
-    let query = `SELECT * FROM users WHERE userID= ?`
-    db.getData(query,`${userid}`)
+    const userID = req.params.userid;
+    const event_target = req.body.event_target;
+    const event_type = req.body.event_type;
+    const event_location = req.body.event_location;
+    const timestamp = Date.now()
+    const today = new Date(timestamp);
+    let day = today.getDate();
+    let month = today.getMonth() + 1;
+    let year = today.getFullYear();
+    let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
+    let query = `INSERT INTO user_behavior (userID, event_location, event_type, event_target, timestamp) VALUES(?,?,?,?,?)`
+
+    db.putData(query,[userID,event_location,event_type,event_target,now])
     .then((rows)=>{
-        res.status(200).json({
-            "content_type" : "json" ,
-            "result_code" : 200 ,
-            "result_req" : "request success" ,
-            "user_setting" : rows[0]
-        })
+        if(rows.length !== 0){
+            res.status(200).json({
+                "content_type" : "json" ,
+                "result_code" : 200 ,
+                "result_req" : "request success" ,
+            })
+        }
+        else{
+            res.status(400).json({   
+                "content_type" : "json" ,
+                "result_code" : 400 ,
+                "result_req" : "bad request" ,
+            })
+        }
     });
 }
 
@@ -161,18 +284,27 @@ let markGet = async (req,res)=>{
         try{
             db.getData(query1+query2+query3+query4)
             .then((rows)=>{
-                result = {
-                    "marked_channel":rows[0][0],
-                    "marked_youvid":rows[1][0],
-                    "marked_ott":rows[2][0],
-                    "marked_streamer":rows[3][0]
+                if(rows.length !== 0){
+                    result = {
+                        "marked_channel":rows[0][0],
+                        "marked_youvid":rows[1][0],
+                        "marked_ott":rows[2][0],
+                        "marked_streamer":rows[3][0]
+                    }
+                    res.status(200).json({
+                        "content_type" : "json" ,
+                        "result_code" : 200 ,
+                        "result_req" : "request success" ,
+                        result,
+                    })
                 }
-                res.status(200).json({
-                    "content_type" : "json" ,
-                    "result_code" : 200 ,
-                    "result_req" : "request success" ,
-                    result,
-                })
+                else{
+                    res.status(400).json({   
+                        "content_type" : "json" ,
+                        "result_code" : 400 ,
+                        "result_req" : "no data" ,
+                    })
+                }
             })
         }
         catch{
@@ -200,12 +332,20 @@ let youvidGet = async (req,res)=>{
     try{
         db.getData(query,`${userid}`)
         .then((rows)=>{
-            res.status(200).json({
-                "content_type" : "json" ,
-                "result_code" : 200 ,
-                "result_req" : "request success" ,
-                "marked_youvid": rows,
-            })
+            if(rows.length !== 0){
+                res.status(200).json({
+                    "content_type" : "json" ,
+                    "result_code" : 200 ,
+                    "result_req" : "request success" ,
+                    "marked_youvid": rows,
+                })
+            }else{
+                res.status(400).json({   
+                    "content_type" : "json" ,
+                    "result_code" : 400 ,
+                    "result_req" : "no data" ,
+                })
+            }
         })
     }
     catch{
@@ -260,12 +400,21 @@ let ottGet = async (req,res)=>{
     try{
         db.getData(query,`${userid}`)
         .then((rows)=>{
-            res.status(200).json({
-                "content_type" : "json" ,
-                "result_code" : 200 ,
-                "result_req" : "request success" ,
-                "marked_ott": rows,
-            })
+            if(rows.length !== 0){
+                res.status(200).json({
+                    "content_type" : "json" ,
+                    "result_code" : 200 ,
+                    "result_req" : "request success" ,
+                    "marked_ott": rows,
+                })
+            }
+            else{
+                res.status(400).json({   
+                    "content_type" : "json" ,
+                    "result_code" : 400 ,
+                    "result_req" : "no data" ,
+                })
+            }
         })
     }
     catch{
@@ -281,42 +430,112 @@ let ottPost = async (req,res)=>{
     const requserid = req.params.userid; //userid
     const userid = req.body.id; 
     const contentsID = req.body.contentsid;
+    // log(req.body)
     
     const ottID = req.body.ottidList;
     const title = req.body.titleList;
     const img = req.body.imgList;
-    const url = req.body.urlList;
+    let url = req.body.urlList;
     const groupSet = req.body.settingList;
+    const type = req.body.typeList;
+
     const timestamp = Date.now();
     const today = new Date(timestamp);
+    let selectQuery = ``;
     let day = today.getDate();
     let month = today.getMonth() + 1;
     let year = today.getFullYear();
     let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
+    let logQuery = ""
+    let inputs = [];
+    try{
+        for(let i in type){
+            if(type[i] === "Disney Plus"){
+                selectQuery = `SELECT title,disneyURL,Offers from specification where (title = "${title[i]}" or rawtitle = "${title[i]}")`;
+                db.getData(selectQuery)
+                    .then(rows=>{
+                        if(rows.length == 0){
+                            logQuery = `insert into errLog (type,title,message,timestamp) values(?,?,?,?) ON DUPLICATE KEY UPDATE message=VALUES(message), timestamp=VALUES(timestamp)`
+                            inputs = ["disney",title[i],"title not found",now];
+                            db.putData(logQuery, inputs)
 
-    let values = [requserid, `${contentsID}`, `${ottID.join("|")}`, `${title.join("|")}`, `${img.join("|")}`, `${url.join("|")}`, `${groupSet.join("|")}`, now];
+                        }else{
+                            if(rows[0].disneyURL == null){
+                                logQuery = `insert into errLog (type,title,message,timestamp) values(?,?,?,?) ON DUPLICATE KEY UPDATE message=VALUES(message), timestamp=VALUES(timestamp)`
+                                inputs = ["disney",title[i],"disneyURL not found",now];
+                                db.putData(logQuery, inputs)
 
-    let query = `INSERT INTO marked_ott (userID, contentsID, ottID, title, img, url, groupSet, timestamp) VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE contentsID=VALUES(contentsID), ottID=VALUES(ottID), title=VALUES(title), img=VALUES(img), url=VALUES(url), groupSet=VALUES(groupSet), timestamp=VALUES(timestamp)`
+                            }
+                            else{
+                                url[i] = rows[0].disneyURL;
+                                let values = [requserid, `${contentsID}`, `${ottID.join("|")}`, `${title.join("|")}`, `${img.join("|")}`, `${url.join("|")}`, `${groupSet.join("|")}`, `${type.join("|")}`,now];
+    
+                                let query = `INSERT INTO marked_ott (userID, contentsID, ottID, title, img, url, groupSet, type ,timestamp) VALUES (?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE contentsID=VALUES(contentsID), ottID=VALUES(ottID), title=VALUES(title), img=VALUES(img), url=VALUES(url), groupSet=VALUES(groupSet),type=VALUES(type), timestamp=VALUES(timestamp)`
+    
+                                db.putData(query, values)
+                            }
+                        }
+                    })
+            }
+            else if(type[i] === "wavve"){
+                selectQuery = `SELECT title, wavveURL, Offers from specification where (title = "${title[i]}" or rawtitle = "${title[i]}")`;
+    
+                db.getData(selectQuery)
+                    .then(rows=>{
+    
+                        if(rows.length == 0){
+                            logQuery = `insert into errLog (type,title,message,timestamp) values(?,?,?,?) ON DUPLICATE KEY UPDATE message=VALUES(message), timestamp=VALUES(timestamp)`
+                            inputs = ["wavve",title[i],"title not found",now];
+                            db.putData(logQuery, inputs)
+                        }else{
+    
+                            if(rows[0].wavveURL == null){
+                                logQuery = `insert into errLog (type,title,message,timestamp) values(?,?,?,?) ON DUPLICATE KEY UPDATE message=VALUES(message), timestamp=VALUES(timestamp)`
+                                inputs = ["wavve",title[i],"wavveURL not found",now];
+    
+                                db.putData(logQuery, inputs)
+                            }
+                            else{
+                                url[i] = rows[0].wavveURL;
+                                let values = [requserid, `${contentsID}`, `${ottID.join("|")}`, `${title.join("|")}`, `${img.join("|")}`, `${url.join("|")}`, `${groupSet.join("|")}`, `${type.join("|")}`,now];
+    
+                                let query = `INSERT INTO marked_ott (userID, contentsID, ottID, title, img, url, groupSet, type ,timestamp) VALUES (?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE contentsID=VALUES(contentsID), ottID=VALUES(ottID), title=VALUES(title), img=VALUES(img), url=VALUES(url), groupSet=VALUES(groupSet),type=VALUES(type), timestamp=VALUES(timestamp)`
+    
+                                db.putData(query, values)
+                            }
+                        }
+    
+                    })
+            }
+        else if(type[i] === "Watcha"){
+            let watchaID = url[i].split("/").pop();
+            selectQuery = `SELECT title, watchaURL, Offers from specification where watchaURL like "%${watchaID}%"`;
 
-    db.putData(query, values)
-    .then(rows=>{
-        if(rows === undefined){
-            res.status(400).json({
-                "content-type": "json",
-                "result_code": 400,
-                "result_req": "bad request"
-            });
-        }else{
-            res.status(200).json({
-                "content-type": "json",
-                "result_code": 200,
-                "result_req": "post done"
-            });
+            db.getData(selectQuery)
+                .then(rows=>{
+                    title[i] = rows[0].title;
+                    let values = [requserid, `${contentsID}`, `${ottID.join("|")}`, `${title.join("|")}`, `${img.join("|")}`, `${url.join("|")}`, `${groupSet.join("|")}`, `${type.join("|")}`,now];
+
+                    let query = `INSERT INTO marked_ott (userID, contentsID, ottID, title, img, url, groupSet, type ,timestamp) VALUES (?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE contentsID=VALUES(contentsID), ottID=VALUES(ottID), title=VALUES(title), img=VALUES(img), url=VALUES(url), groupSet=VALUES(groupSet),type=VALUES(type), timestamp=VALUES(timestamp)`
+
+                    db.putData(query, values)
+                })
         }
-        
-    }); 
+        }
+        res.status(200).json({
+            "content-type": "json",
+            "result_code": 200,
+            "result_req": "post done"
+        });
 
-
+    }
+    catch(err){
+        res.status(400).json({
+            "content-type": "json",
+            "result_code": 400,
+            "result_req": err
+        });
+    }
 };
 
 let streamerGet = async (req,res)=>{
@@ -326,12 +545,21 @@ let streamerGet = async (req,res)=>{
     try{
         db.getData(query,`${userid}`)
         .then((rows)=>{
-            res.status(200).json({
-                "content_type" : "json" ,
-                "result_code" : 200 ,
-                "result_req" : "request success" ,
-                "marked_streamer": rows,
-            })
+            if(rows.length !== 0){
+                res.status(200).json({
+                    "content_type" : "json" ,
+                    "result_code" : 200 ,
+                    "result_req" : "request success" ,
+                    "marked_streamer": rows,
+                })
+            }
+            else{
+                res.status(400).json({   
+                    "content_type" : "json" ,
+                    "result_code" : 400 ,
+                    "result_req" : "no data" ,
+                })
+            }
         })
     }
     catch{
@@ -386,12 +614,21 @@ let channelGet = async (req,res)=>{
     try{
         db.getData(query,`${userid}`)
         .then((rows)=>{
-            res.status(200).json({
-                "content_type" : "json" ,
-                "result_code" : 200 ,
-                "result_req" : "request success" ,
-                "marked_channel": rows,
-            })
+            if(rows.length !== 0){
+                res.status(200).json({
+                    "content_type" : "json" ,
+                    "result_code" : 200 ,
+                    "result_req" : "request success" ,
+                    "marked_channel": rows,
+                })
+            }
+            else{
+                res.status(400).json({   
+                    "content_type" : "json" ,
+                    "result_code" : 400 ,
+                    "result_req" : "no data" ,
+                })
+            }
         })
     }
     catch{
@@ -455,8 +692,7 @@ let logoutGet = async(req, res)=>{
 
 let searchGet = async (req,res)=>{
     const title = req.query.title; //검색어
-    let query = `SELECT * FROM specification WHERE title= ?`
-    log("get", req.ip, req.query);
+    let query = `SELECT * FROM specification WHERE title like %?%`
     try{
         db.getData(query,`${title}`)
         .then((rows)=>{
@@ -487,5 +723,5 @@ let searchPost = async (req,res)=>{
     });
 };
 
-export {userBehaviorGet,searchPost,userInfoGet,userInfoPost,logoutGet,markGet,markPost,youvidGet,youvidPost,ottGet,ottPost,channelGet,channelPost,streamerGet,streamerPost,searchGet,userBehaviorPost}
+export {userBehaviorGet,searchPost,userInfoGet,userInfoPost,userInfoPut,logoutGet,markGet,markPost,youvidGet,youvidPost,ottGet,ottPost,channelGet,channelPost,streamerGet,streamerPost,searchGet,userBehaviorPost}
   

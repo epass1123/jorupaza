@@ -1,0 +1,78 @@
+body{
+    background-color: #F5F5F5;
+}
+
+.wrapper{
+    display: flex;
+}
+
+.left{
+    width: 25vw;
+    height: 88vh;
+}
+
+.right{
+    width: 75vw;
+    height: 88vh;
+}
+
+
+table{
+    width: 90%;
+    border-collapse:collapse;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-align: left;
+    text-align: center;
+}
+
+
+td,tr,th{
+    padding: 10px;
+    height: 15px;
+}
+
+.td1{
+    background-color: aliceblue;;
+}
+
+.td2{
+    background-color: #D9D9D9
+}
+
+.td3{
+    background-color: rgb(195, 193, 193)
+}
+
+.rightUp{
+    display: flex;
+    width: 90%;
+    margin-bottom: 5vh;
+    margin-top: 10vh;
+    margin-left: 3%;
+}
+
+.search{
+    background-color: rgb(157, 203, 247);
+    border: none;
+    height: 35px;
+    width: 60px;
+    border-radius: 5px;
+    margin-left: 15px;
+}
+
+.contentSearchInput{
+    width: 400px;
+    height: 25px;
+    margin-top: 3px;
+}
+
+
+
+.searchText{
+    margin-right: 20px;
+    margin-top: 5px;
+    font-weight: 400;
+    font-size: 1.1rem;
+}
+

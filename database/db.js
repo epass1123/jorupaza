@@ -55,10 +55,17 @@ async function createTable(){
         `CREATE TABLE admin_session (sessionID VARCHAR(25) NOT NULL, adminID VARCHAR(30) NOT NULL, isValid BOOL NOT NULL, PRIMARY KEY(sessionID), FOREIGN KEY(adminID) REFERENCES admin(adminID));
          `);
         res = await conn.query(
-        `CREATE TABLE user_behavior (logID INTEGER(255) NOT NULL, userID VARCHAR(20) NOT NULL, url VARCHAR(30) NOT NULL, event_type VARCHAR(10) NOT NULL, event_target VARCHAR(255) NOT NULL, timestamp datetime NOT NULL, PRIMARY KEY(logID), FOREIGN KEY(userID) REFERENCES users(userID));
+        `CREATE TABLE user_behavior (logID INTEGER(255) NOT NULL auto_increment, userID VARCHAR(25) NOT NULL, event_location VARCHAR(255) NOT NULL, event_type VARCHAR(10) NOT NULL, event_target VARCHAR(255) NOT NULL, timestamp datetime NOT NULL, PRIMARY KEY(logID), FOREIGN KEY(userID) REFERENCES users(userID));
         `);
         res = await conn.query(
         `CREATE TABLE logs (ID varchar(255) NOT NULL, userID VARCHAR(255) not null, url VARCHAR(20) NOT NULL, url VARCHAR(255) NOT NULL, method VARCHAR(10) NOT NULL, day VARCHAR(20) NOT NULL, date VARCHAR(20) NOT NULL, time VARCHAR(255) not null, resCode VARCHAR(10) not null, PRIMARY KEY(ID));
+        `);
+        res = await conn.query(
+        `create table errLog( type varchar(255) not null, title varchar(255) not null, message text not null, timestamp datetime not null, primary key(title, type));
+        `);
+    
+        res = await conn.query(
+        `create table logs( ID int(255) not null auto_increment, userID varchar(255),url varchar(255), method varchar(10) not null, day varchar(20) not null, date text varchar(20) not null, time varchar(255) not null, resCode varchar(10) not null primary key(ID));
         `);
     
     } catch (err) {
