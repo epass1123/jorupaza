@@ -1,11 +1,17 @@
+@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+*{
+    font-family:'Nanum Gothic',monospace}
 
-
-table{
-    font-family: 'Stylish',sans-serif;
-    font-size: 1.5rem;
-    font-weight: 300;
+body{
+    background-color: rgb(250 250 255)
 }
 
 .left{
-    font-family: 'Dongle', sans-serif;
+    width: 20vw;
+    height: 88vh;
+}
+
+.right{
+    width: 80vw;
+    height: 88vh;
 }

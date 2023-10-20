@@ -81,6 +81,12 @@ let userInfoPost = async (req, res) => {
                 db.putData(query,values)
                 .then(p=>{
                     if(p.length !==0){
+                        db.updateData(`update users set loginStatus = true where userid = (?)`,userid)
+                        .then(k=>{
+                            log("done")
+                            log(k);
+                        });
+
                         res.status(200).json({
                             "content_type" : "json" ,
                             "result_code" : 200 ,
@@ -98,6 +104,12 @@ let userInfoPost = async (req, res) => {
                 });
             }
             else{
+                db.updateData(`update users set loginStatus = true where userid = (?)`,userid)
+                        .then(k=>{
+                            log("done")
+                            log(k);
+                        })
+                
                 res.status(200).json({
                 "content_type" : "json" ,
                 "result_code" : 200 ,
@@ -151,7 +163,6 @@ let userInfoPut = async (req, res) => {
             "setting" : "netflix,disneyplus,wavve,watcha,youtube,twitch"
         }
         ]
-        log(typeof(JSON.stringify(useSet)));
     try {
         db.chkUser(userid)
         .then((rows)=>{
@@ -161,6 +172,7 @@ let userInfoPut = async (req, res) => {
                 db.putData(query,values)
                 .then(p=>{
                     if(p.length !==0){
+
                         res.status(200).json({
                             "content_type" : "json" ,
                             "result_code" : 200 ,
@@ -178,6 +190,7 @@ let userInfoPut = async (req, res) => {
                 });
             }
             else{
+                db.updateData(`update users set loginStatus = true where userid = ?`,userid);
                 res.status(200).json({
                 "content_type" : "json" ,
                 "result_code" : 200 ,
@@ -196,6 +209,19 @@ let userInfoPut = async (req, res) => {
     }
 };
 
+let logoutGet = async(req, res)=>{
+    const userid = req.params.userid;
+
+    db.updateData(`update users set loginStatus = false where userid = ?`,userid)
+    .then(rows=>{
+        res.status(200).json({
+            "content_type" : "json" ,
+            "result_code" : 200 ,
+            "result_req" : "request success" ,
+            "login" : "logout success"
+            })
+    })
+  }
 
 let userBehaviorGet = async(req,res)=>{
     const userID = req.params.userid;
@@ -674,21 +700,6 @@ let channelPost = async (req,res)=>{
         
     }); 
 };
-  
-let logoutGet = async(req, res)=>{
-        log("logout", req.session)
-
-        if(req.session.user){
-            // log(req.session.user);
-            req.session.destroy((err) => {
-                if (err) {
-                    console.log("세션 삭제시에 에러가 발생했습니다.");
-                    return;
-                }
-            });
-            console.log(req.session);
-        }
-      }
 
 let searchGet = async (req,res)=>{
     const title = req.query.title; //검색어
@@ -723,5 +734,5 @@ let searchPost = async (req,res)=>{
     });
 };
 
-export {userBehaviorGet,searchPost,userInfoGet,userInfoPost,userInfoPut,logoutGet,markGet,markPost,youvidGet,youvidPost,ottGet,ottPost,channelGet,channelPost,streamerGet,streamerPost,searchGet,userBehaviorPost}
+export {userBehaviorGet,logoutGet,searchPost,userInfoGet,userInfoPost,userInfoPut,markGet,markPost,youvidGet,youvidPost,ottGet,ottPost,channelGet,channelPost,streamerGet,streamerPost,searchGet,userBehaviorPost}
   

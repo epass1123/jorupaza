@@ -14,11 +14,11 @@ router.get('/store/platlinks',store.platlinks);
 router.get('/userinfo/:userid',controller.userInfoGet);
 router.post('/userinfo/:userid',controller.userInfoPost);
 router.put('/userinfo/:userid',controller.userInfoPost);
+router.get('/userinfo/logout/:userid',controller.logoutGet);
 
 router.get('/userinfo/userbehavior/:userid/:start/:end',controller.userBehaviorGet);
 router.post('/userinfo/userbehavior/:userid',controller.userBehaviorPost);
 
-router.get('/logout',controller.logoutGet);
 
 router.get('/mark/:userid',controller.markGet);
 router.post('/mark/:userid',controller.markPost);

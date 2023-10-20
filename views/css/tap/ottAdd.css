@@ -1,20 +1,9 @@
-body{
-    background-color: #F5F5F5;
-}
 
 .wrapper{
     display: flex;
 }
 
-.left{
-    width: 25vw;
-    height: 88vh;
-}
 
-.right{
-    width: 75vw;
-    height: 88vh;
-}
 
 
 table{

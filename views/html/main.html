@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/views/css/component/footer.css" type="text/css" rel="stylesheet">
+    <link href="/views/css/component/menu.css" type="text/css" rel="stylesheet">
+    <link href="/views/css/main/main.css" type="text/css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/views/js/main.js"></script>
+</head>
+<body>
+    <div class="wrapper">
+        <!--메뉴 -->
+        <div class="left">
+            <div class="menuWrapper">
+                <div class="menu">
+                    MENU
+                </div>
+                <div class="menu2">
+                        <div class="outline">
+                        <div class="outlineLogoWrapper"><img class="outlineLogo" src="/views/img/outline.png"></div>
+                        <div class="outlineText" onclick="outlineClick();">개요</div>
+                    </div>
+                    <div class="userManage">
+                        <div class="userManageLogoWrapper"><img class="userManageLogo" src="/views/img/user.png"></div>
+                        <div>사용자 관리</div>
+                    </div>
+                    <div class="userManageMenu">
+                        <div class="userSearch" onclick="userSearchClick();">사용자 조회</div>
+                    </div>
+                    <div class="dataManage">
+                        <div class="dataManageLogoWrapper"><img class="dataManageLogo" src="/views/img/data.png"></div>
+                        <div>데이터 관리</div>
+                    </div>
+                    <div class="ottManageMenu">
+                        <div class="ottSearch" onclick="ottSearchClick();">OTT 콘텐츠 데이터 조회</div><br>
+                        <div class="ottAdd" onclick="ottAddClick();">OTT 콘텐츠 데이터 추가</div>
+                    </div>
+                    <div class="education">
+                        <div class="educationLogoWrapper"><img class="educationLogo" src="/views/img/data.png"></div>
+                        <div>학습 관리</div>
+                    </div>
+                    <div class="educationManageMenu">
+                        <div class="dataEducation">데이터 학습</div><br>
+                        <div class="monitoring">학습 성능 모니터링</div>
+                    </div>
+                    
+                    <img  class="logoutBtn" onclick="logout()" src="/views/img/logout.png">
+                    
+                </div>
+                
+            </div>
+        </div>
+
+        <!--메인 -->
+        <div class="right">
+
+        </div>
+    </div>
+
+    <footer id="footer">
+        
+    </footer>
+   
+</body>
+</html>
