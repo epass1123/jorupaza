@@ -8,7 +8,7 @@ let links2 = csv2.toString().split('\n');
 async function store(req,res){
     let inputs = []
     let obj;
-    let sql = `INSERT INTO specification (contentsID ,title, rawtitle, casts, genre, Offers, director, summary) VALUES (?,?,?,?,?,?,?,?)`;
+    let sql = `INSERT INTO specification (contentsID ,title, rawtitle, casts, genre, Offers, director, summary) VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE title=VALUES(title),rawtitle=VALUES(rawtitle),casts=VALUES(casts),genre=VALUES(genre),director=VALUES(director),Offers=VALUES(Offers),summary=VALUES(summary)`;
     try{
         for(let i of links2){
             i = i.split('|');
@@ -44,7 +44,8 @@ async function store(req,res){
                     }
             
                 }
-                obj.offers = i.pop().slice(0,-1);
+                obj.offers = i.pop().slice(0,-1).replace(/\r/g,'');
+
                 obj.casts = i.pop();
                 obj.summary = i.pop();
                 
@@ -81,8 +82,8 @@ async function jwlinks(req,res){
         for(let i of links){
             if(i.split(',')[0] !== "0" && i.split(',')[1] !== undefined && i.split(',')[0] !== ''){
                 let contentsID = i.split(',')[0];
-                let jwURL = i.split(',')[1];
-                
+                let jwURL = i.split(',')[1].replace(/\r/g,'');
+
                 inputs = [contentsID, jwURL]
                 db.putData(query,inputs)
                 .then(rows=>{
@@ -114,13 +115,15 @@ async function platlinks(req,res){
             let title = links3[i].split('|').shift();
             let url = links3[i].split('|').pop().slice(0, -1);
             if(url.includes("disney")){
-                query = `UPDATE specification SET disneyURL=? WHERE title=? and Offers like "%Disney%" and disneyURL is null`
+                query = `UPDATE specification SET disneyURL=? WHERE title=? and Offers like "%Disney%"`
+                url = url.split("?")[0];
+                log(title, url);
             }
             else if(url.includes("wavve")){
-                query = `UPDATE specification SET wavveURL=? WHERE title=? and Offers like "%wavve%" and wavveURL is null`
+                query = `UPDATE specification SET wavveURL=? WHERE title=? and Offers like "%wavve%"`
             }
             else if(url.includes("watcha")){
-                query = `UPDATE specification SET watchaURL=? WHERE title=? and Offers like "%Watcha%" and watchaURL is null`
+                query = `UPDATE specification SET watchaURL=? WHERE title=? and Offers like "%Watcha%"`
             }
             else{
                 continue;

@@ -86,7 +86,120 @@ let adminLogout = async(req, res)=>{
     
   }
 
+let manageSearch = async (req,res)=>{
+    const {option, input, } = req.body
+    let query = "";
+    if(option === "title"){
+        query = `SELECT * FROM specification WHERE title like ?`
+    }
+    else if(option === "rawtitle"){
+        query = `SELECT * FROM specification WHERE rawtitle like ?`
+    }
+    try{
+        db.getData(query,`%${input}%`)
+        .then((rows)=>{
+            res.status(200).json({
+                "content_type" : "json" ,
+                "result_code" : 200 ,
+                "result_req" : "request success" ,
+                "possible_match": rows,
+            })
+        });
+    }
+    catch{
+        res.status(400).json({
+            "content-type": "json",
+            "result_code": 400,
+            "result_req": "bad request"
+        });
+    }
+};
+
+let updateRow = async (req,res)=>{
+    const {contentsID, title,rawtitle,disneyURL,wavveURL,watchaURL,casts,genre,jwimg,Offers,director,  } = req.body
+    let query = `update specification set title = ?,rawtitle=?,disneyURL=?,wavveURL=?,watchaURL=?,casts=?,genre=?,jwimg=?,Offers=?,director=? where contentsID=?`;
+    let values = [title,rawtitle,disneyURL,wavveURL,watchaURL,casts,genre,jwimg,Offers,director,contentsID];
+
+    try{
+        db.updateData(query,values)
+        .then(rows=>{
+            log(rows);
+            res.status(200).json({
+                "content_type" : "json" ,
+                "result_code" : 200 ,
+                "result_req" : "update success" ,
+            });
+        });
+    }
+    catch{
+        res.status(400).json({
+            "content-type": "json",
+            "result_code": 400,
+            "result_req": "bad request"
+        });
+    }
+};
+
+let ottManagePost = async (req,res)=>{
+    const { title,rawtitle,disneyURL,wavveURL,watchaURL,casts,genre,jwimg,Offers,director,  } = req.body
+    let query = `insert into specification (title ,rawtitle,disneyURL,wavveURL,watchaURL,casts,genre,jwimg,Offers,director) values(?,?,?,?,?,?,?,?,?,?)`;
+    let values = [title,rawtitle,disneyURL,wavveURL,watchaURL,casts,genre,jwimg,Offers,director];
+
+    try{
+        db.putData(query,values)
+        .then(rows=>{
+            log(rows);
+            res.status(200).json({
+                "content_type" : "json" ,
+                "result_code" : 200 ,
+                "result_req" : "add success" ,
+            });
+        });
+    }
+    catch{
+        res.status(400).json({
+            "content-type": "json",
+            "result_code": 400,
+            "result_req": "bad request"
+        });
+    }
+};
 
 
+let errLogGet = async (req,res)=>{
+    const options = req.params.options;
+    let query
+    if(options === "all"){
+        query = `SELECT * FROM errLog`
+    }
+    else if(options === "disney"){
+        query = `SELECT * FROM errLog WHERE type = disney`
+    }
+    else if(options === "wavve"){
+        query = `SELECT * FROM errLog WHERE type = wavve`
+    }
+    else if(options === "watcha"){
+        query = `SELECT * FROM errLog WHERE type = watcha`
+    }
+    try{
+        db.getData(query)
+        .then((rows)=>{
+            res.status(200).json({
+                "content_type" : "json" ,
+                "result_code" : 200 ,
+                "result_req" : "request success" ,
+                "err_logs": rows,
+            })
+        });
+    }
+    catch{
+        res.status(400).json({
+            "content-type": "json",
+            "result_code": 400,
+            "result_req": "bad request"
+        });
+    }
+};
 
-export {manageGet, adminLogin, adminLogout};
+
+export {manageGet, adminLogin, adminLogout,manageSearch, updateRow, errLogGet,ottManagePost};

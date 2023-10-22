@@ -76,17 +76,11 @@ let userInfoPost = async (req, res) => {
         db.chkUser(userid)
         .then((rows)=>{
             if(rows.length === 0){
-                query = `INSERT INTO users (userID,email,regiTime,useSet,timestamp) VALUES (?,?,?,?,?)`
-                let values = [userid, req.body.email, now, `${JSON.stringify(useSet)}`, now];
+                query = `INSERT INTO users (userID,email,regiTime,useSet,loginStatus,timestamp) VALUES (?,?,?,?,?,?)`
+                let values = [userid, req.body.email, now, `${JSON.stringify(useSet)}`,true ,now];
                 db.putData(query,values)
                 .then(p=>{
-                    if(p.length !==0){
-                        db.updateData(`update users set loginStatus = true where userid = (?)`,userid)
-                        .then(k=>{
-                            log("done")
-                            log(k);
-                        });
-
+                    if(p !== undefined){
                         res.status(200).json({
                             "content_type" : "json" ,
                             "result_code" : 200 ,
@@ -104,12 +98,6 @@ let userInfoPost = async (req, res) => {
                 });
             }
             else{
-                db.updateData(`update users set loginStatus = true where userid = (?)`,userid)
-                        .then(k=>{
-                            log("done")
-                            log(k);
-                        })
-                
                 res.status(200).json({
                 "content_type" : "json" ,
                 "result_code" : 200 ,
@@ -130,6 +118,7 @@ let userInfoPost = async (req, res) => {
 
 let userInfoPut = async (req, res) => {
     const userid = req.params.userid;
+    const {useSet,email} = req.body;
     let query = ``;
     const timestamp = Date.now()
     const today = new Date(timestamp);
@@ -137,68 +126,31 @@ let userInfoPut = async (req, res) => {
     let month = today.getMonth() + 1;
     let year = today.getFullYear();
     let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
-    let useSet = [
-        {
-            "type" : "ottGroups",
-            "setting" : ["최근 추가된 OTT 콘텐츠"]
-        },
-        {
-            "type" : "channelGroups",
-            "setting" : ["최근 추가된 채널"]
-        },
-        {
-            "type" : "youvidGroups",
-            "setting" : ["최근 추가된 유튜브 영상"]
-        },
-        {
-            "type" : "streamerGroups",
-            "setting" : ["최근 추가된 스트리머"]
-        },
-        {
-            "type" : "darkmode",
-            "setting" : 0
-        },
-        {
-            "type" : "subscription",
-            "setting" : "netflix,disneyplus,wavve,watcha,youtube,twitch"
-        }
-        ]
+    log(req.body)
+    
     try {
-        db.chkUser(userid)
-        .then((rows)=>{
-            if(rows.length === 0){
-                query = `INSERT INTO users (userID,email,regiTime,useSet,timestamp) VALUES (?,?,?,?,?)`
-                let values = [userid, req.body.email, now, `${JSON.stringify(useSet)}`, now];
-                db.putData(query,values)
-                .then(p=>{
-                    if(p.length !==0){
-
-                        res.status(200).json({
-                            "content_type" : "json" ,
-                            "result_code" : 200 ,
-                            "result_req" : "request success" ,
-                            "user_setting":useSet
-                            })
-                    }
-                    else{
-                        res.status(400).json({
-                            "content_type" : "json" ,
-                            "result_code" : 400 ,
-                            "result_req" : "bad request" ,
-                        })
-                    }
-                });
+        query = `update users set email = ?, useSet = ?, timestamp = ? where userid = ?`
+        let values = [email,`${JSON.stringify(useSet)}`, now ,userid];
+        db.putData(query,values)
+        .then(p=>{
+            if(p !== undefined){
+                res.status(200).json({
+                    "content_type" : "json" ,
+                    "result_code" : 200 ,
+                    "result_req" : "request success" ,
+                    })
             }
             else{
-                db.updateData(`update users set loginStatus = true where userid = ?`,userid);
-                res.status(200).json({
-                "content_type" : "json" ,
-                "result_code" : 200 ,
-                "result_req" : "request success" ,
-                "login" : "login success"
+                res.status(400).json({
+                    "content_type" : "json" ,
+                    "result_code" : 400 ,
+                    "result_req" : "bad request" ,
                 })
             }
-        })
+        });
+            
+            
+        
     }catch(err){
         console.log(err);
         res.status(400).json({
@@ -228,7 +180,6 @@ let userBehaviorGet = async(req,res)=>{
     const start = new Date(req.params.start);
     const end = req.params.end;
     log(req.params);
-    // log(userid);
     let query = `SELECT * FROM user_behavior WHERE userID= ? and timestamp between ? and ?`
     try{
         db.getData(query,[`${userID}`,`${start}`,`${end}`])
@@ -475,6 +426,12 @@ let ottPost = async (req,res)=>{
     let logQuery = ""
     let inputs = [];
     try{
+        if(type.length === 0){
+            let values = [requserid, `${contentsID}`, `${ottID.join("|")}`, `${title.join("|")}`, `${img.join("|")}`, `${url.join("|")}`, `${groupSet.join("|")}`, `${type.join("|")}`,now];
+            let query = `INSERT INTO marked_ott (userID, contentsID, ottID, title, img, url, groupSet, type ,timestamp) VALUES (?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE contentsID=VALUES(contentsID), ottID=VALUES(ottID), title=VALUES(title), img=VALUES(img), url=VALUES(url), groupSet=VALUES(groupSet),type=VALUES(type), timestamp=VALUES(timestamp)`
+
+            db.putData(query, values)
+        }
         for(let i in type){
             if(type[i] === "Disney Plus"){
                 selectQuery = `SELECT title,disneyURL,Offers from specification where (title = "${title[i]}" or rawtitle = "${title[i]}")`;
@@ -547,7 +504,15 @@ let ottPost = async (req,res)=>{
                     db.putData(query, values)
                 })
         }
+        else{
+            let values = [requserid, `${contentsID}`, `${ottID.join("|")}`, `${title.join("|")}`, `${img.join("|")}`, `${url.join("|")}`, `${groupSet.join("|")}`, `${type.join("|")}`,now];
+
+            let query = `INSERT INTO marked_ott (userID, contentsID, ottID, title, img, url, groupSet, type ,timestamp) VALUES (?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE contentsID=VALUES(contentsID), ottID=VALUES(ottID), title=VALUES(title), img=VALUES(img), url=VALUES(url), groupSet=VALUES(groupSet),type=VALUES(type), timestamp=VALUES(timestamp)`
+
+            db.putData(query, values)
         }
+    }
+        
         res.status(200).json({
             "content-type": "json",
             "result_code": 200,
