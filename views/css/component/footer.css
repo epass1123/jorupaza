@@ -6,14 +6,13 @@ body{
 
 #wrapper{
     width: 100vw;
-    height: 10vh;
-    background-color: #f8fdff;
+    height: 12vh;
+    background-color: #ECE6E6;
     display: flex;
     overflow: hidden;
     align-items: center;
     position: fixed;
     bottom: 0;
-    border-top: 1px solid #d4effd; 
 }
 
 .inform{
@@ -31,6 +30,6 @@ body{
 }
 
 .logoImage{
-    width: 77px;
-    height: 70px;
+    width: 8vw;
+    height: 8vh;
 }

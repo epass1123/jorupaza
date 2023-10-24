@@ -1,0 +1,852 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "JORUPAZA API DOC",
+    "description": "api 도큐먼트입니다",
+    "version": "1.0.0"
+  },
+  "host": "localhost:60002",
+  "servers": [
+    {
+      "url": "http://localhost:60002"
+    }
+  ],
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+
+  "paths": {
+    "/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/register": {
+      "post": {
+        "description": "유저 회원가입 api",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userid": {
+                  "example": "user1"
+                },
+                "password": {
+                  "example": "user1"
+                },
+                "email": {
+                  "example": "user1@gachon.ac.kr"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "1.Already logged in \n 2.Duplicate userID"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "description": "유저 로그인 api",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userid": {
+                  "example": "user1"
+                },
+                "password": {
+                  "example": "user1"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "1.Already logged in \n 2.User not found \n 3. Wrong password \n 4. Bad Request"
+          }
+        }
+      }
+    },
+    "/logout": {
+      "get": {
+        "description": "유저 로그아웃 api",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "1.Bad Request \n 2.Not logged in"
+          }
+        }
+      }
+    },
+    "/store": {
+      "get": {
+        "description": "디비에 콘텐츠 데이터 저장하는 api",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/store/jwlinks": {
+      "get": {
+        "description": "specification에 jwlinks를 추가하는 api",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/store/platlinks": {
+      "get": {
+        "description": "specification에 플랫폼링크 추가하는 api",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/userinfo/{userid}": {
+      "get": {
+        "description": "유저의 개인 찜한 목록 등 설정 정보 get api",
+        "parameters": [
+          {
+            "name": "userid",
+            "example":"user1",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "1.Bad Request \n 2.No user"
+          }
+        }
+      },
+      "post": {
+        "description": "유저가 관심콘텐츠를 추가했을때 post api(기존의 userinfo put api)",
+        "parameters": [
+          {
+            "name": "userid",
+            "example":"user1",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "useSet": {
+                  "example": [{"type":"ottGroups","setting":["최근 추가된 OTT 콘텐츠"]},{"type":"channelGroups","setting":["최근 추가된 채널"]},{"type":"youvidGroups","setting":["최근 추가된 유튜브 영상"]},{"type":"streamerGroups","setting":["최근 추가된 스트리머"]},{"type":"darkmode","setting":0},{"type":"subscription","setting":"netflix,disneyplus,wavve,watcha,youtube,twitch"}]
+                },
+                "email": {
+                  "example": "user1@gachon.ac.kr"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "1.Bad Request \n 2.No user"
+          }
+        }
+      }
+    },
+   
+    "/userinfo/userbehavior/{userid}/{start}/{end}": {
+      "get": {
+        "description": "유저 사용자 행동정보 조회 api",
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "path",
+            "example":"user1",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "start",
+            "in": "path",
+            "example":"2023-10-19",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "end",
+            "in": "path",
+            "example":"2023-10-20",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "1.Bad Request \n 2.No data"
+          }
+        }
+      }
+    },
+    "/userinfo/userbehavior/{userid}": {
+      "post": {
+        "description": "사용자 행동데이터 전송 api",
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "event_target": {
+                  "example": "https://www.netflix.com/browse?jbv=80991107"
+                },
+                "event_type": {
+                  "example": "visit"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "1.Bad Request \n 2.Insert failed"
+          }
+        }
+      }
+    },
+    "/mark/{userid}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "path",
+            "example":"user1",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "1.Bad Request \n 2.No data"
+          }
+        }
+      }
+    },
+    "/search/{title}": {
+      "get": {
+        "description": "OTT 콘텐츠 검색 api",
+        "parameters": [
+          {
+            "name": "title",
+            "example":"미녀",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/mark/ott/{userid}": {
+      "get": {
+        "description": "유저가 찜한 OTT 콘텐츠 리스트 조회 api",
+        "parameters": [
+          {
+            "name": "userid",
+            "example":"user1",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "1.Bad Request \n 2.No data"
+          }
+        }
+      },
+      "post": {
+        "description": "유저가 찜한 OTT 콘텐츠 db에 등록",
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "path",
+            "example":"user1",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "user1"
+                },
+                "contentsid": {
+                  "example": "1"
+                },
+                "ottidList": {
+                  "example": ["tP8a4q2","DisneyPlus_무빙","DisneyPlus_최악의 악"]
+                },
+                "titleList": {
+                  "example": ["undefined","무빙","최악의 악"]
+                },
+                "imgList": {
+                  "example": ["https://an-2.img.amz.wtchn.net/image/v2/fewgqe","https://an-2.img.amz.wtchn.net/image/v2/QgSErw","https://an-2.img.amz.wtchn.net/image/v2/YeKwop"]
+                },
+                "urlList": {
+                  "example": ["https://watcha.com/watch/tP8a4q2","",""]
+                },
+                "settingList": {
+                  "example": ["9999","9999","9999"]
+                },
+                "typeList": {
+                  "example": ["Watcha","Disney Plus","Disney Plus"]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/mark/youvid/{userid}": {
+      "get": {
+        "description": "유저가 찜한 youtube 콘텐츠 리스트 조회 api",
+        "parameters": [
+          {
+            "name": "userid",
+            "example":"user1",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "1.Bad Request \n 2.No data"
+          }
+        }
+      },
+      "post": {
+        "description": "유저가 찜한 youtube 콘텐츠 db에 등록",
+        "parameters": [
+          {
+            "name": "userid",
+            "example":"user1",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "user1"
+                },
+                "vidList": {
+                  "example": ["any"]
+                },
+                "settingList": {
+                  "example": ["any"]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/mark/streamer/{userid}": {
+      "get": {
+        "description": "유저가 찜한 스트리머 콘텐츠 리스트 조회 api",
+        "parameters": [
+          {
+            "name": "userid",
+            "example":"user1",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "1.Bad Request \n 2.No data"
+          }
+        }
+      },
+      "post": {
+        "description": "유저가 찜한 스트리머 콘텐츠 db에 등록",
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "idList": {
+                  "example": ["any"]
+                },
+                "settingList": {
+                  "example": ["9999"]
+                },
+                "titleList": {
+                  "example": ["any"]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/mark/channel/{userid}": {
+      "get": {
+        "description": "유저가 찜한 채널 콘텐츠 리스트 조회 api",
+        "parameters": [
+          {
+            "name": "userid",
+            "example":"user1",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "1.Bad Request \n 2.No data"
+          }
+        }
+      },
+      "post": {
+        "description": "유저가 찜한 채널 콘텐츠 db에 등록",
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cidList": {
+                  "example": ["any"]
+                },
+                "imgList": {
+                  "example": ["any"]
+                },
+                "cnameList": {
+                  "example": ["any"]
+                },
+                "settingList": {
+                  "example": ["9999"]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/manage": {
+      "get": {
+        "description": "관리자 페이지 메인화면 요청 api",
+        "responses": {
+            "200": {
+                "description": "OK"
+            },
+            "401": {
+                "description": "Unauthorized"
+            }
+        }
+      }
+    },
+    "/manage/login/": {
+      "post": {
+        "description": "관리자 로그인 api",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "adminid": {
+                  "example": "jorupaza"
+                },
+                "password": {
+                  "example": "jorupaza"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "1.Already logged in \n 2.User not found \n 3. Wrong password \n 4. Bad Request"
+          }
+        }
+      }
+    },
+    "/manage/logout": {
+      "get": {
+        "description": "관리자 로그아웃 api",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "1.Bad Request \n 2.Not logged in"
+          }
+        }
+      }
+    },
+    "/manage/search": {
+        "post": {
+            "description": "관리자 페이지에서 콘텐츠 검색 api",
+            "parameters": [
+                {
+                  "name": "body",
+                  "in": "body",
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "option": {
+                        "example": "title, rawtitle"
+                      },
+                      "input": {
+                        "example": "미녀"
+                      }
+                    }
+                  }
+                }
+              ],
+            "responses": {
+              "200": {
+                "description": "OK"
+              },
+              "400": {
+                "description": "1.Bad Request \n 2.Not logged in"
+              }
+            }
+          },
+      "put": {
+        "description": "관리자 페이지에서 콘텐츠 수정 api",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "contentsID": {
+                  "example": "1"
+                },
+                "title": {
+                  "example": "Moving"
+                },
+                "rawtitle": {
+                  "example": "무빙"
+                },
+                "disneyURL": {
+                  "example": "https://www.disneyplus.com/series/moving/51eZUrK4LnAc"
+                },
+                "wavveURL": {
+                  "example": ""
+                },
+                "watchaURL": {
+                  "example": ""
+                },
+                "casts": {
+                  "example": "Park Yoon-seo , Park In-je"
+                },
+                "genre": {
+                  "example": "판타지,SF,스릴러,액션,드라마"
+                },
+                "jwimg": {
+                  "example": ""
+                },
+                "Offers": {
+                  "example": "Disney Plus"
+                },
+                "director": {
+                  "example": "Park Yoon-seo , Park In-je"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/manage/user/{userid}": {
+      "get": {
+        "description": "관리자 페이지에서 유저 정보 조회 api",
+        "parameters": [
+          {
+            "name": "userid",
+            "example":"jorupaza",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "1.Bad Request \n 2.No user"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/manage/user/delete/{userid}": {
+      "post": {
+        "description": "유저 정보 삭제 (강제추방) 기능 api",
+        "parameters": [
+          {
+            "name": "userid",
+            "example":"user1",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "1.Bad Request \n 2.No user"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/manage/ott/add": {
+      "post": {
+        "description": "관리자 페이지에서 콘텐츠 추가 api",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "example": "Moving"
+                },
+                "rawtitle": {
+                  "example": "무빙"
+                },
+                "disneyURL": {
+                  "example": "https://www.disneyplus.com/series/moving/51eZUrK4LnAc"
+                },
+                "wavveURL": {
+                  "example": ""
+                },
+                "watchaURL": {
+                  "example": ""
+                },
+                "casts": {
+                  "example": "Ryu Seung-ryong,Han Hyo-joo,Zo In-sung,Cha Tae-hyun,Ryoo Seung-bum,Kim Sung-kyun,Kim Hee-won,Moon Sung-keun,Lee Jung-ha,Go Youn-jung,Kim Do-hoon,Park Hee-soon"
+                },
+                "genre": {
+                  "example": "판타지,SF,스릴러,액션,드라마"
+                },
+                "jwimg": {
+                  "example": ""
+                },
+                "Offers": {
+                  "example": "Disney Plus"
+                },
+                "director": {
+                  "example": "Park Yoon-seo , Park In-je"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/manage/errlog/{options}": {
+      "get": {
+        "description": "관리자 페이지에서 에러로그 조회 api",
+        "parameters": [
+          {
+            "name": "options",
+            "example":"all, disney, wavve, watcha",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,13 +1,16 @@
 import express from "express";
 import bodyParser from 'body-parser'
-import {log} from "console";
+import {assert, log} from "console";
 import env from "dotenv";
 env.config();
 import session from "express-session";
 import MySQLStore from "express-mysql-session";
 import morgan from "morgan";
-import morganBody from "morgan-body";
 import {writer} from "./utils/writeable.js"
+import ejs from "ejs";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
+import swaggerFile from "./swagger/swagger-output.json" assert {type:"json"}; 
 
 import path from 'path';
 const __dirname = path.resolve();
@@ -22,7 +25,7 @@ BigInt.prototype.toJSON = function () {
     return this.toString();
   };
 
-var options = {
+const options = {
     host: "localhost",
     user: process.env.DBID, 
     password: process.env.DBPASS,
@@ -34,6 +37,8 @@ var sessionStore = new mySQLStore(options);
 
 let app = express();
 // express 는 함수이므로, 반환값을 변수에 저장한다.
+app.set('view engine', 'ejs');
+app.engine('html', ejs.renderFile);
 
 //middleware
 
@@ -46,17 +51,23 @@ app.use(morgan(':param|:method|:url|:date[web]|:status|:body|', {stream: writer}
 app.use(express.static('.'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerFile,{explorer:true})
+);
 
-const maxAge = 1000 * 60 * 20;
+const maxAge = 1000 * 60 * 60 * 60 * 10;
 
 app.use(session({
     cookie: {
         path: '/',
         maxAge,
       },
+      rolling: true,
     store: sessionStore,
     resave: false,
-    secret: 'kong',
+    secret: process.env.secret,
     saveUninitialized: true,
 }));
 

@@ -9,6 +9,7 @@
     <link href="/views/css/main/main.css" type="text/css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/views/js/main.js"></script>
+    
 </head>
 <body>
     <div class="wrapper">
@@ -35,6 +36,7 @@
                         <div>데이터 관리</div>
                     </div>
                     <div class="ottManageMenu">
+                        <div class="errorLog" onclick="errorLogClick();">에러 로그 조회</div><br>
                         <div class="ottSearch" onclick="ottSearchClick();">OTT 콘텐츠 데이터 조회</div><br>
                         <div class="ottAdd" onclick="ottAddClick();">OTT 콘텐츠 데이터 추가</div>
                     </div>
@@ -47,8 +49,7 @@
                         <div class="monitoring">학습 성능 모니터링</div>
                     </div>
                     
-                    <img  class="logoutBtn" onclick="logout()" src="/views/img/logout.png">
-                    
+                    <div class="logoutBtn" onclick="logout()"><img class="logoutImg"  src="/views/img/logout.png" alt="logout">나가기</div>                    
                 </div>
                 
             </div>

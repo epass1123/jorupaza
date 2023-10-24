@@ -1,8 +1,9 @@
 
 const outlineTable=document.getElementsByClassName("outlineWrapper")
 const userSearchTable=document.getElementsByClassName("userSearchTable")
-const ottSearchTable=document.getElementsByClassName("ottSearchTable")
-const ottAddTable=document.getElementsByClassName("ottAddTable")
+const ottSearchTable=document.getElementsByClassName("ottSearchWrapper")
+const ottAddTableWrapper=document.getElementsByClassName("ottAddTableWrapper")
+const errorLogWrapper=document.getElementsByClassName("errorLogWrapper")
 var keyword=outlineTable
 function outlineClick(){
     keyword[0].style.display="none"
@@ -20,6 +21,14 @@ function userSearchClick(){
 
 }
 
+function errorLogClick(){
+    keyword[0].style.display="none"
+    keyword=errorLogWrapper
+    $(".right").load("errorLog.html");
+    // $(".right").load("http://ceprj.gachon.ac.kr:60002/views/html/tap/ottSearch.html");
+
+}
+
 function ottSearchClick(){
     keyword[0].style.display="none"
     keyword=ottSearchTable
@@ -31,11 +40,10 @@ function ottSearchClick(){
 
 function ottAddClick(){
     keyword[0].style.display="none"
-    keyword=ottAddTable
+    keyword=ottAddTableWrapper
     
     $(".right").load("ottAdd.html");
     // $(".right").load("http://ceprj.gachon.ac.kr:60002/views/html/tap/ottAdd.html");
-
 }
 
 function logout(){

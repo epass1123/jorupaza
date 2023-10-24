@@ -2,6 +2,156 @@ import bcrypt from 'bcrypt';
 import { log } from 'console';
 import jwt from "jsonwebtoken";
 import * as db from "../database/db.js";
+import path from 'path';
+const __dirname = path.resolve();
+
+let mainGet = async(req,res)=>{
+    res.sendFile(path.join(__dirname, 'views/html/boot.html'));
+}   
+
+let register = async(req,res)=>{
+    let {userid,password,email} = req.body; 
+    const timestamp = Date.now();
+    const today = new Date(timestamp);
+    let day = today.getDate();
+    let month = today.getMonth() + 1;
+    let year = today.getFullYear();
+    let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
+    const insert = `insert into users (userID, password ,email, regiTime, useSet ,timestamp) values(?,?,?,?,?,?)`;
+    const select = `SELECT userID FROM users WHERE userID= ?`;
+    const hashPassword = await bcrypt.hash(password,12);
+    const useSet = [{"type" : "ottGroups","setting" : ["최근 추가된 OTT 콘텐츠"]},{"type" : "channelGroups","setting" : ["최근 추가된 채널"]},{"type" : "youvidGroups","setting" : ["최근 추가된 유튜브 영상"]},{"type" : "streamerGroups","setting" : ["최근 추가된 스트리머"]},{"type" : "darkmode","setting" : 0},{"type" : "subscription","setting" : "netflix,disneyplus,wavve,watcha,youtube,twitch"}];
+
+    if(req.session.user){
+        res.status(400).json({   
+            "content_type" : "json" ,
+            "result_code" : 400 ,
+            "result_req" : "already logged in" ,
+     })
+    }
+    else{
+        db.getData(select, userid)
+        .then(rows=>{
+            if(rows.length !== 0){
+                res.status(400).json({   
+                    "content_type" : "json" ,
+                    "result_code" : 400 ,
+                    "result_req" : "duplicate userID" ,
+             })
+            }
+            else{
+                db.putData(insert,[userid,hashPassword,email,now,`${JSON.stringify(useSet)}`,now])
+                .then(p=>{
+                    res.status(200).json({   
+                        "content_type" : "json" ,
+                        "result_code" : 200 ,
+                        "result_req" : "registered successfully" ,
+                    })
+                })
+            }
+        })
+
+    }
+}
+
+let loginPost = async (req,res)=>{
+    let {userid,password} = req.body; 
+    const timestamp = Date.now();
+    const today = new Date(timestamp);
+    let day = today.getDate();
+    let month = today.getMonth() + 1;
+    let year = today.getFullYear();
+    let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
+    let query = `SELECT userID, password FROM users WHERE userID = ?`;
+
+    if(req.session.user){
+        res.status(400).json({   
+            "content_type" : "json" ,
+            "result_code" : 400 ,
+            "result_req" : "already logged in" ,
+     })
+    }
+    else{   
+        try{
+            const dbcheck = await db.getData(query, `${userid}`)
+            if(dbcheck[0] === undefined){
+                res.status(400).json({   
+                    "content_type" : "json" ,
+                    "result_code" : 400 ,
+                    "result_req" : "user not found" ,
+                    "session" : req.session
+                })
+            }
+            else{
+                const hashCompare = await bcrypt.compare(password, dbcheck[0].password);
+                if(hashCompare){
+                    req.session.user = {
+                        isLoggedIn : true,
+                        id: dbcheck[0].userID,
+                    };
+                    
+                    log("session:",req.session)
+                    res.status(200).json({   
+                        "content_type" : "json" ,
+                        "result_code" : 200 ,
+                        "result_req" : "login success" ,
+                        "session" : req.session
+                    })
+                }
+                else{
+                    res.status(400).json({   
+                        "content_type" : "json" ,
+                        "result_code" : 400 ,
+                        "result_req" : "wrong password" ,
+                        "session" : req.session
+                    })
+                }
+            }
+        }
+        catch{
+            res.status(400).json({   
+                "content_type" : "json" ,
+                "result_code" : 400 ,
+                "result_req" : "bad request" ,
+            })
+        }
+    }
+};
+
+let logoutGet = async(req, res)=>{
+    log("logout", req.session)
+
+    try{
+        if(req.session.user){
+            req.session.destroy((err) => {
+                if (err) {
+                    console.log("세션 삭제시에 에러가 발생했습니다.");
+                    return;
+                }
+                return res.status(200).json({
+                    "content_type" : "json" ,
+                    "result_code" : 200 ,
+                    "result_req" : "logout success" ,
+                    "session" : req.session
+                })
+            });
+            log(req.session);
+        }else{
+            res.status(400).json({   
+                "content_type" : "json" ,
+                "result_code" : 400 ,
+                "result_req" : "not logged in" ,
+            })
+        }
+    }
+    catch{
+        res.status(400).json({   
+            "content_type" : "json" ,
+            "result_code" : 400 ,
+            "result_req" : "Bad Request" ,
+        })
+    }
+}
 
 let userInfoGet = async(req,res)=>{
     const userid = req.params.userid;
@@ -36,87 +186,8 @@ let userInfoGet = async(req,res)=>{
     }
 }
 
-let userInfoPost = async (req, res) => {
-    const userid = req.params.userid;
-    let query = ``;
-    const timestamp = Date.now()
-    const today = new Date(timestamp);
-    let day = today.getDate();
-    let month = today.getMonth() + 1;
-    let year = today.getFullYear();
-    let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
-    let useSet = [
-        {
-            "type" : "ottGroups",
-            "setting" : ["최근 추가된 OTT 콘텐츠"]
-        },
-        {
-            "type" : "channelGroups",
-            "setting" : ["최근 추가된 채널"]
-        },
-        {
-            "type" : "youvidGroups",
-            "setting" : ["최근 추가된 유튜브 영상"]
-        },
-        {
-            "type" : "streamerGroups",
-            "setting" : ["최근 추가된 스트리머"]
-        },
-        {
-            "type" : "darkmode",
-            "setting" : 0
-        },
-        {
-            "type" : "subscription",
-            "setting" : "netflix,disneyplus,wavve,watcha,youtube,twitch"
-        }
-        ]
-        log(typeof(JSON.stringify(useSet)));
-    try {
-        db.chkUser(userid)
-        .then((rows)=>{
-            if(rows.length === 0){
-                query = `INSERT INTO users (userID,email,regiTime,useSet,loginStatus,timestamp) VALUES (?,?,?,?,?,?)`
-                let values = [userid, req.body.email, now, `${JSON.stringify(useSet)}`,true ,now];
-                db.putData(query,values)
-                .then(p=>{
-                    if(p !== undefined){
-                        res.status(200).json({
-                            "content_type" : "json" ,
-                            "result_code" : 200 ,
-                            "result_req" : "request success" ,
-                            "user_setting":useSet
-                            })
-                    }
-                    else{
-                        res.status(400).json({
-                            "content_type" : "json" ,
-                            "result_code" : 400 ,
-                            "result_req" : "bad request" ,
-                        })
-                    }
-                });
-            }
-            else{
-                res.status(200).json({
-                "content_type" : "json" ,
-                "result_code" : 200 ,
-                "result_req" : "request success" ,
-                "login" : "login success"
-                })
-            }
-        })
-    }catch(err){
-        console.log(err);
-        res.status(400).json({
-            "content_type" : "json" ,
-            "result_code" : 400 ,
-            "result_req" : "bad request" ,
-            })
-    }
-};
 
-let userInfoPut = async (req, res) => {
+let userInfoPost = async (req, res) => {
     const userid = req.params.userid;
     const {useSet,email} = req.body;
     let query = ``;
@@ -126,10 +197,9 @@ let userInfoPut = async (req, res) => {
     let month = today.getMonth() + 1;
     let year = today.getFullYear();
     let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
-    log(req.body)
     
     try {
-        query = `update users set email = ?, useSet = ?, timestamp = ? where userid = ?`
+        query = `update users set useSet = ?, timestamp = ? where userid = ?`
         let values = [email,`${JSON.stringify(useSet)}`, now ,userid];
         db.putData(query,values)
         .then(p=>{
@@ -144,7 +214,7 @@ let userInfoPut = async (req, res) => {
                 res.status(400).json({
                     "content_type" : "json" ,
                     "result_code" : 400 ,
-                    "result_req" : "bad request" ,
+                    "result_req" : "No user" ,
                 })
             }
         });
@@ -160,20 +230,6 @@ let userInfoPut = async (req, res) => {
             })
     }
 };
-
-let logoutGet = async(req, res)=>{
-    const userid = req.params.userid;
-
-    db.updateData(`update users set loginStatus = false where userid = ?`,userid)
-    .then(rows=>{
-        res.status(200).json({
-            "content_type" : "json" ,
-            "result_code" : 200 ,
-            "result_req" : "request success" ,
-            "login" : "logout success"
-            })
-    })
-  }
 
 let userBehaviorGet = async(req,res)=>{
     const userID = req.params.userid;
@@ -214,37 +270,45 @@ let userBehaviorPost = async(req,res)=>{
     const userID = req.params.userid;
     const event_target = req.body.event_target;
     const event_type = req.body.event_type;
-    const event_location = req.body.event_location;
     const timestamp = Date.now()
     const today = new Date(timestamp);
     let day = today.getDate();
     let month = today.getMonth() + 1;
     let year = today.getFullYear();
     let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
-    let query = `INSERT INTO user_behavior (userID, event_location, event_type, event_target, timestamp) VALUES(?,?,?,?,?)`
+    let query = `INSERT INTO user_behavior (userID, event_type, event_target, timestamp) VALUES(?,?,?,?)`
 
-    db.putData(query,[userID,event_location,event_type,event_target,now])
-    .then((rows)=>{
-        if(rows.length !== 0){
-            res.status(200).json({
-                "content_type" : "json" ,
-                "result_code" : 200 ,
-                "result_req" : "request success" ,
-            })
-        }
-        else{
-            res.status(400).json({   
-                "content_type" : "json" ,
-                "result_code" : 400 ,
-                "result_req" : "bad request" ,
-            })
-        }
-    });
+    try{
+        db.putData(query,[userID,event_type,event_target,now])
+        .then((rows)=>{
+            if(rows.length !== 0){
+                res.status(200).json({
+                    "content_type" : "json" ,
+                    "result_code" : 200 ,
+                    "result_req" : "request success" ,
+                })
+            }
+            else{
+                res.status(400).json({   
+                    "content_type" : "json" ,
+                    "result_code" : 400 ,
+                    "result_req" : "insert failed" ,
+                })
+            }
+        });
+    }
+    catch{
+        res.status(400).json({   
+            "content_type" : "json" ,
+            "result_code" : 400 ,
+            "result_req" : "bad request" ,
+        })
+    }
 }
 
 let markGet = async (req,res)=>{
     const userid = req.params.userid; //userid
-    if(isNaN(Number(userid))){
+    if(!userid){
         res.status(400).json({   
             "content_type" : "json" ,
             "result_code" : 400 ,
@@ -294,80 +358,27 @@ let markGet = async (req,res)=>{
     }
 };
 
-let markPost = async (req,res)=>{
-    const userid = req.params.userid; //userid
-    let body = req.body; 
-    db.putData()
-    .then(rows=>{
-        res.send(rows);
-    })
-};
-
-let youvidGet = async (req,res)=>{
-    const userid = req.params.userid; //userid
-    let query = `SELECT * FROM marked_youvid WHERE userID= ?`
+let searchGet = async (req,res)=>{
+    const title = req.params.title; //검색어
+    let query = `SELECT * FROM specification WHERE title like ?`
     try{
-        db.getData(query,`${userid}`)
+        db.getData(query,`%${title}%`)
         .then((rows)=>{
-            if(rows.length !== 0){
-                res.status(200).json({
-                    "content_type" : "json" ,
-                    "result_code" : 200 ,
-                    "result_req" : "request success" ,
-                    "marked_youvid": rows,
-                })
-            }else{
-                res.status(400).json({   
-                    "content_type" : "json" ,
-                    "result_code" : 400 ,
-                    "result_req" : "no data" ,
-                })
-            }
-        })
+            res.status(200).json({
+                "content_type" : "json" ,
+                "result_code" : 200 ,
+                "result_req" : "request success" ,
+                "possible_match": rows,
+            })
+        });
     }
     catch{
-        res.status(400).json({   
-            "content_type" : "json" ,
-            "result_code" : 400 ,
-            "result_req" : "bad request" ,
-        })
+        res.status(400).json({
+            "content-type": "json",
+            "result_code": 400,
+            "result_req": "bad request"
+        });
     }
-};
-
-let youvidPost = async (req,res)=>{
-    const requserid = req.params.userid; //userid
-    const userid = req.body.id;
-    const vID = req.body.vidList;
-    const groupSet = req.body.settingList;
-    const timestamp = Date.now()
-    const today = new Date(timestamp);
-    let day = today.getDate();
-    let month = today.getMonth() + 1;
-    let year = today.getFullYear();
-    let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
-
-    let query = `INSERT INTO marked_youvid (userID,vID,groupSet,timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE vID=VALUES(vID), groupSet=VALUES(groupSet), timestamp=VALUES(timestamp)`
-    //구분 용이하게 하기위해 |로 join
-    let values = [requserid, `${vID.join("|")}`, `${groupSet.join("|")}`, now];
-
-    db.putData(query, values)
-    .then(rows=>{
-        if(rows === undefined){
-            res.status(400).json({
-                "content-type": "json",
-                "result_code": 400,
-                "result_req": "bad request"
-            });
-        }else{
-            res.status(200).json({
-                "content-type": "json",
-                "result_code": 200,
-                "result_req": "post done"
-            });
-        }
-        
-    }); 
-
 };
 
 let ottGet = async (req,res)=>{
@@ -529,6 +540,73 @@ let ottPost = async (req,res)=>{
     }
 };
 
+let youvidGet = async (req,res)=>{
+    const userid = req.params.userid; //userid
+    let query = `SELECT * FROM marked_youvid WHERE userID= ?`
+    try{
+        db.getData(query,`${userid}`)
+        .then((rows)=>{
+            if(rows.length !== 0){
+                res.status(200).json({
+                    "content_type" : "json" ,
+                    "result_code" : 200 ,
+                    "result_req" : "request success" ,
+                    "marked_youvid": rows,
+                })
+            }else{
+                res.status(400).json({   
+                    "content_type" : "json" ,
+                    "result_code" : 400 ,
+                    "result_req" : "no data" ,
+                })
+            }
+        })
+    }
+    catch{
+        res.status(400).json({   
+            "content_type" : "json" ,
+            "result_code" : 400 ,
+            "result_req" : "bad request" ,
+        })
+    }
+};
+
+let youvidPost = async (req,res)=>{
+    const requserid = req.params.userid; //userid
+    const userid = req.body.id;
+    const vID = req.body.vidList;
+    const groupSet = req.body.settingList;
+    const timestamp = Date.now()
+    const today = new Date(timestamp);
+    let day = today.getDate();
+    let month = today.getMonth() + 1;
+    let year = today.getFullYear();
+    let now = `${year}-${month}-${day} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`;
+
+    let query = `INSERT INTO marked_youvid (userID,vID,groupSet,timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE vID=VALUES(vID), groupSet=VALUES(groupSet), timestamp=VALUES(timestamp)`
+    //구분 용이하게 하기위해 |로 join
+    let values = [requserid, `${vID.join("|")}`, `${groupSet.join("|")}`, now];
+
+    db.putData(query, values)
+    .then(rows=>{
+        if(rows === undefined){
+            res.status(400).json({
+                "content-type": "json",
+                "result_code": 400,
+                "result_req": "bad request"
+            });
+        }else{
+            res.status(200).json({
+                "content-type": "json",
+                "result_code": 200,
+                "result_req": "post done"
+            });
+        }
+        
+    }); 
+
+};
+
 let streamerGet = async (req,res)=>{
     const userid = req.params.userid; //userid
     let query = `SELECT * FROM marked_streamer WHERE userID= ?`
@@ -666,38 +744,5 @@ let channelPost = async (req,res)=>{
     }); 
 };
 
-let searchGet = async (req,res)=>{
-    const title = req.query.title; //검색어
-    let query = `SELECT * FROM specification WHERE title like %?%`
-    try{
-        db.getData(query,`${title}`)
-        .then((rows)=>{
-            res.status(200).json({
-                "content_type" : "json" ,
-                "result_code" : 200 ,
-                "result_req" : "request success" ,
-                "possible_match": rows,
-            })
-        });
-    }
-    catch{
-        res.status(400).json({
-            "content-type": "json",
-            "result_code": 400,
-            "result_req": "bad request"
-        });
-    }
-};
-
-let searchPost = async (req,res)=>{
-    log(req.ip)
-    const title = req.query.title; //검색어
-    log("searchPost", req.body);
-    db.getData("*", "specification", `title= ?`,`${title}`)
-    .then((rows)=>{
-        res.send(rows);
-    });
-};
-
-export {userBehaviorGet,logoutGet,searchPost,userInfoGet,userInfoPost,userInfoPut,markGet,markPost,youvidGet,youvidPost,ottGet,ottPost,channelGet,channelPost,streamerGet,streamerPost,searchGet,userBehaviorPost}
+export {mainGet,register,loginPost,userBehaviorGet,logoutGet,userInfoGet,userInfoPost,markGet,youvidGet,youvidPost,ottGet,ottPost,channelGet,channelPost,streamerGet,streamerPost,searchGet,userBehaviorPost}
   

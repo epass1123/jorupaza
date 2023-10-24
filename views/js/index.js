@@ -28,7 +28,6 @@
                         console.log(response)
                         if (response.status === 200) {
                             sessionStorage.setItem("adminId",adminId)
-                            alert("성공")
                             document.body.querySelector('.wrapper').style.opacity="0"
                             setTimeout(function() {
                                 window.location.href="/views/html/main.html"

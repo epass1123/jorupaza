@@ -7,24 +7,25 @@ import * as store from '../database/store.js'
 // router.get('/login',controller.manageGet);
 // router.post('/login/:adminid',controller.manageGet);
 
+router.get('/',controller.mainGet);
+
+router.post('/register',controller.register);
+router.post('/login',controller.loginPost);
+router.get('/logout',controller.logoutGet);
+
 router.get('/store',store.store);
 router.get('/store/jwlinks',store.jwlinks);
 router.get('/store/platlinks',store.platlinks);
 
 router.get('/userinfo/:userid',controller.userInfoGet);
 router.post('/userinfo/:userid',controller.userInfoPost);
-router.put('/userinfo/:userid',controller.userInfoPut);
-
-router.get('/userinfo/logout/:userid',controller.logoutGet);
 
 router.get('/userinfo/userbehavior/:userid/:start/:end',controller.userBehaviorGet);
 router.post('/userinfo/userbehavior/:userid',controller.userBehaviorPost);
 
 router.get('/mark/:userid',controller.markGet);
-router.post('/mark/:userid',controller.markPost);
 
 router.get('/search/:title',controller.searchGet);
-router.post('/search',controller.searchPost);
 
 router.get('/mark/ott/:userid',controller.ottGet);
 router.post('/mark/ott/:userid',controller.ottPost);

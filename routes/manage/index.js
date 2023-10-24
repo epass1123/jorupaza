@@ -2,13 +2,16 @@ import express from "express";
 import * as controller from "./manage.controller.js"
 const router = express.Router();
 
-router.get('/',controller.manageGet);
+router.get('/manage',controller.manageGet);
 
-router.post('/login/:adminid',controller.adminLogin);
-router.get('/logout',controller.adminLogout);
+router.post('/manage/login/',controller.adminLogin);
+router.get('/manage/logout',controller.adminLogout);
 
-router.post('/manage/search',controller.manageSearch);
+router.post('/manage/search',controller.contentsSearch);
 router.put('/manage/search',controller.updateRow);
+
+router.get('/manage/user/:userid',controller.userSearch);
+router.post('/manage/user/delete/:userid',controller.userDelete);
 
 router.post('/manage/ott/add',controller.ottManagePost);
 

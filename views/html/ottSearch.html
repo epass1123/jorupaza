@@ -5,80 +5,131 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="/views/css/tap/ottSearch.css" type="text/css" rel="stylesheet">
+    <script src="/views/js/ottSearch.js"></script>
     <title>OTT Search</title>
 </head>
-<body>
+<body class="body">
+    <div class="ottSearchWrapper">
+        <div class="rightUp">
+                <div class="searchText">ott 콘텐츠 데이터 조회</div>
+                <input class="contentSearchInput" placeholder="조회할 콘텐츠 제목" onkeydown="if( event.keyCode == 13 ){search();}">
+                <button class="search" type="button" onclick="search()">조회</button>
+    
+        </div>
+        <div class="tableWrapper">
+            <table>
+                <thead>
+                  <tr>
+                    <th class="th1">title</th>
+                    <th class="th2">rawTitle</th>
+                    <th class="th3">contentid</th>
+                    <th class="th4">Offers</th>
+                    <th class="th5">disneyURL</th>
+                    <th class="th6">wavveURL</th>
+                    <th class="th7">수정</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
+       
+    </div>
+    <div class="popup-container">
+        <div class="popup-content">
+            <div>
+                <div>title</div>
+                <input id="popupTitleInput">
+            </div>
+            <div>
+                <div>rawtitle</div>
+                <input id="popupRawTitleInput">
+            </div>
+            <div>
+                <div>contentid</div>
+                <input id="popupContentIdInput">
+            </div>
+            <div>
+                <div>Offers</div>
+                <input id="popupOffersInput">
+            </div>
+            <div>
+                <div>disneyURL</div>
+                <input id="popupDisneyURLInput">
+            </div>
+            <div>
+                <div>wavveURL</div>
+                <input id="popupWavveURLInput">
+            </div>
+            <div>
+              <div>watchaURL</div>
+              <input id="popupWatchaURLInput">
+          </div>
+          <div>
+            <div>casts</div>
+            <input id="popupCastsURLInput">
+        </div>
+        <div>
+          <div>genre</div>
+          <input id="popupGenreInput">
+      </div>
+      <div>
+        <div>jwimg</div>
+        <input id="popupJwimgInput">
+    </div>
     <div>
-        <table class="ottSearchTable">
-            <th class="td1">title</th>
-            <th class="td2">rawtitle</th>
-            <th class="td1">contentId</th>
-            <th class="td2">offers</th>
-            <th class="td1">imageURL</th>
-            <th class="td2">URL</th>
-            <th class="td1">연관 콘텐츠</th>
-            <th></th>
-            <tr>
-                <td class="td2"></td>
-                <td class="td3"></td>
-                <td class="td2"></td>
-                <td class="td3"></td>
-                <td class="td2"></td>
-                <td class="td3"></td>
-                <td class="td2"></td>
-                <td><button type="button" class="editBtn">수정</button></td>
-            </tr>
-            <tr>
-                <td class="td1"></td>
-                <td class="td2"></td>
-                <td class="td1"></td>
-                <td class="td2"></td>
-                <td class="td1"></td>
-                <td class="td2"></td>
-                <td class="td1"></td>
-                <td><button type="button" class="editBtn">수정</button></td>
-            </tr>
-            <tr>
-                <td class="td2"></td>
-                <td class="td3"></td>
-                <td class="td2"></td>
-                <td class="td3"></td>
-                <td class="td2"></td>
-                <td class="td3"></td>
-                <td class="td2"></td>
-                <td><button type="button" class="editBtn">수정</button></td>
-            </tr>
-            <tr>
-                <td class="td1"></td>
-                <td class="td2"></td>
-                <td class="td1"></td>
-                <td class="td2"></td>
-                <td class="td1"></td>
-                <td class="td2"></td>
-                <td class="td1"></td>
-                <td><button type="button" class="editBtn">수정</button></td>
-            </tr>
-            <tr>
-                <td class="td2"></td>
-                <td class="td3"></td>
-                <td class="td2"></td>
-                <td class="td3"></td>
-                <td class="td2"></td>
-                <td class="td3"></td>
-                <td class="td2"></td>
-                <td><button type="button" class="editBtn">수정</button></td>
-            </tr>
-            <tr>
-                <td class="td1"></td>
-                <td class="td2"></td>
-                <td class="td1"></td>
-                <td class="td2"></td>
-                <td class="td1"></td>
-                <td class="td2"></td>
-                <td class="td1"></td>
-                <td><button type="button" class="editBtn">수정</button></td>
-            </tr>
-        </table>
+      <div>director</div>
+      <input id="popupDirectorInput">
+  </div>
+
+            <button class="close-button" onclick="closePopup()">X</button>
+            <button class="popupEdit" onclick="popupEdit()">수정</button>
+        </div>
     </div>
 </body>
 </html>
