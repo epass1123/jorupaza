@@ -1,8 +1,12 @@
 #ignore env file
 .env
-
 *.log
 ## node modules ##
-node_modules
-
 .DS_Store
+*.csv
+*.txt
+downloads/
+views/img/
+extension/
+nohup.out
+node_modules/

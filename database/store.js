@@ -105,6 +105,37 @@ async function jwlinks(req,res){
     }
 }
 
+const jwimgs = fs.readFileSync("jwImg.txt");
+let imglinks = jwimgs.toString().split('\n');
+async function jwimg(req,res){
+
+    let query = `insert into specification (contentsID, jwimg) values(?,?) ON DUPLICATE KEY UPDATE jwimg=VALUES(jwimg)`
+    try{
+        for(let i of imglinks){
+            if(i.split(',')[0] !== "0" && i.split(',')[0] !== ''){
+                let contentsID = Number(i.split("|")[0]);
+                let jwIMG = i.split("|")[1].replace(/\n|\r|\s*/g, '');
+                
+                db.putData(query,[contentsID,jwIMG])
+                .then(rows=>{
+                });
+            }     
+        }
+        res.status(200).json({
+            "content-type": "json",
+            "result_code": 200,
+            "result_req": "post done"
+        });
+    }catch(err){
+        log(err);
+        res.status(400).json({
+            "content-type": "json",
+            "result_code": 400,
+            "result_req": "bad request"
+        });
+    }
+}
+
 const csv3 = fs.readFileSync("offerlinks.csv");
 let links3 = csv3.toString().split("\n");
 
@@ -151,4 +182,47 @@ async function platlinks(req,res){
 }
 
 
-export{store, jwlinks, platlinks};
+const moviescsv = fs.readFileSync("downloads/ml-latest/movies.csv");
+const links4 = fs.readFileSync("downloads/ml-latest/links.csv");
+let movielinks = moviescsv.toString().split('\n');
+let list = links4.toString().split('\n');
+async function moviecsv(req,res){
+    let query = `insert into moviecsv (movieid, title, genre, releaseDate, imdbid, tmdbid) values(?,?,?,?,?,?) ON DUPLICATE KEY UPDATE title=VALUES(title),genre=VALUES(genre),releaseDate=VALUES(releaseDate),imdbid=VALUES(imdbid),tmdbid=VALUES(tmdbid)`
+    try{
+        for(let i in movielinks){
+            if(movielinks[i].split(',')[0] !== "0" && movielinks[i].split(',')[0] !== ''){
+                let title = movielinks[i].split(",");
+                let movieID = title.shift();
+                let genre = title.pop().replace(/\n|\r|\s*/g, '');
+                let year = title.join(",").replace(/"/g,'').slice(-5,-1);
+                let imdbid = list[i].split(",")[1];
+                let tmdbid = list[i].split(",")[2].replace(/\n|\r|\s*/g, ''); 
+                title = title.join(",").replace(/"/g,'')
+                genre = genre.split("|").join(",")
+
+
+                if(Number(movieID)){
+                    db.putData(query,[Number(movieID),title,genre,year,imdbid,tmdbid])
+                    .then(rows=>{
+                    });
+                }
+            }     
+        }
+        res.status(200).json({
+            "content-type": "json",
+            "result_code": 200,
+            "result_req": "post done"
+        });
+    }catch(err){
+        log(err);
+        res.status(400).json({
+            "content-type": "json",
+            "result_code": 400,
+            "result_req": "bad request"
+        });
+    }
+}
+
+
+
+export{store, jwlinks, jwimg, platlinks, moviecsv};

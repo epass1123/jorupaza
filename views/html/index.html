@@ -1,46 +1,77 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html class="no-js" lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/views/css/index.css" type="text/css" rel="stylesheet">
-    <link href="/views/css/component/footer.css" type="text/css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/png" href="assets/images/icon/favicon.ico">
+    <link rel="stylesheet" href="/views/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/views/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/views/assets/css/themify-icons.css">
+    <link rel="stylesheet" href="/views/assets/css/metisMenu.css">
+    <link rel="stylesheet" href="/views/assets/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/views/assets/css/slicknav.min.css">
+    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="/views/assets/css/typography.css">
+    <link rel="stylesheet" href="/views/assets/css/default-css.css">
+    <link rel="stylesheet" href="/views/assets/css/styles.css">
+    <link rel="stylesheet" href="/views/assets/css/responsive.css">
+    <script src="/views/assets/js/vendor/modernizr-2.8.3.min.js"></script>
     <script src="/views/js/index.js"></script>
 </head>
+
 <body>
-    <div class="wrapper">
-        <form class="loginForm" onsubmit="event.preventDefault(); checkLogin();">
-        <h1 class="title">관리자 페이지</h1>
-        <div class="idWrapper">
-            <input type="text" placeholder="ID를 입력해주세요." id="id">
-        </div>
-        <div class="pwWrapper">
-            <input type="password" placeholder="PW를 입력해주세요." id="pw">
-        </div>
-        <button type="submit" class="loginBtn">로그인</button>
-    </form>
-    <footer id="footer">
-        <!-- <div id="wrapper">
-            <div class="inform">
-                <div>GitHub</div>
-                <div>Email : jorupaza@gachon.ac.kr</div>
-                <div>Copyright 2023.jorupaza All Rights Reserved</div>
-            </div>
-            <div class="logo">
-                <img src="Image/logo.jpg" alt="logo" class="logoImage">
-            </div>
-        </div> -->
-    </footer>
+    <div id="preloader">
+        <div class="loader"></div>
     </div>
-    
-    
-    <script>
-        $(document).ready(function () {
-            $("#footer").load("/views/html/footer.html");
-        });
-        
-    </script>
+    <div class="login-area login-s2">
+        <div class="container">
+            <div class="login-box ptb--100">
+                <form onsubmit="checkLogin(); event.preventDefault(); " id="loginForm">
+                    <div class="login-form-head">
+                        <h4>Sign In</h4>
+                        <p>Administrator Site</p>
+                    </div>
+                    <div class="login-form-body">
+                        <div class="form-gp">
+                            <label for="exampleInputEmail1">ID</label>
+                            <input type="id" id="exampleInputEmail1">
+                            <i class="ti-email"></i>
+                        </div>
+                        <div class="form-gp">
+                            <label for="exampleInputPassword1">Password</label>
+                            <input type="password" id="exampleInputPassword1">
+                            <i class="ti-lock"></i>
+                        </div>
+                        <div class="row mb-4 rmber-area">
+                            <div class="col-6">
+                                <div class="custom-control custom-checkbox mr-sm-2">
+                                    <input type="checkbox" class="custom-control-input" id="customControlAutosizing">
+                                </div>
+                            </div>
+                            <div class="col-6 text-right">
+                                <a href="#">Forgot Password?</a>
+                            </div>
+                        </div>
+                        <div class="submit-btn-area">
+                            <button id="form_submit"  type="submit">Submit <i class="ti-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="/views/assets/js/vendor/jquery-2.2.4.min.js"></script>
+    <script src="/views/assets/js/popper.min.js"></script>
+    <script src="/views/assets/js/bootstrap.min.js"></script>
+    <script src="/views/assets/js/owl.carousel.min.js"></script>
+    <script src="/views/assets/js/metisMenu.min.js"></script>
+    <script src="/views/assets/js/jquery.slimscroll.min.js"></script>
+    <script src="/views/assets/js/jquery.slicknav.min.js"></script>
+    <script src="/views/assets/js/plugins.js"></script>
+    <script src="/views/assets/js/scripts.js"></script>
 </body>
+
 </html>

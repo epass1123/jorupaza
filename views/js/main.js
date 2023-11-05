@@ -1,56 +1,10 @@
 
-const outlineTable=document.getElementsByClassName("outlineWrapper")
-const userSearchTable=document.getElementsByClassName("userSearchTable")
-const ottSearchTable=document.getElementsByClassName("ottSearchWrapper")
-const ottAddTableWrapper=document.getElementsByClassName("ottAddTableWrapper")
-const errorLogWrapper=document.getElementsByClassName("errorLogWrapper")
-var keyword=outlineTable
-function outlineClick(){
-    keyword[0].style.display="none"
-    keyword=outlineTable
-    $(".right").load("outline.html");
-    // $(".right").load("http://ceprj.gachon.ac.kr:60002/views/html/tap/outline.html");
-}
-
-
-function userSearchClick(){
-    keyword[0].style.display="none"
-    keyword=userSearchTable
-    $(".right").load("userSearch.html");
-    //$(".right").load("http://ceprj.gachon.ac.kr:60002/views/html/userSearch.html");
-
-}
-
-function errorLogClick(){
-    keyword[0].style.display="none"
-    keyword=errorLogWrapper
-    $(".right").load("errorLog.html");
-    // $(".right").load("http://ceprj.gachon.ac.kr:60002/views/html/tap/ottSearch.html");
-
-}
-
-function ottSearchClick(){
-    keyword[0].style.display="none"
-    keyword=ottSearchTable
-    $(".right").load("ottSearch.html");
-    // $(".right").load("http://ceprj.gachon.ac.kr:60002/views/html/tap/ottSearch.html");
-
-}
-
-
-function ottAddClick(){
-    keyword[0].style.display="none"
-    keyword=ottAddTableWrapper
-    
-    $(".right").load("ottAdd.html");
-    // $(".right").load("http://ceprj.gachon.ac.kr:60002/views/html/tap/ottAdd.html");
-}
 
 function logout(){
     
     $.ajax({
-        url: "http://localhost:60002/logout",
-        method: "GET",
+        url: "http://ceprj.gachon.ac.kr:60002/admin/logout",
+        method: "DELETE",
         complete:function (response) {
             console.log(response)
             if (response.status === 200) {
@@ -65,14 +19,4 @@ function logout(){
     }
 });
 }
-
-
-
-$(document).ready(function () {
-    $("#footer").load("footer.html");
-});
-
-$(document).ready(function () {
-    $(".right").load("outline.html");
-});
 

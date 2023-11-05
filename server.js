@@ -3,12 +3,12 @@ import bodyParser from 'body-parser'
 import {assert, log} from "console";
 import env from "dotenv";
 env.config();
+import methodOverride from "method-override";
 import session from "express-session";
 import MySQLStore from "express-mysql-session";
 import morgan from "morgan";
 import {writer} from "./utils/writeable.js"
 import ejs from "ejs";
-import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import swaggerFile from "./swagger/swagger-output.json" assert {type:"json"}; 
 
@@ -48,6 +48,7 @@ app.engine('html', ejs.renderFile);
 morgan.token('body', (req, res) => JSON.stringify(req.body));
 morgan.token('param', (req, res) => JSON.stringify(req.params));
 app.use(morgan(':param|:method|:url|:date[web]|:status|:body|', {stream: writer}));
+app.use(methodOverride('_method'));
 app.use(express.static('.'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -57,7 +58,7 @@ app.use(
   swaggerUi.setup(swaggerFile,{explorer:true})
 );
 
-const maxAge = 1000 * 60 * 60 * 60 * 10;
+const maxAge = 1000 * 60 * 60;
 
 app.use(session({
     cookie: {

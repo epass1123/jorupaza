@@ -2,7 +2,7 @@
 
 $(document).ready(function() {
     $.ajax({
-      url: "http://ceprj.gachon.ac.kr:60002/manage/errlog/all",
+      url: "http://ceprj.gachon.ac.kr:60002/admin/errlog/all",
       method: "GET",
       complete: function(response) {
         console.log(response);
@@ -16,13 +16,13 @@ $(document).ready(function() {
                 row.innerHTML = `
                     <td>${item.type}</td>
                     <td>${item.title}</td>
-                    <td>${item.message}</td>
+                    <td ><span class="message">${item.message}</span></td>
                     <td>${item.timestamp}</td>
                 `;
                 tableBody.appendChild(row);
             });
         } else {
-          alert("로그아웃 실패");
+          alert("실패");
           return;
         }
       }

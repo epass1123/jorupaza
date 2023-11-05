@@ -11,25 +11,32 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.5.1",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
+    "cheerio": "^1.0.0-rc.12",
+    "child_process": "^1.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-mysql-session": "^3.0.0",
     "express-session": "^1.17.3",
+    "forever-monitor": "^3.0.3",
     "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "mariadb": "^3.2.1",
     "memorystore": "^1.6.7",
+    "method-override": "^3.0.0",
     "morgan": "^1.10.0",
     "morgan-body": "^2.6.9",
     "mysql": "^2.18.1",
     "path": "^0.12.7",
+    "pm2": "^5.3.0",
     "stream": "^0.0.2",
     "swagger-autogen": "^2.23.6",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.0"
+    "swagger-ui-express": "^5.0.0",
+    "unzipper": "^0.10.14"
   }
 }

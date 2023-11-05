@@ -15,6 +15,8 @@ function openPopup(event) {
     document.getElementById('popupGenreInput').value = rowData[10].textContent;
     document.getElementById('popupJwimgInput').value = rowData[11].textContent;
     document.getElementById('popupDirectorInput').value = rowData[12].textContent;
+    document.getElementById("popupJwURLInput").value=rowData[13].textContent;
+
     console.log(rowData)
     for(var i=0; i<rowData.length; i++){
         console.log("rowData"+[i]+":"+rowData[i].textContent)
@@ -43,6 +45,7 @@ function popupEdit(){
     const genre=document.querySelector("#popupGenreInput").value;
     const jwimg=document.querySelector("#popupJwimgInput").value;
     const director=document.querySelector("#popupDirectorInput").value;
+    const jwURL=document.querySelector("#popupJwURLInput").value;
 
 
 
@@ -57,10 +60,11 @@ function popupEdit(){
         casts:casts,
         genre:genre,
         jwimg:jwimg,
-        director:director
+        director:director,
+        jwURL:jwURL
     }
     $.ajax({
-        url: "http://ceprj.gachon.ac.kr:60002/manage/search",
+        url: "http://ceprj.gachon.ac.kr:60002/admin/content",
         method: "PUT",
         data: JSON.stringify(data),
         contentType: "application/json",
@@ -81,7 +85,7 @@ function popupEdit(){
 
 
 function search() {
-    const input = document.querySelector(".contentSearchInput").value;
+    const input = document.querySelector("#contentSearchInput").value;
     var search = {
         input:input,
         option:"title"
@@ -95,7 +99,7 @@ function search() {
     
 
     $.ajax({
-        url: "http://ceprj.gachon.ac.kr:60002/manage/search",
+        url: "http://ceprj.gachon.ac.kr:60002/admin/content",
         method: "POST",
         data: JSON.stringify(search),
          contentType: "application/json",
@@ -118,6 +122,11 @@ function search() {
                             item.wavveURL1 = item.wavveURL.slice(0, 15) + "......";
                         }
                     }
+                    if(item.jwURL!=null){
+                        if (item.jwURL.length > 20) {
+                            item.jwURL1 = item.jwURL.slice(0, 15) + "......";
+                        }
+                    }
                     row.innerHTML = `
                         <td>${item.title}</td>
                         <td>${item.rawtitle}</td>
@@ -132,13 +141,13 @@ function search() {
                         <td style="display: none;">${item.genre}</td>
                         <td style="display: none;">${item.jwimg}</td>
                         <td style="display: none;">${item.director}</td>
-
-                        <td><button type="button" class="editBtn" onclick="openPopup(event);">수정</button></td>
-                    `;
+                        <td>${item.jwURL1}</td>
+                        <td><button type="button" id="deleteBtn" class="btn btn-outline-dark" onclick="openPopup(event);">수정</button></td>
+                        `;
                     tableBody.appendChild(row);
                 });
                 $.ajax({
-                    url: "http://ceprj.gachon.ac.kr:60002/manage/search",
+                    url: "http://ceprj.gachon.ac.kr:60002/admin/content",
                     method: "POST",
                     data: JSON.stringify(search2),
                      contentType: "application/json",
@@ -164,9 +173,9 @@ function search() {
                                     <td style="display: none;">${item.genre}</td>
                                     <td style="display: none;">${item.jwimg}</td>
                                     <td style="display: none;">${item.director}</td>
-            
-                                    <td><button type="button" class="editBtn" onclick="openPopup(event);">수정</button></td>
-                                `;
+                                    <td>${item.jwURL}</td>
+                                    <td><button type="button" id="deleteBtn" class="btn btn-outline-dark" onclick="openPopup(event);">수정</button></td>
+                                    `;
                                 tableBody.appendChild(row);
                             });
                             

@@ -1,0 +1,40 @@
+.loader{
+    display: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 60px;
+    height: 60px;
+  }
+  
+
+  .downloadRequestImg{
+    margin-top: 25%;
+    margin-bottom: 25%;
+    width: 20%;
+    height: 20%;
+  }
+
+  .downloadRequestImg:hover{
+    width: 25%;
+    height: 25%;
+  }
+
+  #downloadWrapper{
+    cursor: pointer;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 400px;
+  }
+
+  .downloadText{
+    font-size: 1.5rem;
+    margin-bottom: 100px;
+  }
+
+.request{
+  display: flex;
+  flex-direction: column;
+}

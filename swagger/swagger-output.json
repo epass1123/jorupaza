@@ -5,10 +5,10 @@
     "description": "api 도큐먼트입니다",
     "version": "1.0.0"
   },
-  "host": "localhost:60002",
+  "host": "ceprj.gachon.ac.kr:60002",
   "servers": [
     {
-      "url": "http://localhost:60002"
+      "url": "http://ceprj.gachon.ac.kr:60002"
     }
   ],
   "basePath": "/",
@@ -91,7 +91,7 @@
       }
     },
     "/logout": {
-      "get": {
+      "delete": {
         "description": "유저 로그아웃 api",
         "responses": {
           "200": {
@@ -103,8 +103,8 @@
         }
       }
     },
-    "/store": {
-      "get": {
+    "/jwcontents": {
+      "post": {
         "description": "디비에 콘텐츠 데이터 저장하는 api",
         "responses": {
           "200": {
@@ -116,8 +116,8 @@
         }
       }
     },
-    "/store/jwlinks": {
-      "get": {
+    "/jwlinks": {
+      "post": {
         "description": "specification에 jwlinks를 추가하는 api",
         "responses": {
           "200": {
@@ -129,9 +129,22 @@
         }
       }
     },
-    "/store/platlinks": {
-      "get": {
+    "/platlinks": {
+      "post": {
         "description": "specification에 플랫폼링크 추가하는 api",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/jwimg": {
+      "post": {
+        "description": "specification에 jwimg 추가하는 api",
         "responses": {
           "200": {
             "description": "OK"
@@ -200,7 +213,7 @@
       }
     },
    
-    "/userinfo/userbehavior/{userid}/{start}/{end}": {
+    "/userinfo/userbehavior/{userid}/{start}": {
       "get": {
         "description": "유저 사용자 행동정보 조회 api",
         "parameters": [
@@ -215,13 +228,6 @@
             "name": "start",
             "in": "path",
             "example":"2023-10-19",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "end",
-            "in": "path",
-            "example":"2023-10-20",
             "required": true,
             "type": "string"
           }
@@ -300,7 +306,7 @@
         "parameters": [
           {
             "name": "title",
-            "example":"미녀",
+            "example":"인어",
             "in": "path",
             "required": true,
             "type": "string"
@@ -308,7 +314,56 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 200
+                },
+                "result_req": {
+                  "example": "request success"
+                },
+                "possible_match":{
+                  "example":[
+                    {
+                        "title": "인어공주",
+                        "rawtitle": "The Little Mermaid",
+                        "jwURL": "https://www.justwatch.com/kr/%EC%98%81%ED%99%94/ineogongju",
+                        "jwimg": "https://images.justwatch.com/poster/247304996/s276/ineogongju.webp\r"
+                    },
+                    {
+                        "title": "인어공주 3",
+                        "rawtitle": "The Little Mermaid: Ariel's Beginning",
+                        "jwURL": "https://www.justwatch.com/kr/%EC%98%81%ED%99%94/ineogongju-3",
+                        "jwimg": "https://images.justwatch.com/poster/147883659/s276/ineogongju-3.webp\r"
+                    },
+                    {
+                        "title": "인어공주 2",
+                        "rawtitle": "The Little Mermaid II: Return to the Sea",
+                        "jwURL": "https://www.justwatch.com/kr/%EC%98%81%ED%99%94/ineogongju-2",
+                        "jwimg": "https://images.justwatch.com/poster/185490529/s276/ineogongju-2.webp\r"
+                    },
+                    {
+                        "title": "인어공주 : 새로운 모험의 시작",
+                        "rawtitle": "美人鱼之海盗来袭",
+                        "jwURL": "https://www.justwatch.com/kr/%EC%98%81%ED%99%94/ineogongju-saeroun-moheomyi-sijag",
+                        "jwimg": "https://images.justwatch.com/poster/84240961/s276/ineogongju-saeroun-moheomyi-sijag.webp\r"
+                    },
+                    {
+                        "title": "인어공주",
+                        "rawtitle": "None",
+                        "jwURL": "https://www.justwatch.com/kr/%EC%98%81%ED%99%94/ineogongju-2004",
+                        "jwimg": "https://images.justwatch.com/poster/136113917/s276/ineogongju-2004.webp\r"
+                    }
+                ]
+                }
+                
+              }
+            }
           },
           "400": {
             "description": "Bad Request"
@@ -572,7 +627,360 @@
         }
       }
     },
-    "/manage": {
+    "/recommend": {
+      "post": {
+        "description": "관심콘텐츠 추천 api",
+        "parameters": [
+          {
+            "name": "title",
+            "example":"대부",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "platform",
+            "example":"Netflix",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 200
+                },
+                "responselist": {
+                  "example": [
+                    {
+                        "movieid": "318",
+                        "id": 278,
+                        "imdb_id": "tt0111161",
+                        "original_title": "The Shawshank Redemption",
+                        "title": "쇼생크 탈출",
+                        "release_date": "1994-09-23",
+                        "poster_path": "/oAt6OtpwYCdJI76AVtVKW1eorYx.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "1213",
+                        "id": 769,
+                        "imdb_id": "tt0099685",
+                        "original_title": "GoodFellas",
+                        "title": "좋은 친구들",
+                        "release_date": "1990-09-12",
+                        "poster_path": "/zF9hSBS1t7PVFLo01GrJ3OjGi67.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "1221",
+                        "id": 240,
+                        "imdb_id": "tt0071562",
+                        "original_title": "The Godfather Part II",
+                        "title": "대부 2",
+                        "release_date": "1974-12-20",
+                        "poster_path": "/bhqvqYuAgrTGwyNAmMR0ZVmjXel.jpg",
+                        "belongs_to_collection": {
+                            "id": 230,
+                            "name": "대부 시리즈",
+                            "overview": "뉴욕 마피아 가문인 콜레오네 패밀리의 가족사를 중심으로 펼쳐지는 프랜시스 포드 코폴라 감독의 갱스터영화. 1972년에 첫 작품이 개봉해 1974년에 속편, 1990년에 세 번째 작품이 개봉되었다. 이탈리아에서 맨손으로 미국 땅을 밟아 뉴욕 최대의 범죄조직을 키워낸 대부 비토 콜레오네와 아버지 뒤를 이어 마피아 보스가 된 마이클 콜레오네의 삶을 통해 아메리칸드림의 흥망성쇠를 은유적으로 표현해 낸, 미국 영화사를 대표하는 걸작으로 평가받는다.",
+                            "poster_path": "/zqV8MGXfpLZiFVObLxpAI7wWonJ.jpg",
+                            "backdrop_path": "/3WZTxpgscsmoUk81TuECXdFOD0R.jpg",
+                            "parts": [
+                                {
+                                    "adult": false,
+                                    "backdrop_path": "/tmU7GeKVybMWFButWEGl2M4GeiP.jpg",
+                                    "id": 238,
+                                    "title": "대부",
+                                    "original_language": "en",
+                                    "original_title": "The Godfather",
+                                    "overview": "시실리에서 이민온 뒤, 정치권까지 영향력을 미치는 거물로 자리잡은 돈 꼴레오네는 갖가지 고민을 호소하는 사람들의 문제를 해결해주며 대부라 불리운다. 한편 솔로소라는 인물은 꼴레오네가와 라이벌인 탓타리아 패밀리와 손잡고 새로운 마약 사업을 제안한다. 돈 꼴레오네가 마약 사업에 참여하지 않기로 하자, 돈 꼴레오네를 저격해 그는 중상을 입고 사경을 헤매게 된다. 그 뒤, 돈 꼴레오네의 아들 소니는 조직력을 총 동원해 다른 패밀리들과 피를 부르는 전쟁을 시작하는데... 가족의 사업과 상관없이 대학에 진학한 뒤 인텔리로 지내왔던 막내 아들 마이클은 아버지가 총격을 당한 뒤, 아버지를 구하기 위해 위험천만한 협상 자리에 나선다.",
+                                    "poster_path": "/I1fkNd5CeJGv56mhrTDoOeMc2r.jpg",
+                                    "media_type": "movie",
+                                    "genre_ids": [
+                                        18,
+                                        80
+                                    ],
+                                    "popularity": 157.034,
+                                    "release_date": "1972-03-14",
+                                    "video": false,
+                                    "vote_average": 8.71,
+                                    "vote_count": 18875
+                                },
+                                {
+                                    "adult": false,
+                                    "backdrop_path": "/kGzFbGhp99zva6oZODW5atUtnqi.jpg",
+                                    "id": 240,
+                                    "title": "대부 2",
+                                    "original_language": "en",
+                                    "original_title": "The Godfather Part II",
+                                    "overview": "아버지의 장례식 도중에 맏아들 파올로가 총에 맞아 죽고, 비토(로버트 드니로)는 겨우 도망쳐 미국으로 건너온다. 대부로 성장한 후 비토는 다시 치치오를 찾아 복수를 한다. 새롭게 등장한 젊은 대부 마이클(알 파치노)은 본거지를 라스베가스로 옮기고 가족의 사업을 가능한 합법적인 것으로 바꾸려고 애쓴다. 그런 과중 중에 자신을 제거하려는 음모를 알게되고 그는 냉혹하고 신속하게 반대파들을 제거, 조직을 더욱 확대해 나간다. 이를 위해 마이클은 배신한 형마저 죽이고, 일 때문에 아내와 헤어지는 등 인간적으로는 계속 외로워져 가는데...",
+                                    "poster_path": "/bhqvqYuAgrTGwyNAmMR0ZVmjXel.jpg",
+                                    "media_type": "movie",
+                                    "genre_ids": [
+                                        18,
+                                        80
+                                    ],
+                                    "popularity": 76.862,
+                                    "release_date": "1974-12-20",
+                                    "video": false,
+                                    "vote_average": 8.591,
+                                    "vote_count": 11402
+                                },
+                                {
+                                    "adult": false,
+                                    "backdrop_path": "/zNnjHLDtV8Ti3aworltaeaLMov4.jpg",
+                                    "id": 242,
+                                    "title": "대부 3",
+                                    "original_language": "en",
+                                    "original_title": "The Godfather Part III",
+                                    "overview": "이제는 60대의 노인이 되어버린 마이클(알 파치노)은 거대해진 패밀리의 강력한 자금력을 바탕으로 합법적인 사업으로 전환하는데 힘쓴다. 이 과정에서 특히 그는 바티칸 은행의 책임을 맡고 있는 대주교와 거래하므로써 이러한 합법적인 사업을 행할 수 있었고 바티칸의 대주교 역시 마이클의 사업에 참여하여 이익을 얻고 있었다. 이러한 그의 계획에 젊은 보스 조이 자자(죠 맨테그나)가 정면으로 도전해오고, 마이클 자신도 습격을 받는다. 그러나 일단 도전을 받은 이상 응하지 않을 수가 없고, 자자의 뒤에는 그의 계획을 방해하는 거대한 조직의 음모가 도사리고 있었는데...",
+                                    "poster_path": "/eLbVVIgIoqBxR0ZnxbCXao4ujFP.jpg",
+                                    "media_type": "movie",
+                                    "genre_ids": [
+                                        80,
+                                        18,
+                                        53
+                                    ],
+                                    "popularity": 66.924,
+                                    "release_date": "1990-12-25",
+                                    "video": false,
+                                    "vote_average": 7.4,
+                                    "vote_count": 5674
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "movieid": "6214",
+                        "id": 979,
+                        "imdb_id": "tt0290673",
+                        "original_title": "Irréversible",
+                        "title": "돌이킬 수 없는",
+                        "release_date": "2002-05-22",
+                        "poster_path": "/kZhT2qcBs44FAKYiieWAdGfqqkg.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "5291",
+                        "id": 548,
+                        "imdb_id": "tt0042876",
+                        "original_title": "羅生門",
+                        "title": "라쇼몽",
+                        "release_date": "1950-08-26",
+                        "poster_path": "/cpO1iPdMFCuJvKjRx3cIONkMRTw.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "52241",
+                        "id": 8270,
+                        "imdb_id": "tt0427470",
+                        "original_title": "The Lookout",
+                        "title": "룩아웃",
+                        "release_date": "2007-03-09",
+                        "poster_path": "/wTYyXCoIBy2TDxetoGS4Sc0VBP1.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "6337",
+                        "id": 15394,
+                        "imdb_id": "tt0285861",
+                        "original_title": "Owning Mahowny",
+                        "title": "오닝 마호니",
+                        "release_date": "2003-05-02",
+                        "poster_path": "/AsuNYra8rsKQ877jDM8FfTCiHU6.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "93598",
+                        "id": 67748,
+                        "imdb_id": "tt1680114",
+                        "original_title": "Snowtown",
+                        "title": "Snowtown",
+                        "release_date": "2011-05-19",
+                        "poster_path": "/3Vg3FleDGEX72uipj7fwG3fJRcu.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "271917",
+                        "id": 799876,
+                        "imdb_id": "tt14114802",
+                        "original_title": "The Outfit",
+                        "title": "아웃핏",
+                        "release_date": "2022-02-25",
+                        "poster_path": "/yju3CSIR8fdNsZyPdMsUun7XQnd.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "27005",
+                        "id": 19846,
+                        "imdb_id": "tt0120714",
+                        "original_title": "The Interview",
+                        "title": "The Interview",
+                        "release_date": "1998-03-03",
+                        "poster_path": "/yW462Tqs3pGcYFaNAAYlsfeDpcG.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "81591",
+                        "id": 44214,
+                        "imdb_id": "tt0947798",
+                        "original_title": "Black Swan",
+                        "title": "블랙 스완",
+                        "release_date": "2010-12-03",
+                        "poster_path": "/n7HKY5t09ZBv2KxMAQyEm17yrcv.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "116797",
+                        "id": 205596,
+                        "imdb_id": "tt2084970",
+                        "original_title": "The Imitation Game",
+                        "title": "이미테이션 게임",
+                        "release_date": "2014-11-14",
+                        "poster_path": "/wT4cHJMqWqWxY4GXDXgD10lMQWy.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "97304",
+                        "id": 68734,
+                        "imdb_id": "tt1024648",
+                        "original_title": "Argo",
+                        "title": "아르고",
+                        "release_date": "2012-10-11",
+                        "poster_path": "/n9krGDgUlxm5Uh6pZTfTEEKgeTm.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "55276",
+                        "id": 4566,
+                        "imdb_id": "tt0465538",
+                        "original_title": "Michael Clayton",
+                        "title": "마이클 클레이튼",
+                        "release_date": "2007-09-28",
+                        "poster_path": "/h77VesJ3Im8zMT3CvSI5uaEyUFB.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "143385",
+                        "id": 296098,
+                        "imdb_id": "tt3682448",
+                        "original_title": "Bridge of Spies",
+                        "title": "스파이 브릿지",
+                        "release_date": "2015-10-15",
+                        "poster_path": "/eHBoCS5nnJd7lg7XVuHbiwJ2waD.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "149334",
+                        "id": 340666,
+                        "imdb_id": "tt4550098",
+                        "original_title": "Nocturnal Animals",
+                        "title": "녹터널 애니멀스",
+                        "release_date": "2016-11-04",
+                        "poster_path": "/38ne9m6KHJLFAOyq8SHxmKP0aiz.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "90376",
+                        "id": 71859,
+                        "imdb_id": "tt1242460",
+                        "original_title": "We Need to Talk About Kevin",
+                        "title": "케빈에 대하여",
+                        "release_date": "2011-09-28",
+                        "poster_path": "/5T9tGUUu2frmiHLQ7o9BK1r7I55.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "80969",
+                        "id": 42188,
+                        "imdb_id": "tt1334260",
+                        "original_title": "Never Let Me Go",
+                        "title": "네버 렛 미 고",
+                        "release_date": "2010-03-18",
+                        "poster_path": "/tv2PIDAcp3fdEZlbqjmb45ASjD7.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "143367",
+                        "id": 68730,
+                        "imdb_id": "tt0490215",
+                        "original_title": "Silence",
+                        "title": "사일런스",
+                        "release_date": "2016-12-22",
+                        "poster_path": "/ww6q47tBUePDeRDJulnA8g3lIlt.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "167544",
+                        "id": 388399,
+                        "imdb_id": "tt4572514",
+                        "original_title": "Patriots Day",
+                        "title": "패트리어트 데이",
+                        "release_date": "2016-12-12",
+                        "poster_path": "/wrEnNmDCgx54SYyU8vuIe8fUDNW.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "3571",
+                        "id": 36234,
+                        "imdb_id": "tt0220100",
+                        "original_title": "Timecode",
+                        "title": "Timecode",
+                        "release_date": "2000-03-22",
+                        "poster_path": "/ptGDBAMfDOxr49RSTgMClxPiHjb.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "753",
+                        "id": 41007,
+                        "imdb_id": "tt0113849",
+                        "original_title": "A Month by the Lake",
+                        "title": "A Month by the Lake",
+                        "release_date": "1995-09-11",
+                        "poster_path": "/cgoiGvNffe4tZC33x6RIQQiKIp9.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "185979",
+                        "id": 429417,
+                        "imdb_id": "tt5516328",
+                        "original_title": "Ghost Stories",
+                        "title": "귀신 이야기",
+                        "release_date": "2018-01-20",
+                        "poster_path": "/e94P7JFSS0WbXTZYpRTYiHrVirI.jpg",
+                        "belongs_to_collection": null
+                    },
+                    {
+                        "movieid": "197419",
+                        "id": 449459,
+                        "imdb_id": "tt4131496",
+                        "original_title": "The Vanishing",
+                        "title": "키퍼스",
+                        "release_date": "2019-01-04",
+                        "poster_path": "/tx9QO35bT9Lk0CiiUBZn2hbEJnl.jpg",
+                        "belongs_to_collection": null
+                    }
+                ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "1.Bad Request \n 2.No data"
+          }
+        }
+      }
+    },
+    "/admin": {
       "get": {
         "description": "관리자 페이지 메인화면 요청 api",
         "responses": {
@@ -585,7 +993,7 @@
         }
       }
     },
-    "/manage/login/": {
+    "/admin/login/": {
       "post": {
         "description": "관리자 로그인 api",
         "parameters": [
@@ -615,8 +1023,8 @@
         }
       }
     },
-    "/manage/logout": {
-      "get": {
+    "/admin/logout": {
+      "delete": {
         "description": "관리자 로그아웃 api",
         "responses": {
           "200": {
@@ -628,7 +1036,43 @@
         }
       }
     },
-    "/manage/search": {
+    "/admin/dashboard": {
+      "get": {
+        "description": "대시보드 정보 요청 api",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 200
+                },
+                "contentsNum": {
+                  "example": "22585"
+                },
+                "CrawlSuccess": {
+                  "example": "3"
+                },
+                "CrawlError": {
+                  "example": "2"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "1.Bad Request"
+          },
+          "401":{
+            "description":"Unauthorized"
+          }
+        }
+      }
+    },
+    "/admin/content": {
         "post": {
             "description": "관리자 페이지에서 콘텐츠 검색 api",
             "parameters": [
@@ -675,6 +1119,9 @@
                 "rawtitle": {
                   "example": "무빙"
                 },
+                "jwURL": {
+                  "example": "https://www.justwatch.com/kr/TV-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%A8/mubing"
+                },
                 "disneyURL": {
                   "example": "https://www.disneyplus.com/series/moving/51eZUrK4LnAc"
                 },
@@ -716,13 +1163,13 @@
         }
       }
     },
-    "/manage/user/{userid}": {
+    "/admin/user/{userid}": {
       "get": {
         "description": "관리자 페이지에서 유저 정보 조회 api",
         "parameters": [
           {
             "name": "userid",
-            "example":"jorupaza",
+            "example":"selectAll",
             "in": "path",
             "required": true,
             "type": "string"
@@ -739,10 +1186,8 @@
             "description": "Unauthorized"
           }
         }
-      }
-    },
-    "/manage/user/delete/{userid}": {
-      "post": {
+      },
+      "delete": {
         "description": "유저 정보 삭제 (강제추방) 기능 api",
         "parameters": [
           {
@@ -766,7 +1211,8 @@
         }
       }
     },
-    "/manage/ott/add": {
+
+    "/admin/ott": {
       "post": {
         "description": "관리자 페이지에서 콘텐츠 추가 api",
         "parameters": [
@@ -781,6 +1227,9 @@
                 },
                 "rawtitle": {
                   "example": "무빙"
+                },
+                "jwURL": {
+                  "example": "https://www.justwatch.com/kr/TV-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%A8/mubing"
                 },
                 "disneyURL": {
                   "example": "https://www.disneyplus.com/series/moving/51eZUrK4LnAc"
@@ -823,7 +1272,7 @@
         }
       }
     },
-    "/manage/errlog/{options}": {
+    "/admin/errlog/{options}": {
       "get": {
         "description": "관리자 페이지에서 에러로그 조회 api",
         "parameters": [
@@ -844,6 +1293,323 @@
           },
           "401": {
             "description": "Unauthorized"
+          }
+        }
+      }
+    },"/admin/jwcontent": {
+      "post": {
+        "description": "관리자 페이지에서 크롤링 요청 api",
+        "parameters": [
+          {
+            "name": "url",
+            "example":"https://www.justwatch.com/kr/%EC%98%81%ED%99%94/ineogongju-2021",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "1.Bad Request \n 2.No user"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },"/admin/mldata": {
+      "get": {
+        "description": "관리자 페이지에서 다운로드 후 전처리 요청 api",
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 200
+                },
+                "result_req": {
+                  "example": "File processed successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 400
+                },
+                "result_req": {
+                  "example": "Bad Request"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 401
+                },
+                "result_req": {
+                  "example": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },"/admin/reccontent": {
+      "get": {
+        "description": "관리자 페이지에서 배포 요청 api",
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 200
+                },
+                "result_req": {
+                  "example": "dispatch completed successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 400
+                },
+                "result_req": {
+                  "example": "Error during dispatching"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 401
+                },
+                "result_req": {
+                  "example": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "관리자 페이지에서 배포 중단 api",
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 200
+                },
+                "result_req": {
+                  "example": "Dispatch process stopped successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 400
+                },
+                "result_req": {
+                  "example": "Error stopping dispatch process"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 401
+                },
+                "result_req": {
+                  "example": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },"/admin/ai": {
+      "get": {
+        "description": "관리자 페이지에서 학습 요청 api",
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 200
+                },
+                "result_req": {
+                  "example": "Training completed successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 400
+                },
+                "result_req": {
+                  "example": "Error during training"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 401
+                },
+                "result_req": {
+                  "example": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "관리자 페이지에서 학습 중단 api",
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 200
+                },
+                "result_req": {
+                  "example": "Train process stopped successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 400
+                },
+                "result_req": {
+                  "example": "Error stopping train process"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 401
+                },
+                "result_req": {
+                  "example": "Unauthorized"
+                }
+              }
+            }
           }
         }
       }
