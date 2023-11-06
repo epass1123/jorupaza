@@ -23,7 +23,7 @@ function checkLogin() {
     }
     else{
         $.ajax({
-            url: "http://ceprj.gachon.ac.kr:60002/admin/login",
+            url: "http://localhost:60002/admin/login",
             method: "POST",
             data: JSON.stringify(data),
             contentType: "application/json",
@@ -31,7 +31,7 @@ function checkLogin() {
                 console.log(response)
                 if (response.status === 200) {
                     document.body.querySelector('.login-area').style.opacity="0"
-                    window.location.href="http://ceprj.gachon.ac.kr:60002/views/html/main.html"
+                    window.location.href="http://localhost:60002/views/html/main.html"
                     alert("로그인")
                 }
                 else{

@@ -167,65 +167,86 @@ if ($('#coin_sales3').length) {
 }
 
 /*--------------  coin_sales3 End ------------*/
-
+var list=[]
+    for (var i =0; i<31; i++){
+        $.ajax({
+            url: "http://ceprj.gachon.ac.kr:60002/admin/monitor/date/"+(i+1),
+            method: "GET",
+            complete:function (response) {
+                if (response.status === 200) {
+                    list.push(response.responseJSON.logs.length)
+                }
+                else{
+                    return
+                }
+        }
+        });
+    }
+    console.log(list)
 /*--------------  overview-chart start ------------*/
 if ($('#verview-shart').length) {
-    var myConfig = {
-        "type": "line",
-
-        "scale-x": { //X-Axis
-            "labels": ["0", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100"],
-            "label": {
-                "font-size": 14,
-                "offset-x": 0,
-            },
-            "item": { //Scale Items (scale values or labels)
-                "font-size": 10,
-            },
-            "guide": { //Guides
-                "visible": false,
-                "line-style": "solid", //"solid", "dotted", "dashed", "dashdot"
-                "alpha": 1
-            }
-        },
-        "plot": { "aspect": "spline" },
-        "series": [{
-                "values": [20, 25, 30, 35, 45, 40, 40, 35, 25, 17, 40, 50],
-                "line-color": "#F0B41A",
-                /* "dotted" | "dashed" */
-                "line-width": 5 /* in pixels */ ,
-                "marker": { /* Marker object */
-                    "background-color": "#D79D3B",
-                    /* hexadecimal or RGB value */
-                    "size": 5,
-                    /* in pixels */
-                    "border-color": "#D79D3B",
-                    /* hexadecimal or RBG value */
+    
+    var list2=[]
+    for (var i =0; i<31; i++){
+        $.ajax({
+            url: "http://ceprj.gachon.ac.kr:60002/admin/monitor/date/"+(i+1),
+            method: "GET",
+            complete:function (response) {
+                if (response.status === 200) {
+                    list2.push(response.responseJSON.logs.length)
+                    var myConfig = {
+                        "type": "line",
+                
+                        "scale-x": { //X-Axis
+                            "labels": ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"],
+                            "label": {
+                                "font-size": 14,
+                                "offset-x": 0,
+                            },
+                            "item": { //Scale Items (scale values or labels)
+                                "font-size": 10,
+                            },
+                            "guide": { //Guides
+                                "visible": false,
+                                "line-style": "solid", //"solid", "dotted", "dashed", "dashdot"
+                                "alpha": 1
+                            }
+                        },
+                        "plot": { "aspect": "spline" },
+                        "series": [{
+                                "values":list2,
+                                "line-color": "#F0B41A",
+                                /* "dotted" | "dashed" */
+                                "line-width": 5 /* in pixels */ ,
+                                "marker": { /* Marker object */
+                                    "background-color": "#D79D3B",
+                                    /* hexadecimal or RGB value */
+                                    "size": 5,
+                                    /* in pixels */
+                                    "border-color": "#D79D3B",
+                                    /* hexadecimal or RBG value */
+                                }
+                            }
+                        ]
+                    };
+                
+                    zingchart.render({
+                        id: 'verview-shart',
+                        data: myConfig,
+                        height: "100%",
+                        width: "100%"
+                    });
                 }
-            },
-            {
-                "values": [40, 45, 30, 20, 30, 35, 45, 55, 40, 30, 55, 30],
-                "line-color": "#0884D9",
-                /* "dotted" | "dashed" */
-                "line-width": 5 /* in pixels */ ,
-                "marker": { /* Marker object */
-                    "background-color": "#067dce",
-                    /* hexadecimal or RGB value */
-                    "size": 5,
-                    /* in pixels */
-                    "border-color": "#067dce",
-                    /* hexadecimal or RBG value */
+                else{
+                    return
                 }
-            }
-        ]
-    };
-
-    zingchart.render({
-        id: 'verview-shart',
-        data: myConfig,
-        height: "100%",
-        width: "100%"
-    });
+        }
+        });
+    }
+    
+    
+    
+    
 }
 
 /*--------------  overview-chart END ------------*/

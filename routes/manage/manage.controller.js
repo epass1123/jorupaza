@@ -12,10 +12,10 @@ const __dirname = path.resolve();
 
 let manageGet = async(req,res)=>{
     if(req.session.admin){
-        res.status(200).render(path.join(__dirname, 'views/html/main.html'));
+        res.status(200).sendFile(path.join(__dirname, 'views/html/main.html'));
     }
     else{
-        res.status(200).render(path.join(__dirname, 'views/html/index.html'));
+        res.status(400).sendFile(path.join(__dirname, 'views/html/index.html'));
     }
 }   
 
@@ -117,7 +117,7 @@ let adminLogout = async(req, res)=>{
   }
 
 let dashboard = async (req,res)=>{
-    let query = `select count(contentsID) as number  from specification;`
+    let query = `select count(contentsID) as number from specification;`
     let contentsNum = await db.getData(query);
     let CrawlSuccess = await db.getData(`select count(success) as number from crawlLog where success = 1`);
     let CrawlError= await db.getData(`select count(success) as number from crawlLog where success = 0`);
@@ -131,6 +131,37 @@ let dashboard = async (req,res)=>{
         contentsNum, 
         CrawlSuccess, 
         CrawlError
+    })
+}
+
+let monitorDate= async (req,res)=>{
+    const date = req.params.date;
+    let query = `select * from logs where date = ?;`
+    let logs = await db.getData(query, date);
+
+    res.status(200).json({
+        "content_type" : "json" ,
+        "result_code" : 200 ,
+        "result_req" : "request success" ,
+        "count":logs.length,
+        logs
+    })
+}
+
+let monitorTime = async (req,res)=>{
+    const datetime = req.params.datetime;
+    let date = datetime.split(".")[0];
+    let time = datetime.split(".")[1];
+
+    let query = `select * from logs where date = ? and str_to_date(time,'%H:%i:%s') between ? and ?;`
+    let logs = await db.getData(query, [date,`${time}:00:00`,`${(time+1)<25 ?time+1:"01"}:00:00`]);
+
+    res.status(200).json({
+        "content_type" : "json" ,
+        "result_code" : 200 ,
+        "result_req" : "request success" ,
+        "count":logs.length,
+        logs
     })
 }
 
@@ -344,23 +375,19 @@ let ottManagePost = async (req,res)=>{
 
 let errLogGet = async (req,res)=>{
     const options = req.params.options;
+    let title;
     let query
     if(req.session.admin){
 
-        if(options === "all"){
+        if(options === "selectAll"){
             query = `SELECT * FROM errLog`
         }
-        else if(options === "disney"){
-            query = `SELECT * FROM errLog WHERE type = disney`
-        }
-        else if(options === "wavve"){
-            query = `SELECT * FROM errLog WHERE type = wavve`
-        }
-        else if(options === "watcha"){
-            query = `SELECT * FROM errLog WHERE type = watcha`
+        else {
+            title = options;
+            query = `SELECT * FROM errLog WHERE title like ?`;
         }
         try{
-            db.getData(query)
+            db.getData(query,`%${title}%`)
             .then((rows)=>{
                 res.status(200).json({
                     "content_type" : "json" ,
@@ -376,6 +403,50 @@ let errLogGet = async (req,res)=>{
                 "result_code": 400,
                 "result_req": "bad request"
             });
+        }
+    }
+    else{
+        res.status(401).json({   
+            "content_type" : "json" ,
+            "result_code" : 401 ,
+            "result_req" : "Unauthorized" ,
+        })
+    }
+};
+
+let errlogDelete = async (req,res)=>{
+    const ID = req.params.options;
+    if(req.session.admin){
+        
+        let query = `delete from errLog where ID = ?`;
+        
+        try{
+            db.updateData(query,`${ID}`)
+            .then(rows=>{
+                const rowCount = rows.affectedRows
+                if(rows.length !== 0 && rowCount>0){
+                    res.status(200).json({
+                        "content_type" : "json" ,
+                        "result_code" : 200 ,
+                        "result_req" : "delete success" ,
+                    });
+                }
+                else if(rowCount === 0){
+                    res.status(404).json({   
+                        "content_type" : "json" ,
+                        "result_code" : 404 ,
+                        "result_req" : "errLog not found" ,
+                    })
+                }
+            });
+        }
+        catch(err){
+            log(err)
+            res.status(400).json({   
+                "content_type" : "json" ,
+                "result_code" : 400 ,
+                "result_req" : "bad request" ,
+            })
         }
     }
     else{
@@ -654,4 +725,4 @@ let stopDispatch = async(req,res)=>{
     }
 }
 
-export {manageGet,userSearch, userDelete, adminLogin, adminLogout,dashboard, contentsSearch, updateRow, errLogGet,ottManagePost, crawl,download, train, dispatch,stopTrain,stopDispatch};
+export {manageGet,userSearch, userDelete, adminLogin, adminLogout,dashboard,monitorDate,monitorTime, contentsSearch, updateRow, errLogGet,errlogDelete ,ottManagePost, crawl,download, train, dispatch,stopTrain,stopDispatch};

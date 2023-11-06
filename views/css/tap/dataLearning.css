@@ -15,10 +15,7 @@
     height: 20%;
   }
 
-  .downloadRequestImg:hover{
-    width: 25%;
-    height: 25%;
-  }
+
 
   #downloadWrapper{
     cursor: pointer;

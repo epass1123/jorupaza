@@ -8,13 +8,8 @@ router.get('/',controller.mainGet);
 router.post('/register',controller.register);
 router.post('/login',controller.loginPost);
 
-// router.get('/logout',controller.logoutGet);
 router.delete('/logout',controller.logoutDelete);
 
-// router.get('/store',store.store);
-// router.get('/store/jwlinks',store.jwlinks);
-// router.get('/store/jwimg',store.jwimg);
-// router.get('/store/platlinks',store.platlinks);
 router.post('/jwcontents',store.store);
 router.post('/jwlinks',store.jwlinks);
 router.post('/jwimg',store.jwimg);

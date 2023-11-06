@@ -32,3 +32,19 @@ window.addEventListener('DOMContentLoaded', event => {
     });
 
 });
+
+function adminClick(){
+    $.ajax({
+        url: "http://ceprj.gachon.ac.kr:60002/admin",
+        method: "GET",
+        complete:function (response) {
+            console.log(response)
+            if (response.status === 200) {
+                window.location.href="/views/html/main.html"
+            }
+            else{
+                window.location.href="/views/html/index.html"
+            }
+    }
+});
+}

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>유저 관리</title>
+    <title>userActive</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/png" href="/views/assets/images/icon/favicon.ico">
     <link rel="stylesheet" href="/views/assets/css/bootstrap.min.css">
@@ -13,25 +13,21 @@
     <link rel="stylesheet" href="/views/assets/css/metisMenu.css">
     <link rel="stylesheet" href="/views/assets/css/owl.carousel.min.css">
     <link rel="stylesheet" href="/views/assets/css/slicknav.min.css">
-    <!-- amcharts css -->
+    <!-- amchart css -->
     <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
-    <!-- Start datatable css -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.jqueryui.min.css">
-    <!-- style css -->
+    <!-- others css -->
     <link rel="stylesheet" href="/views/assets/css/typography.css">
     <link rel="stylesheet" href="/views/assets/css/default-css.css">
     <link rel="stylesheet" href="/views/assets/css/styles.css">
     <link rel="stylesheet" href="/views/assets/css/responsive.css">
+    <link rel="stylesheet" href="/views/assets/css/userManage.css">
+    <link href="/views/css/tap/userActive.css" type="text/css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="/views/js/monitor.js"></script>
+    <script src="/views/js/main.js"></script>
     <!-- modernizr css -->
     <script src="/views/assets/js/vendor/modernizr-2.8.3.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="/views/js/userManage.js"></script>
-    <link href="/views/css/tap/userManage.css" type="text/css" rel="stylesheet">
-    
-
 </head>
 
 <body>
@@ -56,58 +52,38 @@
                 <div class="menu-inner">
                     <nav>
                         <ul class="metismenu" id="menu">
-                            <li >
-                                <a href="/views/html/main.html" aria-expanded="true">
-                                    <i class="ti-line-double"></i>
-                                    <span>개요</span></a>
+                            <li>
+                                <a href="/views/html/main.html" aria-expanded="true"><i class="ti-line-double"></i><span>개요</span></a>
                             </li>
                             <li>
-                                <a href="javascript:void(0)" aria-expanded="true">
-                                    <i class="ti-user"></i>
-                                </i>
-                                <span>사용자 관리</span></a>
-                            <ul class="collapse">
-                                <li>
-                                    <a href="/views/html/userManage.html">사용자 조회</a>
-                                </li>
-                                <li><a href="/views/html/userActive.html">사용자 행동정보 조회</a></li>
-                                
+                                <a href="javascript:void(0)" aria-expanded="true"><i class="ti-user"></i></i><span>사용자 관리</span></a>
+                                <ul class="collapse">
+                                    <li><a href="/views/html/userManage.html">사용자 조회</a></li>
+                                    <li><a href="/views/html/userActive.html">사용자 행동정보 조회</a></li>
 
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0)" aria-expanded="true">
-                                <i class="ti-cloud-down"></i>
-                                <span>데이터 관리</span></a>
-                            <ul class="collapse">
-                                <li>
-                                    <a href="/views/html/errorLog.html">에러 로그 조회</a>
-                                </li>
-                                <li>
-                                    <a href="/views/html/ottSearch.html">OTT 콘텐츠 데이터 조회</a>
-                                </li>
-                                <li>
-                                    <a href="/views/html/ottAdd.html">OTT 콘텐츠 데이터 추가</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="javascript:void(0)" aria-expanded="true">
-                                <i class="ti-pencil"></i>
-                                <span>학습관리</span></a>
-                            <ul class="collapse">
-                                <li><a href="/views/html/dataLearning.html">데이터 학습</a></li>
-                                <li><a href="/views/html/monitor.html">모니터링</a></li>
-
-
-                            </ul>
-                        </li>
-
-                    </ul>
-                </nav>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" aria-expanded="true"><i class="ti-cloud-down"></i><span>데이터 관리</span></a>
+                                <ul class="collapse">
+                                    <li><a href="/views/html/errorLog.html">에러 로그 조회</a></li>
+                                    <li><a href="/views/html/ottSearch.html">OTT 콘텐츠 데이터 조회</a></li>
+                                    <li><a href="/views/html/ottAdd.html">OTT 콘텐츠 데이터 추가</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" aria-expanded="true"><i class="ti-pencil"></i><span>학습관리</span></a>
+                                <ul class="collapse">
+                                    <li><a href="/views/html/dataLearning.html">데이터 학습</a></li>
+                                    <li><a href="/views/html/monitor.html">모니터링</a></li>
+                                </ul>
+                            </li>
+                            
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
-    </div>
         <!-- sidebar menu area end -->
         <!-- main content area start -->
         <div class="main-content">
@@ -134,6 +110,8 @@
                             <li id="full-view"><i class="ti-fullscreen"></i></li>
                             <li id="full-view-exit"><i class="ti-zoom-out"></i></li>
                             
+                            
+                            
                         </ul>
                     </div>
                 </div>
@@ -144,20 +122,19 @@
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <div class="breadcrumbs-area clearfix">
-                            <h4 class="page-title pull-left">Dashboard</h4>
+                            <h4 class="page-title pull-left">모니터링</h4>
                             <ul class="breadcrumbs pull-left">
-                                <li><a href="index.html">Home</a></li>
-                                <li><span>유저 관리</span></li>
+                                <li><a href="/views/html/main.html">Home</a></li>
+                                <li><span>모니터링</span></li>
                             </ul>
                         </div>
                     </div>
                     <div class="col-sm-6 clearfix">
                         <div class="user-profile pull-right">
                             <img class="avatar user-thumb" src="/views/img/logo.jpg" alt="logo">
-
                             <h4 class="user-name dropdown-toggle" data-toggle="dropdown">JORUPAZA<i class="fa fa-angle-down"></i></h4>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#">Log Out</a>
+                                <a class="dropdown-item" href="#" onclick="logout()">Log Out</a>
                             </div>
                         </div>
                     </div>
@@ -166,76 +143,33 @@
             <!-- page title area end -->
             <div class="main-content-inner">
                 <div class="row">
-                    <!-- basic table start -->
-                    <div class="col-12 mt-5">
+                    <div class="col-lg-12 mt-5">
                         <div class="card">
                             <div class="card-body">
-                                <div id="uWrapper">
-                                    <div class="header-title">유저 관리</div>
-                                    <div id="form-container" >
-                                        <!--<input type="submit" id="searchsubmit" value="" />-->
-                                            <button class="search-submit-button" type="button" onclick="idSearch()"  href="javascript:void(0)">
-                                                <i class="fa fa-search"></i>
-                                            </button>
-                                            <div id="searchtext">
-                                                    <input type="text" size="40" id="crawlingInput" class="search-input" value="" name="s" id="s" placeholder="ID..." oninput="idSearch()" onkeydown="if( event.keyCode == 13 ){idSearch();}">
+                                        <div class="userActiveWrapper">
+                                            <div class="header-title" id="userText">유저 검색</div>
+                                            <div class="dateWrapper">
+                                                <input type="datetime-local" class="date">
                                             </div>
+                                            <div id="form-container" >
+                                                <!--<input type="submit" id="searchsubmit" value="" />-->
+                                                    <button class="search-submit-button" type="button" onclick="userActiveClick()" href="javascript:void(0)">
+                                                        <i class="fa fa-search"></i>
+                                                    </button>
+                                                    <div id="searchtext">
+                                                            <input type="text" size="40" id="userActiveInput" class="search-input" value="" name="s" id="s" placeholder="userID..." onkeydown="if( event.keyCode == 13 ){userActiveClick();}">
+                                                    </div>
+                                        </div>
                                     </div>
-                                </div>
-                               
-                                <div class="single-table">
-                                    <div class="table-responsive">
-                                        <table class="table text-center">
-                                            <thead class="text-uppercase bg-secondary">
-                                                <tr class="text-white">
-                                                    <th scope="col"><input type="checkbox" id="cbx_chkAll" onclick="allCheck()"></th>
-                                                    <th scope="col">아이디</th>
-                                                    <th scope="col">이메일</th>
-                                                    <th scope="col">날짜</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td scope="row">1</td>
-                                                    <td>Mark</td>
-                                                    <td>09 / 07 / 2018</td>
-                                                    <td>$120</td>
-                                                    <td><i class="ti-trash"></i></td>
-                                                </tr>
-                                                <tr>
-                                                    <td scope="row">1</td>
-                                                    <td>jone</td>
-                                                    <td>09 / 07 / 2018</td>
-                                                    <td>$150</td>
-                                                    <td><i class="ti-trash"></i></td>
-                                                </tr>
-                                                <tr>
-                                                    <td scope="row">1</td>
-                                                    <td>Mark</td>
-                                                    <td>09 / 07 / 2018</td>
-                                                    <td>$120</td>
-                                                    <td><i class="ti-trash"></i></td>
-                                                </tr>
-                                                <tr>
-                                                    <td scope="row">1</td>
-                                                    <td>jone</td>
-                                                    <td>09 / 07 / 2018</td>
-                                                    <td>$150</td>
-                                                    <td><i class="ti-trash"></i></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                    <div class="tableWrapper">
+                                        
+                                        
                                     </div>
-                                    <button type="button" id="deleteBtn" class="btn btn-outline-dark" onclick="deleteUser(event)">선택 삭제</button>
+                                   
                                 </div>
+                                
                             </div>
                         </div>
-                    </div>
-            
-    <!-- data table end -->
-    <!-- Primary table start -->
-    
-                    <!-- Dark table end -->
                 </div>
             </div>
         </div>
@@ -437,12 +371,6 @@
     <script src="/views/assets/js/jquery.slimscroll.min.js"></script>
     <script src="/views/assets/js/jquery.slicknav.min.js"></script>
 
-    <!-- Start datatable js -->
-    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
-    <script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap.min.js"></script>
     <!-- others plugins -->
     <script src="/views/assets/js/plugins.js"></script>
     <script src="/views/assets/js/scripts.js"></script>

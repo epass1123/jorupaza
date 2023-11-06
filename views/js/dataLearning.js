@@ -8,7 +8,7 @@ function dataDownload(){
         complete: function(response) {
           console.log(response);
           if (response.status === 200) {
-            alert("성공")
+            alert("완료")
             image.style.display = "none";
           }
           else{
@@ -29,7 +29,7 @@ function learningRequest(){
         complete: function(response) {
           console.log(response);
           if (response.status === 200) {
-            alert("성공")
+            alert("시작")
             image.style.display = "none";
           }
           else{
@@ -50,7 +50,49 @@ function dataShare(){
         complete: function(response) {
           console.log(response);
           if (response.status === 200) {
-            alert("성공")
+            alert("시작")
+            image.style.display = "none";
+          }
+          else{
+            alert("실패")
+            image.style.display = "none";
+
+          }
+        }
+      });
+}
+
+function learningStop(){
+  var image = document.querySelector(".loader");
+    image.style.display = "block";
+    $.ajax({
+        url: "http://ceprj.gachon.ac.kr:60002/admin/ai",
+        method: "DELETE",
+        complete: function(response) {
+          console.log(response);
+          if (response.status === 200) {
+            alert("중지")
+            image.style.display = "none";
+          }
+          else{
+            alert("실패")
+            image.style.display = "none";
+
+          }
+        }
+      });
+}
+
+function shareStop(){
+  var image = document.querySelector(".loader");
+    image.style.display = "block";
+    $.ajax({
+        url: "http://ceprj.gachon.ac.kr:60002/admin/reccontent",
+        method: "DELETE",
+        complete: function(response) {
+          console.log(response);
+          if (response.status === 200) {
+            alert("중지")
             image.style.display = "none";
           }
           else{

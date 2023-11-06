@@ -6,7 +6,11 @@ router.get('/admin',controller.manageGet);
 
 router.post('/admin/login',controller.adminLogin);
 router.delete('/admin/logout',controller.adminLogout);
+
 router.get('/admin/dashboard',controller.dashboard);
+
+router.get('/admin/monitor/date/:date',controller.monitorDate);
+router.get('/admin/monitor/time/:datetime',controller.monitorTime);
 
 router.post('/admin/content',controller.contentsSearch);
 router.put('/admin/content',controller.updateRow);
@@ -26,5 +30,6 @@ router.get("/admin/reccontent",controller.dispatch);
 router.delete("/admin/reccontent",controller.stopDispatch);
 
 router.get('/admin/errlog/:options',controller.errLogGet);
+router.delete('/admin/errlog/:options',controller.errlogDelete);
 
 export default router;

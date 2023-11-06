@@ -15,10 +15,11 @@
   "schemes": [
     "http"
   ],
-
+  "tags":["userlogin"],
   "paths": {
     "/": {
       "get": {
+        "tags":["USER"],
         "description": "",
         "responses": {
           "200": {
@@ -29,6 +30,7 @@
     },
     "/register": {
       "post": {
+        "tags":["USER"],
         "description": "유저 회원가입 api",
         "parameters": [
           {
@@ -62,6 +64,7 @@
     },
     "/login": {
       "post": {
+        "tags":["USER"],
         "description": "유저 로그인 api",
         "parameters": [
           {
@@ -92,6 +95,7 @@
     },
     "/logout": {
       "delete": {
+        "tags":["USER"],
         "description": "유저 로그아웃 api",
         "responses": {
           "200": {
@@ -105,6 +109,7 @@
     },
     "/jwcontents": {
       "post": {
+        "tags":["STORE"],
         "description": "디비에 콘텐츠 데이터 저장하는 api",
         "responses": {
           "200": {
@@ -118,6 +123,7 @@
     },
     "/jwlinks": {
       "post": {
+        "tags":["STORE"],
         "description": "specification에 jwlinks를 추가하는 api",
         "responses": {
           "200": {
@@ -131,6 +137,7 @@
     },
     "/platlinks": {
       "post": {
+        "tags":["STORE"],
         "description": "specification에 플랫폼링크 추가하는 api",
         "responses": {
           "200": {
@@ -144,6 +151,7 @@
     },
     "/jwimg": {
       "post": {
+        "tags":["STORE"],
         "description": "specification에 jwimg 추가하는 api",
         "responses": {
           "200": {
@@ -157,6 +165,7 @@
     },
     "/userinfo/{userid}": {
       "get": {
+        "tags":["USER"],
         "description": "유저의 개인 찜한 목록 등 설정 정보 get api",
         "parameters": [
           {
@@ -177,6 +186,7 @@
         }
       },
       "post": {
+        "tags":["USER"],
         "description": "유저가 관심콘텐츠를 추가했을때 post api(기존의 userinfo put api)",
         "parameters": [
           {
@@ -215,6 +225,7 @@
    
     "/userinfo/userbehavior/{userid}/{start}": {
       "get": {
+        "tags":["USER"],
         "description": "유저 사용자 행동정보 조회 api",
         "parameters": [
           {
@@ -244,6 +255,7 @@
     },
     "/userinfo/userbehavior/{userid}": {
       "post": {
+        "tags":["USER"],
         "description": "사용자 행동데이터 전송 api",
         "parameters": [
           {
@@ -280,6 +292,7 @@
     },
     "/mark/{userid}": {
       "get": {
+        "tags":["USER"],
         "description": "",
         "parameters": [
           {
@@ -302,6 +315,7 @@
     },
     "/search/{title}": {
       "get": {
+        "tags":["USER"],
         "description": "OTT 콘텐츠 검색 api",
         "parameters": [
           {
@@ -373,6 +387,7 @@
     },
     "/mark/ott/{userid}": {
       "get": {
+        "tags":["USER"],
         "description": "유저가 찜한 OTT 콘텐츠 리스트 조회 api",
         "parameters": [
           {
@@ -393,6 +408,7 @@
         }
       },
       "post": {
+        "tags":["USER"],
         "description": "유저가 찜한 OTT 콘텐츠 db에 등록",
         "parameters": [
           {
@@ -448,6 +464,7 @@
     },
     "/mark/youvid/{userid}": {
       "get": {
+        "tags":["USER"],
         "description": "유저가 찜한 youtube 콘텐츠 리스트 조회 api",
         "parameters": [
           {
@@ -468,6 +485,7 @@
         }
       },
       "post": {
+        "tags":["USER"],
         "description": "유저가 찜한 youtube 콘텐츠 db에 등록",
         "parameters": [
           {
@@ -508,6 +526,7 @@
     },
     "/mark/streamer/{userid}": {
       "get": {
+        "tags":["USER"],
         "description": "유저가 찜한 스트리머 콘텐츠 리스트 조회 api",
         "parameters": [
           {
@@ -528,6 +547,7 @@
         }
       },
       "post": {
+        "tags":["USER"],
         "description": "유저가 찜한 스트리머 콘텐츠 db에 등록",
         "parameters": [
           {
@@ -567,6 +587,7 @@
     },
     "/mark/channel/{userid}": {
       "get": {
+        "tags":["USER"],
         "description": "유저가 찜한 채널 콘텐츠 리스트 조회 api",
         "parameters": [
           {
@@ -587,6 +608,7 @@
         }
       },
       "post": {
+        "tags":["USER"],
         "description": "유저가 찜한 채널 콘텐츠 db에 등록",
         "parameters": [
           {
@@ -629,6 +651,7 @@
     },
     "/recommend": {
       "post": {
+        "tags":["USER"],
         "description": "관심콘텐츠 추천 api",
         "parameters": [
           {
@@ -982,6 +1005,7 @@
     },
     "/admin": {
       "get": {
+        "tags":["ADMIN"],
         "description": "관리자 페이지 메인화면 요청 api",
         "responses": {
             "200": {
@@ -995,6 +1019,7 @@
     },
     "/admin/login/": {
       "post": {
+        "tags":["ADMIN"],
         "description": "관리자 로그인 api",
         "parameters": [
           {
@@ -1025,6 +1050,7 @@
     },
     "/admin/logout": {
       "delete": {
+        "tags":["ADMIN"],
         "description": "관리자 로그아웃 api",
         "responses": {
           "200": {
@@ -1038,6 +1064,7 @@
     },
     "/admin/dashboard": {
       "get": {
+        "tags":["ADMIN"],
         "description": "대시보드 정보 요청 api",
         "responses": {
           "200": {
@@ -1072,8 +1099,192 @@
         }
       }
     },
+    "/admin/monitor/date/{date}": {
+      "get": {
+        "tags":["ADMIN"],
+        "description": "날짜별 로그 조회 api",
+        "parameters": [
+          {
+            "name": "date",
+            "example":"6",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 200
+                },
+                "logs": {
+                  "example": [
+                    {
+                        "ID": 8109,
+                        "userID": "{}",
+                        "url": "/login",
+                        "method": "POST",
+                        "day": "1",
+                        "date": "6",
+                        "time": "0:13:40",
+                        "resCode": "400"
+                    },
+                    {
+                        "ID": 8110,
+                        "userID": "{}",
+                        "url": "/login",
+                        "method": "POST",
+                        "day": "1",
+                        "date": "6",
+                        "time": "0:13:49",
+                        "resCode": "400"
+                    },
+                    {
+                        "ID": 8111,
+                        "userID": "{}",
+                        "url": "/login",
+                        "method": "POST",
+                        "day": "1",
+                        "date": "6",
+                        "time": "0:13:50",
+                        "resCode": "400"
+                    },
+                    {
+                        "ID": 8112,
+                        "userID": "{}",
+                        "url": "/login",
+                        "method": "POST",
+                        "day": "1",
+                        "date": "6",
+                        "time": "0:13:50",
+                        "resCode": "400"
+                    },
+                    {
+                        "ID": 8113,
+                        "userID": "{}",
+                        "url": "/login",
+                        "method": "POST",
+                        "day": "1",
+                        "date": "6",
+                        "time": "0:13:51",
+                        "resCode": "400"
+                    },
+                    {
+                        "ID": 8114,
+                        "userID": "{\"userid\":\"kim\",\"password\":\"kim\"}",
+                        "url": "/login",
+                        "method": "POST",
+                        "day": "1",
+                        "date": "6",
+                        "time": "0:15:46",
+                        "resCode": "400"
+                    },
+                    {
+                        "ID": 8115,
+                        "userID": "kim",
+                        "url": "/login",
+                        "method": "POST",
+                        "day": "1",
+                        "date": "6",
+                        "time": "0:17:40",
+                        "resCode": "400"
+                    },
+                    {
+                        "ID": 8116,
+                        "userID": "{}",
+                        "url": "/login",
+                        "method": "POST",
+                        "day": "1",
+                        "date": "6",
+                        "time": "1:19:32",
+                        "resCode": "400"
+                    }
+                ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "1.Bad Request"
+          },
+          "401":{
+            "description":"Unauthorized"
+          }
+        }
+      }
+    },
+    "/admin/monitor/time/{datetime}": {
+      "get": {
+        "tags":["ADMIN"],
+        "description": "시간별 로그 조회 api",
+        "parameters": [
+          {
+            "name": "datetime",
+            "description":"OO.OO 앞에 두자리는 날짜가 뒤에 두자리는 시간이 들어갑니다. \n 예를 들어 6일날의 1시와 2시 사이의 로그를 조회하고 싶다면 6.1이 됩니다.",
+            "example":"6.1",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 200
+                },
+                "logs": {
+                  "example": [
+                    {
+                        "ID": 8116,
+                        "userID": "{}",
+                        "url": "/login",
+                        "method": "POST",
+                        "day": "1",
+                        "date": "6",
+                        "time": "1:19:32",
+                        "resCode": "400"
+                    },
+                    {
+                        "ID": 8117,
+                        "userID": "{}",
+                        "url": "/login",
+                        "method": "POST",
+                        "day": "1",
+                        "date": "6",
+                        "time": "1:27:11",
+                        "resCode": "400"
+                    }
+                ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "1.Bad Request"
+          },
+          "401":{
+            "description":"Unauthorized"
+          }
+        }
+      }
+    },
     "/admin/content": {
         "post": {
+            "tags":["ADMIN"],
             "description": "관리자 페이지에서 콘텐츠 검색 api",
             "parameters": [
                 {
@@ -1102,6 +1313,7 @@
             }
           },
       "put": {
+        "tags":["ADMIN"],
         "description": "관리자 페이지에서 콘텐츠 수정 api",
         "parameters": [
           {
@@ -1165,6 +1377,7 @@
     },
     "/admin/user/{userid}": {
       "get": {
+        "tags":["ADMIN"],
         "description": "관리자 페이지에서 유저 정보 조회 api",
         "parameters": [
           {
@@ -1188,6 +1401,7 @@
         }
       },
       "delete": {
+        "tags":["ADMIN"],
         "description": "유저 정보 삭제 (강제추방) 기능 api",
         "parameters": [
           {
@@ -1214,6 +1428,7 @@
 
     "/admin/ott": {
       "post": {
+        "tags":["ADMIN"],
         "description": "관리자 페이지에서 콘텐츠 추가 api",
         "parameters": [
           {
@@ -1274,11 +1489,13 @@
     },
     "/admin/errlog/{options}": {
       "get": {
+        "tags":["ADMIN"],
         "description": "관리자 페이지에서 에러로그 조회 api",
         "parameters": [
           {
             "name": "options",
-            "example":"all, disney, wavve, watcha",
+            "example":"selectAll or title",
+            "description":"options가 selectAll일 경우 리스트를 모두 조회하고 \n 다른 경우엔 options로 디비에서 title로 검색합니다",
             "in": "path",
             "required": true,
             "type": "string"
@@ -1295,9 +1512,38 @@
             "description": "Unauthorized"
           }
         }
+      },
+      "delete": {
+        "tags":["ADMIN"],
+        "description": "관리자 페이지에서 에러로그 조회 api",
+        "parameters": [
+          {
+            "name": "options",
+            "example":"1",
+            "description":"지울 errorlog의 아이디입니다.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "delete success"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "errLog not found"
+          }
+        }
       }
     },"/admin/jwcontent": {
       "post": {
+        "tags":["ADMIN"],
         "description": "관리자 페이지에서 크롤링 요청 api",
         "parameters": [
           {
@@ -1322,6 +1568,7 @@
       }
     },"/admin/mldata": {
       "get": {
+        "tags":["ADMIN"],
         "description": "관리자 페이지에서 다운로드 후 전처리 요청 api",
         "parameters": [
         ],
@@ -1381,6 +1628,7 @@
       }
     },"/admin/reccontent": {
       "get": {
+        "tags":["ADMIN"],
         "description": "관리자 페이지에서 배포 요청 api",
         "parameters": [
         ],
@@ -1439,6 +1687,7 @@
         }
       },
       "delete": {
+        "tags":["ADMIN"],
         "description": "관리자 페이지에서 배포 중단 api",
         "parameters": [
         ],
@@ -1498,6 +1747,7 @@
       }
     },"/admin/ai": {
       "get": {
+        "tags":["ADMIN"],
         "description": "관리자 페이지에서 학습 요청 api",
         "parameters": [
         ],
@@ -1556,6 +1806,7 @@
         }
       },
       "delete": {
+        "tags":["ADMIN"],
         "description": "관리자 페이지에서 학습 중단 api",
         "parameters": [
         ],

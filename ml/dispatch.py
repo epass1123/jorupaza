@@ -6,7 +6,18 @@ from dotenv import load_dotenv
 import mysql.connector
 import os
 import heapq
+import torch
 
+# os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+# os.environ["CUDA_VISIBLE_DEVICES"]="0"
+
+# print(f"Using GPU is CUDA:{os.environ['CUDA_VISIBLE_DEVICES']}")
+
+# for i in range(torch.cuda.device_count()):
+#     info = torch.cuda.get_device_properties(i)
+#     print(f"CUDA:{i} {info.name}, {info.total_memory / 1024 ** 2}MB")
+
+# device = torch.device("cuda:0")
 '''
 입력값 #  sys.argv[1] : 파일 이름,  sys.argv[2] : 시작 KEY 값
 
@@ -42,6 +53,7 @@ load_dotenv(verbose=True)
 
 current_directory = os.path.dirname(os.path.dirname(__file__))
 file_path = os.path.join(current_directory, 'ml/preprocessed.csv')
+
 
 k = 77            #top_k
 # variables
@@ -130,6 +142,7 @@ def main():
                 # key : result
                 print(','.join(map(str,result)))
                 print(str(time.time() - t0) + "초 소요\n")
+
 
 if __name__ == "__main__":
     main()
