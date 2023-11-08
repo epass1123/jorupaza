@@ -751,25 +751,25 @@ let youvidPost = async (req,res)=>{
             db.getData(`select * from youvid where youtubeID = ?`,i).then(p=>{
                 try{
                     if(p.length === 0){
-                    let url = `https://www.googleapis.com/youtube/v3/videos?fields=items(id,snippet(title,tags,thumbnails,publishedAt))&part=snippet&key=${process.env.youtubekey}&id=${i}`
-                    axios({
-                        method: 'get',
-                        url: url,
-                        responseType: 'json',
-                        }).then(p=>{
-                            db.putData(`insert into youvid (youtubeID, snippet) values (?,?) ON DUPLICATE KEY UPDATE youtubeID=VALUES(youtubeID)`,[p.data.items[0].id,JSON.stringify(p.data.items[0].snippet)]).then(k=>{
-                            db.putData(query, values)
-                                .then(rows=>{
-                                    if(rows === undefined){
-                                        res.status(400).json({
-                                            "content-type": "json",
-                                            "result_code": 400,
-                                            "result_req": "bad request"
-                                        });
-                                    }
-                                }); 
-                            })
-                    })
+                        let url = `https://www.googleapis.com/youtube/v3/videos?fields=items(id,snippet(title,tags,thumbnails,publishedAt))&part=snippet&key=${process.env.youtubekey}&id=${i}`
+                        axios({
+                            method: 'get',
+                            url: url,
+                            responseType: 'json',
+                            }).then(p=>{
+                                db.putData(`insert into youvid (youtubeID, snippet) values (?,?) ON DUPLICATE KEY UPDATE youtubeID=VALUES(youtubeID)`,[p.data.items[0].id,JSON.stringify(p.data.items[0].snippet)]).then(k=>{
+                                db.putData(query, values)
+                                    .then(rows=>{
+                                        if(rows === undefined){
+                                            res.status(400).json({
+                                                "content-type": "json",
+                                                "result_code": 400,
+                                                "result_req": "bad request"
+                                            });
+                                        }
+                                    }); 
+                                })
+                        })
                     }
                     else{
                         db.putData(query, values)
@@ -806,20 +806,6 @@ let youvidPost = async (req,res)=>{
     }
 
 };
-
-let test = async (req, res) => {
-    if(req.session.user){
-        
-      
-    }
-    else{
-        res.status(401).json({
-            "content_type" : "json" ,
-            "result_code" : 401 ,
-            "result_req" : "unauthorized" ,
-        })
-    }
-}
 
 let streamerGet = async (req,res)=>{
     const userid = req.params.userid; //userid
@@ -914,6 +900,28 @@ let channelGet = async (req,res)=>{
     let query = `SELECT * FROM marked_channel WHERE userID= ?`
 
     if(req.session.user){
+        let i = "UCewitUbsXnyjvJjGgxa0IYw"
+        let url = `https://www.googleapis.com/youtube/v3/search?part=id,snippet&order=date&type=video&key=${process.env.youtubekey}&channelId=${i}`
+        await axios({
+            method: 'get',
+            url: url,
+            responseType: 'json',
+            }).then(p=>{
+                log(p.data)
+                // db.putData(`insert into youvid (youtubeID, snippet) values (?,?) ON DUPLICATE KEY UPDATE youtubeID=VALUES(youtubeID)`,[p.data.items[0].id,JSON.stringify(p.data.items[0].snippet)])
+                //     .then(k=>{
+                //         db.putData(query, values)
+                //             .then(rows=>{
+                //                 if(rows === undefined){
+                //                     res.status(400).json({
+                //                         "content-type": "json",
+                //                         "result_code": 400,
+                //                         "result_req": "bad request"
+                //                     });
+                //                 }
+                //             }); 
+                //     })
+        })
         try{
             db.getData(query,`${userid}`)
             .then((rows)=>{
@@ -969,39 +977,62 @@ let channelPost = async (req,res)=>{
     let values = [requserid, `${channelID.join("|")}`, `${title.join("|")}`,`${img.join("|")}`,`${groupSet.join("|")}`, now];
 
     if(req.session.user){
-
-        let channelID = "UCewitUbsXnyjvJjGgxa0IYw"
-        let url = `https://www.googleapis.com/youtube/v3/search?part=id,snippet&order=date&type=video&key=${process.env.youtubekey}&channelId=${channelID}`
-        await axios({
-            method: 'get',
-            url: url,
-            responseType: 'json',
-        }).then(p=>{
-            res.status(200).json({
-                "content-type": "json",
-                "result_code": 200,
-                "result_req": "api loaded successfully",
-                "channel": p.data
-            });
-        })
-
-        db.putData(query, values)
-        .then(rows=>{
-            if(rows === undefined){
+        for(let i of channelID){
+            try{
+                db.getData(`select * from youtubechannel where channelID = ?`,i)
+                .then(p=>{
+                    if(p.length === 0){
+                        let url = `https://www.googleapis.com/youtube/v3/search?part=id,snippet&order=date&type=video&key=${process.env.youtubekey}&channelId=${channelID}`
+                        axios({
+                            method: 'get',
+                            url: url,
+                            responseType: 'json',
+                        }).then(p=>{
+                            db.putData(`insert into youtubechannel (channelID, items) values (?,?) ON DUPLICATE KEY UPDATE channelID=VALUES(channelID),items=VALUES(items)`,[i,JSON.stringify(p.data.items)])
+                            .then(k=>{
+                                log(k)
+                            db.putData(query, values)
+                            .then(rows=>{
+                                if(rows === undefined){
+                                    res.status(400).json({
+                                        "content-type": "json",
+                                        "result_code": 400,
+                                        "result_req": "bad request"
+                                    });
+                                }
+                            }); 
+                            })
+                        })
+                    }
+                    else{
+                        db.putData(query, values)
+                        .then(rows=>{
+                            if(rows === undefined){
+                                res.status(400).json({
+                                    "content-type": "json",
+                                    "result_code": 400,
+                                    "result_req": "bad request"
+                                });
+                            }
+                
+                        }); 
+                    }
+                    res.status(200).json({
+                        "content-type": "json",
+                        "result_code": 200,
+                        "result_req": "post done"
+                    });
+                
+                })
+            }
+            catch(err){
                 res.status(400).json({
                     "content-type": "json",
                     "result_code": 400,
                     "result_req": "bad request"
                 });
-            }else{
-                res.status(200).json({
-                    "content-type": "json",
-                    "result_code": 200,
-                    "result_req": "post done"
-                });
             }
-            
-        }); 
+        }
     }
     else{
         res.status(401).json({
@@ -1265,6 +1296,4 @@ export {mainGet,register,loginPost,userBehaviorGet,
     logoutDelete,userInfoGet,userInfoPost,markGet,
     youvidGet,youvidPost,ottGet,ottPost,
     channelGet,channelPost,streamerGet,
-    streamerPost,searchGet,userBehaviorPost,recommend,
-    test}
-  
+    streamerPost,searchGet,userBehaviorPost,recommend}
