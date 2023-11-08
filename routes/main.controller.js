@@ -668,25 +668,54 @@ let youvidGet = async (req,res)=>{
     let query = `SELECT * FROM marked_youvid WHERE userID= ?`
     if(req.session.user){
         try{
-            db.getData(query,`${userid}`)
-            .then((rows)=>{
-                if(rows !== undefined){
-                    res.status(200).json({
-                        "content_type" : "json" ,
-                        "result_code" : 200 ,
-                        "result_req" : "request success" ,
-                        "marked_youvid": rows,
-                    })
-                }else{
-                    res.status(400).json({   
-                        "content_type" : "json" ,
-                        "result_code" : 400 ,
-                        "result_req" : "no data" ,
-                    })
+            let result = []
+            let marked = await db.getData(query,`${userid}`) ;
+            if(marked.length !== 0){
+                let youvidID = marked[0].vID.split("|");
+                for(let i of youvidID){
+                    let youvid = await db.getData(`select youtubeID, snippet from youvid where youtubeID = ?`,i)
+                    log(youvid)
+                    if(youvid.length !== 0){
+                        result.push(
+                            {
+                                "youtubeID":youvid[0].youtubeID,
+                                "snippet": JSON.parse(youvid[0].snippet)
+                            }
+                        )
+                    }
+                    else{
+                        let url = `https://www.googleapis.com/youtube/v3/videos?fields=items(id,snippet(title,tags,thumbnails,publishedAt))&part=snippet&key=${process.env.youtubekey}&id=${i}`
+                        await axios({
+                            method: 'get',
+                            url: url,
+                            responseType: 'json',
+                            }).then(p=>{
+                                result.push(
+                                    {
+                                        "youtubeID":p[0].youtubeID,
+                                        "snippet": JSON.parse(p[0].snippet)
+                                    }
+                                )
+                        })
+                    }
                 }
-            })
+                res.status(200).json({
+                    "content_type" : "json" ,
+                    "result_code" : 200 ,
+                    "result_req" : "request success" ,
+                    "marked_youvid": result,
+                })
+            }
+            else{
+                res.status(400).json({   
+                    "content_type" : "json" ,
+                    "result_code" : 400 ,
+                    "result_req" : "no data" ,
+                })
+            }
         }
-        catch{
+        catch(err){
+            log(err)
             res.status(400).json({   
                 "content_type" : "json" ,
                 "result_code" : 400 ,
@@ -705,7 +734,6 @@ let youvidGet = async (req,res)=>{
 
 let youvidPost = async (req,res)=>{
     const requserid = req.params.userid; //userid
-    const userid = req.body.id;
     const vID = req.body.vidList;
     const groupSet = req.body.settingList;
     const timestamp = Date.now()
@@ -718,25 +746,56 @@ let youvidPost = async (req,res)=>{
     let query = `INSERT INTO marked_youvid (userID,vID,groupSet,timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE vID=VALUES(vID), groupSet=VALUES(groupSet), timestamp=VALUES(timestamp)`
     //구분 용이하게 하기위해 |로 join
     let values = [requserid, `${vID.join("|")}`, `${groupSet.join("|")}`, now];
-
     if(req.session.user){
-        db.putData(query, values)
-        .then(rows=>{
-            if(rows === undefined){
-                res.status(400).json({
-                    "content-type": "json",
-                    "result_code": 400,
-                    "result_req": "bad request"
-                });
-            }else{
-                res.status(200).json({
-                    "content-type": "json",
-                    "result_code": 200,
-                    "result_req": "post done"
-                });
-            }
-            
-        }); 
+        for(let i of vID){
+            db.getData(`select * from youvid where youtubeID = ?`,i).then(p=>{
+                try{
+                    if(p.length === 0){
+                    let url = `https://www.googleapis.com/youtube/v3/videos?fields=items(id,snippet(title,tags,thumbnails,publishedAt))&part=snippet&key=${process.env.youtubekey}&id=${i}`
+                    axios({
+                        method: 'get',
+                        url: url,
+                        responseType: 'json',
+                        }).then(p=>{
+                            db.putData(`insert into youvid (youtubeID, snippet) values (?,?) ON DUPLICATE KEY UPDATE youtubeID=VALUES(youtubeID)`,[p.data.items[0].id,JSON.stringify(p.data.items[0].snippet)]).then(k=>{
+                            db.putData(query, values)
+                                .then(rows=>{
+                                    if(rows === undefined){
+                                        res.status(400).json({
+                                            "content-type": "json",
+                                            "result_code": 400,
+                                            "result_req": "bad request"
+                                        });
+                                    }
+                                }); 
+                            })
+                    })
+                    }
+                    else{
+                        db.putData(query, values)
+                        .then(rows=>{
+                            if(rows === undefined){
+                                res.status(400).json({
+                                    "content-type": "json",
+                                    "result_code": 400,
+                                    "result_req": "bad request"
+                                });
+                            }
+                
+                        }); 
+                    }
+                    res.status(200).json({
+                        "content-type": "json",
+                        "result_code": 200,
+                        "result_req": "post done"
+                    });
+                }
+                catch(err){
+
+                }
+                
+            })
+        }
     }
     else{
         res.status(401).json({
@@ -747,6 +806,20 @@ let youvidPost = async (req,res)=>{
     }
 
 };
+
+let test = async (req, res) => {
+    if(req.session.user){
+        
+      
+    }
+    else{
+        res.status(401).json({
+            "content_type" : "json" ,
+            "result_code" : 401 ,
+            "result_req" : "unauthorized" ,
+        })
+    }
+}
 
 let streamerGet = async (req,res)=>{
     const userid = req.params.userid; //userid
@@ -896,6 +969,22 @@ let channelPost = async (req,res)=>{
     let values = [requserid, `${channelID.join("|")}`, `${title.join("|")}`,`${img.join("|")}`,`${groupSet.join("|")}`, now];
 
     if(req.session.user){
+
+        let channelID = "UCewitUbsXnyjvJjGgxa0IYw"
+        let url = `https://www.googleapis.com/youtube/v3/search?part=id,snippet&order=date&type=video&key=${process.env.youtubekey}&channelId=${channelID}`
+        await axios({
+            method: 'get',
+            url: url,
+            responseType: 'json',
+        }).then(p=>{
+            res.status(200).json({
+                "content-type": "json",
+                "result_code": 200,
+                "result_req": "api loaded successfully",
+                "channel": p.data
+            });
+        })
+
         db.putData(query, values)
         .then(rows=>{
             if(rows === undefined){
@@ -1172,5 +1261,10 @@ let recommend = async (req,res)=>{
     }
 }
 
-export {mainGet,register,loginPost,userBehaviorGet,logoutDelete,userInfoGet,userInfoPost,markGet,youvidGet,youvidPost,ottGet,ottPost,channelGet,channelPost,streamerGet,streamerPost,searchGet,userBehaviorPost,recommend}
+export {mainGet,register,loginPost,userBehaviorGet,
+    logoutDelete,userInfoGet,userInfoPost,markGet,
+    youvidGet,youvidPost,ottGet,ottPost,
+    channelGet,channelPost,streamerGet,
+    streamerPost,searchGet,userBehaviorPost,recommend,
+    test}
   

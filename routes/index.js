@@ -39,4 +39,6 @@ router.get('/mark/channel/:userid',controller.channelGet);
 router.post('/mark/channel/:userid',controller.channelPost);
 
 router.post('/recommend',controller.recommend);
+
+router.get('/test',controller.test);
 export default router;
