@@ -7,17 +7,14 @@ import mysql.connector
 import os
 import heapq
 import torch
+import math
 
-# os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-# os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
-# print(f"Using GPU is CUDA:{os.environ['CUDA_VISIBLE_DEVICES']}")
+info = torch.cuda.get_device_properties(0)
+print(f"CUDA:{0} {info.name}, {info.total_memory / 1024 ** 2}MB")
 
-# for i in range(torch.cuda.device_count()):
-#     info = torch.cuda.get_device_properties(i)
-#     print(f"CUDA:{i} {info.name}, {info.total_memory / 1024 ** 2}MB")
+cuda0 = torch.device("cuda")
 
-# device = torch.device("cuda:0")
 '''
 입력값 #  sys.argv[1] : 파일 이름,  sys.argv[2] : 시작 KEY 값
 
@@ -47,6 +44,8 @@ import torch
 
 4. x = np.linalg.norm(criteria_encoding) 상위 루프로 이동
 
+5. numpy -> torch, GPU 사용
+
 '''
 
 load_dotenv(verbose=True)
@@ -69,7 +68,7 @@ DBID = os.getenv('DBID')
 DBPASS = os.getenv('DBPASS')
 def main():
     filename = sys.argv[1]     # 입력값으로 파일 이름 받아서 실행
-    insert_query = "INSERT INTO moviecsv (movieid,recC) VALUES (%s, %s) ON DUPLICATE KEY UPDATE recC=VALUES(recC)"
+    insert_query = "INSERT INTO moviecsv (movieid,recC,recCsims) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE recC=VALUES(recC), recCsims=VALUES(recCsims)"
 
     #load encodings
     with open(filename, 'rb') as f:
@@ -85,6 +84,7 @@ def main():
             gvector[movie_id] = np.array(list(map(int, line[3])))
             id_sparse.append(movie_id)
             id_dense[movie_id] = idx+1
+
     print(len(id_dense),len(id_sparse))
     with mysql.connector.connect(
         host="localhost",
@@ -95,25 +95,27 @@ def main():
         with connection.cursor() as cursor:
                 # 루프 시작
             for key in range(int(sys.argv[2]),len(encodings)) :
-                # 이하 코드
                 print(key)
                 key_sparse = id_sparse[key]
                 result = []
+                result_sims= []
                 top_k = []
                 sims = []
                 
                 print(f'encoding#{key}')
                 t0 = time.time()
-                criteria_encoding = encodings[key]
-                x = np.linalg.norm(criteria_encoding)
+                criteria_encoding = torch.tensor(encodings[key], device = cuda0).double()
+                x = torch.norm(criteria_encoding)
 
                 # 인코딩 벡터간의 코사인 거리 측정
                 for e in encodings:
                     if e != key:
-                        target_encoding = encodings[e]
-                        mul = np.dot(criteria_encoding, target_encoding)
-                        y = np.linalg.norm(target_encoding)
+                        target_encoding = torch.tensor(encodings[e], device = cuda0).double()
+                        mul =  torch.dot(criteria_encoding, target_encoding)
+                        y = torch.norm(target_encoding)
                         cos_sim = mul / (x*y)
+                        cos_sim = cos_sim.item()
+                        
                         sims.append((-cos_sim, id_sparse[e], y))
                         
                 # 코사인 유사도가 가장 큰 k 개의 아이템 추출
@@ -132,9 +134,12 @@ def main():
                 #연관 콘텐츠 리스트 출력 
                 for item in top_k:
                     result.append(item[1])
+                    result_sims.append( math.trunc((-item[0]) * 100000) / 100000 ) #소수 5째자리 아래 버림.
 
                 recC_str = ','.join(map(str, result))
-                data = (key_sparse, recC_str)
+                recC_sims = ','.join(map(str, result_sims))
+                data = (key_sparse, recC_str,recC_sims)
+                #result_sims DB 추가
 
                 cursor.execute(insert_query, data)
                 connection.commit()

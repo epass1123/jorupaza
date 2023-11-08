@@ -23,7 +23,7 @@ router.post('/admin/ott',controller.ottManagePost);
 router.post("/admin/jwcontent",controller.crawl);
 router.get("/admin/mldata",controller.download);
 
-router.get("/admin/ai",controller.train);
+router.post("/admin/ai",controller.train);
 router.delete("/admin/ai",controller.stopTrain);
 
 router.get("/admin/reccontent",controller.dispatch);
@@ -31,5 +31,8 @@ router.delete("/admin/reccontent",controller.stopDispatch);
 
 router.get('/admin/errlog/:options',controller.errLogGet);
 router.delete('/admin/errlog/:options',controller.errlogDelete);
+
+router.get('/admin/moviecsv/:options',controller.moviecsvGet);
+router.post('/admin/moviecsv',controller.moviecsvGet);
 
 export default router;

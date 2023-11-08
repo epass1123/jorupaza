@@ -966,7 +966,7 @@ let recommend = async (req,res)=>{
                     queryTitle = queryTitle[0]
                 }
                 log("queryTitle:",queryTitle)
-                let moviecsvSearch = await db.getData(`select title, tmdbid, recc from moviecsv where title like ?`,`%${queryTitle}%`)
+                let moviecsvSearch = await db.getData(`select title, tmdbid, recc, recCsims from moviecsv where title like ?`,`%${queryTitle}%`)
                 if(moviecsvSearch.length === 0){
                     let url = `https://api.themoviedb.org/3/search/movie?query=${queryTitle}&include_adult=false&language=en-US&page=1`
                     try{
@@ -1010,64 +1010,79 @@ let recommend = async (req,res)=>{
                         log(err);
                     }
                 }
-                log("moviecsvSearch",moviecsvSearch);
-                let rectmdbid = moviecsvSearch[0].recc.split(",");
-                log("rectmdbid",rectmdbid);
-                let responselist = []
-                for(let i of rectmdbid){
-                    let tmdbid = await db.getData(`select tmdbid from moviecsv where movieid = ${i}`)
-                    let url = `https://api.themoviedb.org/3/movie/${tmdbid[0].tmdbid}?language=ko-KR`
-                    try{
-                        const response = await axios({
-                            method: 'get',
-                            url: url,
-                            responseType: 'json',
-                            headers:{
-                                accept: 'application/json',
-                                Authorization: process.env.tmdbkey
-                              }
-                        })
-                        responselist.push({
-                            movieid: i,
-                            id: response.data.id,
-                            imdb_id : response.data.imdb_id,
-                            original_title : response.data.original_title,
-                            title : response.data.title,
-                            release_date : response.data.release_date,
-                            poster_path : response.data.poster_path,
-                            belongs_to_collection : response.data.belongs_to_collection,
-                        })
+                else{
+                    log("moviecsvSearch",moviecsvSearch);
+                    let rectmdbid = moviecsvSearch[0].recc.split(",");
+                    let recCsims = moviecsvSearch[0].recCsims;
+                    
+                    if(rectmdbid.length > 15){
+                        rectmdbid = rectmdbid.slice(0,15)
+                        log("rectmdbid",rectmdbid);
                     }
-                    catch(err){
-                        db.putData(`insert into errLog (type, title, message, timestamp) values(?,?,?,?)  ON DUPLICATE KEY UPDATE message=VALUES(message), timestamp=VALUES(timestamp)`,["tmdbid",`movieid:${i}`,"tmdbid not found",now])
-                        log(err.config.url)
+                    
+                    let responselist = []
+                    for(let i of rectmdbid){
+                        let tmdbid = await db.getData(`select tmdbid from moviecsv where movieid = ${i}`)
+    
+                        let url = `https://api.themoviedb.org/3/movie/${tmdbid[0].tmdbid}?language=ko-KR`
+                        try{
+                            await axios({
+                                method: 'get',
+                                url: url,
+                                responseType: 'json',
+                                headers:{
+                                    accept: 'application/json',
+                                    Authorization: process.env.tmdbkey
+                                  }
+                            }).then(response=>{
+                                responselist.push({
+                                    movieid: i,
+                                    id: response.data.id,
+                                    imdb_id : response.data.imdb_id,
+                                    original_title : response.data.original_title,
+                                    title : response.data.title,
+                                    release_date : response.data.release_date,
+                                    poster_path : response.data.poster_path,
+                                    belongs_to_collection : response.data.belongs_to_collection,
+                                    similarity : recCsims,
+                                })
+                            })
+                            
+                        }
+                        catch(err){
+                            log(err);
+                            db.putData(`insert into errLog (type, title, message, timestamp) values(?,?,?,?)  ON DUPLICATE KEY UPDATE message=VALUES(message), timestamp=VALUES(timestamp)`,["tmdbid",`movieid:${i}`,"tmdbid not found",now])
+                            log(err.config.url);
+                        }
                     }
+                    for(let k of responselist){
+                        if(k.belongs_to_collection !== null){
+                            let url = `https://api.themoviedb.org/3/collection/${k.belongs_to_collection.id}?language=ko-KR`
+                        try{
+                            const collection = await axios({
+                                method: 'get',
+                                url: url,
+                                responseType: 'json',
+                                headers:{
+                                    accept: 'application/json',
+                                    Authorization: process.env.tmdbkey
+                                  }
+                            })
+                            k.belongs_to_collection = collection.data
+                        }
+                        catch(err){
+                            log(err.config.url)
+                        }
+                        }
+                    }
+                    res.status(200).json({
+                        "content-type": "json",
+                        "result_code": 200,
+                        "recommendation": responselist,
+                        recCsims
+    
+                    });
                 }
-                for(let k of responselist){
-                    if(k.belongs_to_collection !== null){
-                        let url = `https://api.themoviedb.org/3/collection/${k.belongs_to_collection.id}?language=ko-KR`
-                    try{
-                        const collection = await axios({
-                            method: 'get',
-                            url: url,
-                            responseType: 'json',
-                            headers:{
-                                accept: 'application/json',
-                                Authorization: process.env.tmdbkey
-                              }
-                        })
-                        k.belongs_to_collection = collection.data
-                    }
-                    catch(err){
-                        log(err.config.url)
-                    }
-                    }
-                }
-                res.status(200).json({
-                    "content-type": "json",
-                    "result_code": 200,
-                    "recommendation": responselist
-                });
             }
             else{
                 let url = `https://api.themoviedb.org/3/search/movie?query=${title}&include_adult=false&language=en-US&page=1`

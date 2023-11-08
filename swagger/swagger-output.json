@@ -1626,6 +1626,133 @@
           }
         }
       }
+    },"/admin/moviecsv": {
+      "get": {
+        "tags":["ADMIN"],
+        "description": "관리자 페이지에서 학습 전 기준을 정하기 위해 moviecsv 조회 api",
+        "parameters": [
+          
+          {
+            "name": "options",
+            "in": "path",
+            "description":"options가 selectAll일 경우 리스트를 모두 조회하고 \n 다른 경우엔 options로 디비에서 title로 검색합니다",
+            "example":"toy story",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 200
+                },
+                "result_req": {
+                  "example": "request success"
+                },
+                "moviecsv": {
+                  "example": [
+                    {
+                        "movieID": 1,
+                        "title": "Toy Story (1995)",
+                        "genre": "Adventure,Animation,Children,Comedy,Fantasy",
+                        "releaseDate": "1995"
+                    },
+                    {
+                        "movieID": 3114,
+                        "title": "Toy Story 2 (1999)",
+                        "genre": "Adventure,Animation,Children,Comedy,Fantasy",
+                        "releaseDate": "1999"
+                    },
+                    {
+                        "movieID": 78499,
+                        "title": "Toy Story 3 (2010)",
+                        "genre": "Adventure,Animation,Children,Comedy,Fantasy,IMAX",
+                        "releaseDate": "2010"
+                    },
+                    {
+                        "movieID": 106022,
+                        "title": "Toy Story of Terror (2013)",
+                        "genre": "Animation,Children,Comedy",
+                        "releaseDate": "2013"
+                    },
+                    {
+                        "movieID": 115875,
+                        "title": "Toy Story Toons: Hawaiian Vacation (2011)",
+                        "genre": "Adventure,Animation,Children,Comedy,Fantasy",
+                        "releaseDate": "2011"
+                    },
+                    {
+                        "movieID": 115879,
+                        "title": "Toy Story Toons: Small Fry (2011)",
+                        "genre": "Adventure,Animation,Children,Comedy,Fantasy",
+                        "releaseDate": "2011"
+                    },
+                    {
+                        "movieID": 120468,
+                        "title": "Toy Story Toons: Partysaurus Rex (2012)",
+                        "genre": "Animation,Children,Comedy",
+                        "releaseDate": "2012"
+                    },
+                    {
+                        "movieID": 120474,
+                        "title": "Toy Story That Time Forgot (2014)",
+                        "genre": "Animation,Children",
+                        "releaseDate": "2014"
+                    },
+                    {
+                        "movieID": 201588,
+                        "title": "Toy Story 4 (2019)",
+                        "genre": "Adventure,Animation,Children,Comedy",
+                        "releaseDate": "2019"
+                    }
+                ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 400
+                },
+                "result_req": {
+                  "example": "Bad Request"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 401
+                },
+                "result_req": {
+                  "example": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
     },"/admin/reccontent": {
       "get": {
         "tags":["ADMIN"],
@@ -1746,10 +1873,23 @@
         }
       }
     },"/admin/ai": {
-      "get": {
+      "post": {
         "tags":["ADMIN"],
         "description": "관리자 페이지에서 학습 요청 api",
         "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description":"기준으로 삼고자하는 영화를 체크하여 포스트해서 학습을 시작합니다.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "movieID": {
+                  "example": [1,2,3,4,5]
+                }
+              }
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -1764,7 +1904,7 @@
                   "example": 200
                 },
                 "result_req": {
-                  "example": "Training completed successfully"
+                  "example": "Training On"
                 }
               }
             }

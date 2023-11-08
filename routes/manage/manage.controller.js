@@ -85,7 +85,6 @@ let adminLogin = async (req,res)=>{
     }
 };
 
-  
 let adminLogout = async(req, res)=>{
     log("logout", req.session)
 
@@ -114,7 +113,7 @@ let adminLogout = async(req, res)=>{
          })
         }
 
-  }
+}
 
 let dashboard = async (req,res)=>{
     let query = `select count(contentsID) as number from specification;`
@@ -287,7 +286,7 @@ let userSearch = async(req,res)=>{
     }
 }
 
-  let userDelete = async(req,res)=>{
+let userDelete = async(req,res)=>{
     const userid = req.params.userid;
     if(req.session.admin){
         let sessionID = await db.getData(`select sessionID from users where userID="${userid}"`);
@@ -337,7 +336,6 @@ let userSearch = async(req,res)=>{
     }
 }
 
-
 let ottManagePost = async (req,res)=>{
     const { title,rawtitle,jwURL, disneyURL,wavveURL,watchaURL,casts,genre,jwimg,Offers,director,  } = req.body
     let query = `insert into specification (title ,rawtitle,jwURL, disneyURL,wavveURL,watchaURL,casts,genre,jwimg,Offers,director) values(?,?,?,?,?,?,?,?,?,?,?)`;
@@ -371,7 +369,6 @@ let ottManagePost = async (req,res)=>{
         })
     }
 };
-
 
 let errLogGet = async (req,res)=>{
     const options = req.params.options;
@@ -457,6 +454,82 @@ let errlogDelete = async (req,res)=>{
         })
     }
 };
+
+let moviecsvGet = async (req,res)=>{
+    const options = req.params.options;
+    let title;
+    let query
+    if(req.session.admin){
+
+        if(options === "selectAll"){
+            query = `SELECT movieID, title, genre, releaseDate FROM moviecsv`
+        }
+        else {
+            title = options;
+            query = `SELECT movieID, title, genre, releaseDate FROM moviecsv where title like ?`
+        }
+        try{
+            db.getData(query,`%${title}%`)
+            .then((rows)=>{
+                res.status(200).json({
+                    "content_type" : "json" ,
+                    "result_code" : 200 ,
+                    "result_req" : "request success" ,
+                    "moviecsv": rows,
+                })
+            });
+        }
+        catch{
+            res.status(400).json({
+                "content-type": "json",
+                "result_code": 400,
+                "result_req": "bad request"
+            });
+        }
+    }
+    else{
+        res.status(401).json({   
+            "content_type" : "json" ,
+            "result_code" : 401 ,
+            "result_req" : "Unauthorized" ,
+        })
+    }
+};
+
+// let moviecsvPost = async (req,res)=>{
+//     const {movieID} = req.body
+//     if(req.session.admin){
+//         if(movieID === ){
+//             title = options;
+//             query = `SELECT movieID, title, genre, releasDate FROM moviecsv where title like ?`
+//         }
+//         try{
+//             db.getData(query,`%${title}%`)
+//             .then((rows)=>{
+//                 res.status(200).json({
+//                     "content_type" : "json" ,
+//                     "result_code" : 200 ,
+//                     "result_req" : "request success" ,
+//                     "err_logs": rows,
+//                 })
+//             });
+//         }
+//         catch{
+//             res.status(400).json({
+//                 "content-type": "json",
+//                 "result_code": 400,
+//                 "result_req": "bad request"
+//             });
+//         }
+//     }
+//     else{
+//         res.status(401).json({   
+//             "content_type" : "json" ,
+//             "result_code" : 401 ,
+//             "result_req" : "Unauthorized" ,
+//         })
+//     }
+// };
 
 let crawl = async (req,res)=>{
     const {url} = req.body;
@@ -565,11 +638,48 @@ let download = async(req,res)=>{
               }
         
               console.log(`Python script output: ${stdout}`);
-              res.status(200).json({   
-                "content_type" : "json" ,
-                "result_code" : 200 ,
-                "result_req" : "File processed successfully" ,
-            })
+              console.log("File processed successfully")
+              
+                
+            const moviescsv = fs.readFileSync("downloads/ml-latest/movies.csv");
+            const links4 = fs.readFileSync("downloads/ml-latest/links.csv");
+            let movielinks = moviescsv.toString().split('\n');
+            let list = links4.toString().split('\n');
+
+            let query = `insert into moviecsv (movieid, title, genre, releaseDate, imdbid, tmdbid) values(?,?,?,?,?,?) ON DUPLICATE KEY UPDATE title=VALUES(title),genre=VALUES(genre),releaseDate=VALUES(releaseDate),imdbid=VALUES(imdbid),tmdbid=VALUES(tmdbid)`
+            try{
+                for(let i in movielinks){
+                    if(movielinks[i].split(',')[0] !== "0" && movielinks[i].split(',')[0] !== ''){
+                        let title = movielinks[i].split(",");
+                        let movieID = title.shift();
+                        let genre = title.pop().replace(/\n|\r|\s*/g, '');
+                        let year = title.join(",").replace(/"/g,'').slice(-5,-1);
+                        let imdbid = list[i].split(",")[1];
+                        let tmdbid = list[i].split(",")[2].replace(/\n|\r|\s*/g, ''); 
+                        title = title.join(",").replace(/"/g,'')
+                        genre = genre.split("|").join(",")
+
+
+                        if(Number(movieID)){
+                            db.putData(query,[Number(movieID),title,genre,year,imdbid,tmdbid])
+                            .then(rows=>{
+                            });
+                        }
+                    }     
+                }
+                res.status(200).json({
+                    "content-type": "json",
+                    "result_code": 200,
+                    "result_req": "post done"
+                });
+            }catch(err){
+                log(err);
+                res.status(400).json({
+                    "content-type": "json",
+                    "result_code": 400,
+                    "result_req": "bad request"
+                });
+            }
             });
 
           } catch (error) {
@@ -591,8 +701,10 @@ let download = async(req,res)=>{
 }
 
 let train = async(req,res)=>{
+    const movieID = req.body.movieID;
+    const out = fs.openSync('./out.log', 'a');
+    const err = fs.openSync('./err.log', 'a');
     const pythonPath = path.join(__dirname, "ml",'vacs.py');
-    
     if(req.session.admin){
         
         res.status(200).json({   
@@ -600,7 +712,7 @@ let train = async(req,res)=>{
             "result_code" : 200 ,
             "result_req" : "Training On" ,
         })
-        const pythonProcess = spawn('python', [pythonPath],{
+        const pythonProcess = spawn('python', [pythonPath, movieID],{
             detached:true,
             stdio: ['ignore',out,err],
         });
@@ -617,14 +729,13 @@ let train = async(req,res)=>{
     }
 }
 
-
 let dispatch = async(req,res)=>{
     const pythonPath = path.join(__dirname, "ml",'dispatch.py');
     const pickle = path.join(__dirname, "../ml",'encoded_250000.pickle');
     const out = fs.openSync('./out.log', 'a');
     const err = fs.openSync('./err.log', 'a');
-    let start = await db.getData(`select count(recc) as number from moviecsv`);
-    start = Number(start[0].number);
+    let start = await db.getData(`select count(recCsims) as number from moviecsv`);
+    start = Number(start[0].number) + 1 ;
     if(req.session.admin){
         res.status(200).json({   
             "content_type" : "json" ,
@@ -725,4 +836,4 @@ let stopDispatch = async(req,res)=>{
     }
 }
 
-export {manageGet,userSearch, userDelete, adminLogin, adminLogout,dashboard,monitorDate,monitorTime, contentsSearch, updateRow, errLogGet,errlogDelete ,ottManagePost, crawl,download, train, dispatch,stopTrain,stopDispatch};
+export {manageGet,userSearch, userDelete, adminLogin, adminLogout,dashboard,monitorDate,monitorTime, contentsSearch, updateRow, errLogGet,errlogDelete, moviecsvGet, ottManagePost, crawl,download, train, dispatch,stopTrain,stopDispatch};
