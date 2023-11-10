@@ -76,3 +76,9 @@
 #form-container{
     margin-left: auto;
 }
+
+#bottomWrapper{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

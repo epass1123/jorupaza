@@ -137,7 +137,108 @@
                 </div>
             </div>
             <!-- page title area end -->
+            
             <div class="main-content-inner">
+                <div class="sales-report-area sales-style-two">
+                    <div class="row">
+                        <div class="col-xl-4 col-ml-4 col-md-6 mt-5">
+                            <div class="single-report">
+                                <div class="s-sale-inner mb-3">
+                                    <div class="s-report-title justify-content-between" style="display: flex; align-items: center;" >
+                                        <div style="display: flex; justify-content: center; align-items: center;">
+                                            <img src="/views/img/netflix.png" style="width: 2rem; height: 2rem;">
+                                        <div style="margin-top: 20px;" class="header-title ">넷플릭스</div>
+                                        </div>
+                                        
+                                        <select class="custome-select border-0 pr-3">
+                                            <option selected="">크롤링 개수</option>
+                                            <option value="0">오류 개수</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <canvas id="coin_sales4" height="100"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-ml-4 col-md-6 mt-5">
+                            <div class="single-report">
+                                <div class="s-sale-inner mb-3">
+                                    <div class="s-report-title justify-content-between" style="display: flex; align-items: center;" >
+                                        <div style="display: flex; justify-content: center; align-items: center;">
+                                            <img src="/views/img/disney.png" style="width: 2rem; height: 2rem;">
+                                        <div style="margin-top: 20px;" class="header-title ">디즈니</div>
+                                        </div>
+                                        
+                                        <select class="custome-select border-0 pr-3">
+                                            <option selected="">크롤링 개수</option>
+                                            <option value="0">오류 개수</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <canvas id="coin_sales41" height="100"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-ml-4 col-md-6 mt-5">
+                            <div class="single-report">
+                                <div class="s-sale-inner mb-3">
+                                    <div class="s-report-title justify-content-between" style="display: flex; align-items: center;" >
+                                        <div style="display: flex; justify-content: center; align-items: center;">
+                                            <img src="/views/img/wavve.png" style="width: 2rem; height: 2rem;">
+                                        <div style="margin-top: 20px;" class="header-title ">웨이브</div>
+                                        </div>
+                                        
+                                        <select class="custome-select border-0 pr-3">
+                                            <option selected="">크롤링 개수</option>
+                                            <option value="0">오류 개수</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <canvas id="coin_sales42" height="100"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-ml-4 col-md-6 mt-5">
+                            <div class="single-report">
+                                <div class="s-sale-inner mb-3">
+                                    <div class="s-report-title justify-content-between" style="display: flex; align-items: center;" >
+                                        <div style="display: flex; justify-content: center; align-items: center;">
+                                            <img src="/views/img/watcha.png" style="width: 2rem; height: 2rem;">
+                                        <div style="margin-top: 20px;" class="header-title ">왓차</div>
+                                        </div>
+                                        
+                                        <select class="custome-select border-0 pr-3">
+                                            <option selected="">크롤링 개수</option>
+                                            <option value="0">오류 개수</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <canvas id="coin_sales43" height="100"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-ml-4 col-md-6 mt-5">
+                            <div class="single-report">
+                                <div class="s-sale-inner mb-3">
+                                    <div class="s-report-title" style="display: flex; align-items: center;">
+                                        <img src="/views/img/youtube.png" style="width: 2rem; height: 2rem;">
+                                        <div style="margin-top: 20px;" class="header-title ">유튜브</div>
+                                        
+                                    </div>
+                                </div>
+                                <canvas id="coin_sales44" height="100"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-ml-4 col-md-6 mt-5">
+                            <div class="single-report">
+                                <div class="s-sale-inner mb-3">
+                                    <div class="s-report-title" style="display: flex; align-items: center;">
+                                        <img src="/views/img/twitch.png" style="width: 2rem; height: 2rem;">
+                                        <div style="margin-top: 20px;" class="header-title ">트위치</div>
+                                        
+                                    </div>
+                                </div>
+                                <canvas id="coin_sales45" height="100"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- sales report area start -->
                 <div class="sales-report-area mt-5 mb-5">
                     <div class="row">
@@ -183,25 +284,17 @@
                 <!-- sales report area end -->
                 <!-- overview area start -->
                 <div class="row">
-                    <div class="col-xl-9 col-lg-8">
+                    <div class="col-xl-12 col-lg-12">
                         <div class="card">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <h4 class="header-title mb-0">Overview</h4>
+                                    <h4 class="header-title mb-0">트래픽</h4>
                                     <select class="custome-select border-0 pr-3">
                                         <option selected>Last 24 Hours</option>
                                         <option value="0">01 July 2018</option>
                                     </select>
                                 </div>
                                 <div id="verview-shart"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-lg-4 coin-distribution">
-                        <div class="card h-full">
-                            <div class="card-body">
-                                <h4 class="header-title mb-0">Coin Distribution</h4>
-                                <div id="coin_distribution"></div>
                             </div>
                         </div>
                     </div>
@@ -691,6 +784,8 @@
     <script src="/views/assets/js/line-chart.js"></script>
     <!-- all pie chart -->
     <script src="/views/assets/js/pie-chart.js"></script>
+    <!-- all bar chart activation -->
+    <script src="/views/assets/js/bar-chart.js"></script>
     <!-- others plugins -->
     <script src="/views/assets/js/plugins.js"></script>
     <script src="/views/assets/js/scripts.js"></script>

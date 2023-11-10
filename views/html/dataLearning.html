@@ -28,6 +28,7 @@
     <script src="/views/js/main.js"></script>
     <!-- modernizr css -->
     <script src="/views/assets/js/vendor/modernizr-2.8.3.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
 </head>
 
 <body>
@@ -35,9 +36,7 @@
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
     <!-- preloader area start -->
-    <div id="preloader">
-        <div class="loader"></div>
-    </div>
+    
     <!-- preloader area end -->
     <!-- page container area start -->
     <div class="page-container">
@@ -89,9 +88,11 @@
         <!-- sidebar menu area end -->
         <!-- main content area start -->
         <div class="main-content">
+            
             <!-- header area start -->
             <div class="header-area">
                 <div class="row align-items-center">
+                    
                     <!-- nav and search button -->
                     <div class="col-md-6 col-sm-8 clearfix">
                         <div class="nav-btn pull-left">
@@ -144,7 +145,82 @@
             </div>
             <!-- page title area end -->
             <div class="main-content-inner">
-                
+                <div class="row">
+                    <div class="col-12 mt-5">
+                        <div class="card">
+                                <div class="card-body">     
+                                    <div class="explainText1">
+                                        *데이터 다운로드 및 전처리 요청
+                                    </div>  
+                                    <div class="explainText2">
+                                        *데이터 선택 후 학습 요청
+                                    </div>  
+                                    <div class="explainText3">
+                                        *배포 요청
+                                    </div>  
+                                <div class="requestWrapper">
+                                    <div class="requestImgWrapper" onclick="dataDownload()">
+                                        <img class="requestImg1" src="/views/img/downloadRequest.png" alt="downloadRequest" >
+                                        <img class="loader1" style="display: none;" src="/views/img/loading.gif">
+                                    </div>
+                                    <div class="requestImgWrapper" onclick="learningRequest()">
+                                        <img class="requestImg2" src="/views/img/learningRequest.png" alt="downloadRequest" >
+                                        <img class="loader2" style="display: none;" src="/views/img/loading.gif">
+                                    </div>
+                                    <div class="requestImgWrapper" onclick="dataShare()"> 
+                                        <img class="requestImg3" src="/views/img/modelShare.png" alt="downloadRequest" >
+                                        <img class="loader3" style="display: none;" src="/views/img/loading.gif">
+                                    </div>
+                                    <div class="requestImgWrapper" onclick="learningProcess()">
+                                        <img class="requestImg2" src="/views/img/learningRequest.png" alt="downloadRequest" >
+                                        <img class="loader2" style="display: none;" src="/views/img/loading.gif">
+                                    </div>
+                                </div>
+                                
+                                <div class="single-table">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover text-center">
+                                            <thead class="text-uppercase">
+                                                <tr>
+                                                    <th scope="col"><input type="checkbox" id="cbx_chkAll" onclick="allCheck()"></th>
+                                                    <th scope="col">무비아이디</th>
+                                                    <th scope="col">제목 </th>
+                                                    <th scope="col">장르</th>
+                                                    <th scope="col">개봉년도</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <div id="paginationWrapper">
+                                    <div id="form-container" >
+                                        <!--<input type="submit" id="searchsubmit" value="" />-->
+                                            <div id="searchtext">
+                                                    <input type="text" size="40" id="Inputs" class="search-input" value="" name="s" id="s" placeholder="Title..." oninput="search()" onkeydown="if( event.keyCode == 13 ){search();}">
+                                            </div>
+                                    </div>
+                                    <div class="pagination" id="pagination">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="sales-report-area mt-5 mb-5">
                     <div class="row">
                         <div class="col-xl-4 col-ml-4 col-mdl-4 col-sm-6 mt-5">
@@ -205,7 +281,7 @@
                 </div>
             </div>
         </div>
-        <img class="loader" src="/views/img/loading.gif">
+        
         <!-- main content area end -->
         <!-- footer area start-->
         <footer>

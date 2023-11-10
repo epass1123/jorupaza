@@ -148,16 +148,30 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="errorLogWrapper">
-                                    <div class="header-title" id="OTTText">에러로그 조회</div>
-
+                                    <div class="rightUp">
+                                        <div class="header-title" id="OTTText">에러로그 조회</div>
+                                        <div id="form-container" >
+                                            <!--<input type="submit" id="searchsubmit" value="" />-->
+                                                <button class="search-submit-button" type="button" onclick="search()" href="javascript:void(0)">
+                                                    <i class="fa fa-search"></i>
+                                                </button>
+                                                <div id="searchtext">
+                                                        <input type="text" size="40" id="searchInput" class="search-input" value="" name="s" id="s" placeholder="title..." onkeydown="if( event.keyCode == 13 ){search();}">
+                                                </div>
+                                        </div>
+                                    </div>
+                                    
                                     <div class="errorLogTableWrapper">
                                         <table class="table text-center">
                                             <thead class="text-uppercase bg-secondary">
                                                 <tr class="text-white">
+                                                    <th scope="col"><input type="checkbox" id="cbx_chkAll" onclick="allCheck()"></th>
+
+                                                    <th scope="col">시간</th>
                                                     <th >유형</th>
                                                     <th scope="col">제목</th>
                                                     <th scope="col">에러 메시지</th>
-                                                    <th scope="col">시간</th>
+                                                    
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -191,9 +205,14 @@
                                                 </tr>
                                             </tbody>
                                         </table>
+                                        <div id="paginationWrapper">
+                                            <div class="pagination" id="pagination">
+                                            </div>
+                                        </div>
                                     </div>
                                     
                                   </div>
+                                  
                             </div>
                         </div>
                     </div>

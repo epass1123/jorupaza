@@ -1,74 +1,77 @@
-<!doctype html>
-<html class="no-js" lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Login</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" type="image/png" href="assets/images/icon/favicon.ico">
-    <link rel="stylesheet" href="/views/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/views/assets/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/views/assets/css/themify-icons.css">
-    <link rel="stylesheet" href="/views/assets/css/metisMenu.css">
-    <link rel="stylesheet" href="/views/assets/css/owl.carousel.min.css">
-    <link rel="stylesheet" href="/views/assets/css/slicknav.min.css">
-    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
-    <link rel="stylesheet" href="/views/assets/css/typography.css">
-    <link rel="stylesheet" href="/views/assets/css/default-css.css">
-    <link rel="stylesheet" href="/views/assets/css/styles.css">
-    <link rel="stylesheet" href="/views/assets/css/responsive.css">
-    <script src="/views/assets/js/vendor/modernizr-2.8.3.min.js"></script>
+<!DOCTYPE html>
+<html :class="{ 'theme-dark': dark }" x-data="data()" lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Windmill Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/views/css/tailwind.output.css" />
     <script src="/views/js/index.js"></script>
-</head>
-
-<body>
-    <div id="preloader">
-        <div class="loader"></div>
-    </div>
-    <div class="login-area login-s2">
-        <div class="container">
-            <div class="login-box ptb--100">
-                <form onsubmit="checkLogin(); event.preventDefault(); " id="loginForm">
-                    <div class="login-form-head">
-                        <h4>Sign In</h4>
-                        <p>관리자 사이트</p>
-                    </div>
-                    <div class="login-form-body">
-                        <div class="form-gp">
-                            <label for="exampleInputEmail1">ID</label>
-                            <input type="id" id="exampleInputEmail1">
-                            <i class="ti-email"></i>
-                        </div>
-                        <div class="form-gp">
-                            <label for="exampleInputPassword1">Password</label>
-                            <input type="password" id="exampleInputPassword1">
-                            <i class="ti-lock"></i>
-                        </div>
-                        <div class="row mb-4 rmber-area">
-                            <div class="col-6">
-                                <div class="custom-control custom-checkbox mr-sm-2">
-                                    <input type="checkbox" class="custom-control-input" id="customControlAutosizing">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="submit-btn-area">
-                            <button id="form_submit"  type="submit">Submit <i class="ti-arrow-right"></i></button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
     <script src="/views/assets/js/vendor/jquery-2.2.4.min.js"></script>
-    <script src="/views/assets/js/popper.min.js"></script>
-    <script src="/views/assets/js/bootstrap.min.js"></script>
-    <script src="/views/assets/js/owl.carousel.min.js"></script>
-    <script src="/views/assets/js/metisMenu.min.js"></script>
-    <script src="/views/assets/js/jquery.slimscroll.min.js"></script>
-    <script src="/views/assets/js/jquery.slicknav.min.js"></script>
-    <script src="/views/assets/js/plugins.js"></script>
-    <script src="/views/assets/js/scripts.js"></script>
-</body>
 
+  </head>
+  <body>
+    <div class="flex items-center min-h-screen p-6 bg-gray-50 dark:bg-gray-900">
+      <div
+        class="flex-1 h-full max-w-4xl mx-auto overflow-hidden bg-white rounded-lg shadow-xl dark:bg-gray-800"
+      >
+        <div class="flex flex-col overflow-y-auto md:flex-row">
+          <div class="h-32 md:h-auto md:w-1/2 flex justify-center items-center">
+            <img
+              aria-hidden="true"
+              class="object-cover w-full h-full dark:hidden"
+              src="/views/img/movie.png"
+              alt="Office"
+              style="height: 300px; width: 300px;"
+            />
+          </div>
+          <div class="flex items-center justify-center p-6 sm:p-12 md:w-1/2">
+            <div class="w-full">
+              <h1
+                class="mb-4 text-xl font-semibold text-gray-700 dark:text-gray-200"
+              >
+                관리자 로그인
+              </h1>
+              <label class="block text-sm">
+                <span class="text-gray-700 dark:text-gray-400">아이디</span>
+                <input
+                  class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="ID"
+                  id="exampleInputEmail1"
+                />
+              </label>
+              <label class="block mt-4 text-sm">
+                <span class="text-gray-700 dark:text-gray-400">비밀번호</span>
+                <input
+                  class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="***************"
+                  type="password"
+                  id="exampleInputPassword1"
+                  onkeydown="if( event.keyCode == 13 ){checkLogin();}"
+                />
+              </label>
+
+              <!-- You should use a button here, as the anchor is only used for the example  -->
+              <a
+                class="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+                onclick="checkLogin()" 
+              >
+                로그인
+              </a>
+
+              <hr class="my-8" />
+
+              
+              
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

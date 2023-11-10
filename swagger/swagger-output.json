@@ -1086,6 +1086,18 @@
                 },
                 "CrawlError": {
                   "example": "2"
+                },
+                "disneyNum": {
+                  "example": "2011"
+                },
+                "watchaNum": {
+                  "example": "10263"
+                },
+                "wavveNum": {
+                  "example": "9537"
+                },
+                "netflixNum": {
+                  "example": "6191"
                 }
               }
             }
@@ -1753,11 +1765,19 @@
           }
         }
       }
-    },"/admin/reccontent": {
+    },"/admin/reccontent/{options}": {
       "get": {
         "tags":["ADMIN"],
         "description": "관리자 페이지에서 배포 요청 api",
         "parameters": [
+          {
+            "name": "options",
+            "example":"100/200/300/400/500/600",
+            "description":"options가 100일경우 pickle이 encodings_100_small이 \n 200일경우 encodings_200_small이 됩니다.",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
         ],
         "responses": {
           "200": {
@@ -1981,6 +2001,64 @@
                 },
                 "result_req": {
                   "example": "Error stopping train process"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 401
+                },
+                "result_req": {
+                  "example": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },"/admin/aiprocess": {
+      "get": {
+        "tags":["ADMIN"],
+        "description": "관리자 페이지에서 실시간 history.txt, result.txt 요청 api",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 200
+                },
+                "result_req": {
+                  "example": "OK"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content_type": {
+                  "example":  "json"
+                },
+                "result_code": {
+                  "example": 400
+                },
+                "result_req": {
+                  "example": "Error during training"
                 }
               }
             }

@@ -112,7 +112,7 @@ $(document).ready(function() {
     var searchText= document.querySelector("#crawlingInput").value;
 
     $.ajax({
-      url: "http://ceprj.gachon.ac.kr:60002/admin/user/"+searchText,
+      url: "http://ceprj.gachon.ac.kr:60002/admin/user/selectAll",
       method: "GET",
       complete: function(response) {
         console.log(response);
@@ -121,7 +121,7 @@ $(document).ready(function() {
           displayPage(dataArray);
         createPagination(dataArray);
         } else {
-            
+            alert("불러오기 실패")
           return;
         }
       }

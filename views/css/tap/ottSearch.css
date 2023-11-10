@@ -53,12 +53,7 @@
 
 
 
-  .editBtn{
-    width: 50px;
-    border: 1px solid rgb(208, 208, 249);
-    background-color: rgb(157, 203, 247);
 
-}
 
 .popup-container {
     display: none;
@@ -171,4 +166,7 @@
         height: 50px;
     }
 
- 
+    #paginationWrapper {
+        display: flex;
+        justify-content: flex-end;
+      }

@@ -184,6 +184,50 @@ var list=[]
     }
     console.log(list)
 /*--------------  overview-chart start ------------*/
+// if ($('#verview-shart').length) {
+//     var myConfig = {
+//         "type": "line",
+
+//         "scale-x": { //X-Axis
+//             "labels": ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"],
+//             "label": {
+//                 "font-size": 14,
+//                 "offset-x": 0,
+//             },
+//             "item": { //Scale Items (scale values or labels)
+//                 "font-size": 10,
+//             },
+//             "guide": { //Guides
+//                 "visible": false,
+//                 "line-style": "solid", //"solid", "dotted", "dashed", "dashdot"
+//                 "alpha": 1
+//             }
+//         },
+//         "plot": { "aspect": "spline" },
+//         "series": [{
+//                 "values": [20, 25, 30, 35, 45, 40, 40, 35, 25, 17, 40, 50],
+//                 "line-color": "#F0B41A",
+//                 /* "dotted" | "dashed" */
+//                 "line-width": 5 /* in pixels */ ,
+//                 "marker": { /* Marker object */
+//                     "background-color": "#D79D3B",
+//                     /* hexadecimal or RGB value */
+//                     "size": 5,
+//                     /* in pixels */
+//                     "border-color": "#D79D3B",
+//                     /* hexadecimal or RBG value */
+//                 }
+//             }
+//         ]
+//     };
+
+//     zingchart.render({
+//         id: 'verview-shart',
+//         data: myConfig,
+//         height: "100%",
+//         width: "100%"
+//     });
+// }
 if ($('#verview-shart').length) {
     
     var list2=[]
@@ -248,7 +292,6 @@ if ($('#verview-shart').length) {
     
     
 }
-
 /*--------------  overview-chart END ------------*/
 
 /*--------------  market status chart start ------------*/

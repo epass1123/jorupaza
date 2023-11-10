@@ -11250,6 +11250,6 @@ a{
   display: flex;
 }
 
-#title{
-  margin-top: 20px;
+.head-title{
+  margin-top: 10px;
 }

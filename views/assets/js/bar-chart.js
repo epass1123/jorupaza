@@ -60,6 +60,311 @@ if ($('#coin_sales4').length) {
         }
     });
 }
+if ($('#coin_sales41').length) {
+    var ctx = document.getElementById("coin_sales41").getContext('2d');
+    var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'bar',
+        // The data for our dataset
+        data: {
+            labels: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"],
+            datasets: [{
+                label: "Sales",
+                data: [250, 320, 380, 330, 420, 250, 180, 250, 100, 300],
+                backgroundColor: [
+                    '#8416fe',
+                    '#3a3afb',
+                    '#8416fe',
+                    '#3a3afb',
+                    '#8416fe',
+                    '#3a3afb',
+                    '#8416fe',
+                    '#3a3afb',
+                    '#3a3afb',
+                    '#8416fe'
+                ]
+            }]
+        },
+        // Configuration options go here
+        options: {
+            legend: {
+                display: false
+            },
+            animation: {
+                easing: "easeInOutBack"
+            },
+            scales: {
+                yAxes: [{
+                    display: !1,
+                    ticks: {
+                        fontColor: "#cccccc",
+                        beginAtZero: !0,
+                        padding: 0
+                    },
+                    gridLines: {
+                        zeroLineColor: "transparent"
+                    }
+                }],
+                xAxes: [{
+                    display: !1,
+                    gridLines: {
+                        zeroLineColor: "transparent",
+                        display: !1
+                    },
+                    ticks: {
+                        beginAtZero: !0,
+                        padding: 0,
+                        fontColor: "#cccccc"
+                    }
+                }]
+            }
+        }
+    });
+}
+if ($('#coin_sales42').length) {
+    var ctx = document.getElementById("coin_sales42").getContext('2d');
+    var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'bar',
+        // The data for our dataset
+        data: {
+            labels: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"],
+            datasets: [{
+                label: "Sales",
+                data: [250, 320, 380, 330, 420, 250, 180, 250, 100, 300],
+                backgroundColor: [
+                    '#8416fe',
+                    '#3a3afb',
+                    '#8416fe',
+                    '#3a3afb',
+                    '#8416fe',
+                    '#3a3afb',
+                    '#8416fe',
+                    '#3a3afb',
+                    '#3a3afb',
+                    '#8416fe'
+                ]
+            }]
+        },
+        // Configuration options go here
+        options: {
+            legend: {
+                display: false
+            },
+            animation: {
+                easing: "easeInOutBack"
+            },
+            scales: {
+                yAxes: [{
+                    display: !1,
+                    ticks: {
+                        fontColor: "#cccccc",
+                        beginAtZero: !0,
+                        padding: 0
+                    },
+                    gridLines: {
+                        zeroLineColor: "transparent"
+                    }
+                }],
+                xAxes: [{
+                    display: !1,
+                    gridLines: {
+                        zeroLineColor: "transparent",
+                        display: !1
+                    },
+                    ticks: {
+                        beginAtZero: !0,
+                        padding: 0,
+                        fontColor: "#cccccc"
+                    }
+                }]
+            }
+        }
+    });
+}
+if ($('#coin_sales43').length) {
+    var ctx = document.getElementById("coin_sales43").getContext('2d');
+    var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'bar',
+        // The data for our dataset
+        data: {
+            labels: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"],
+            datasets: [{
+                label: "Sales",
+                data: [250, 320, 380, 330, 420, 250, 180, 250, 100, 300],
+                backgroundColor: [
+                    '#8416fe',
+                    '#3a3afb',
+                    '#8416fe',
+                    '#3a3afb',
+                    '#8416fe',
+                    '#3a3afb',
+                    '#8416fe',
+                    '#3a3afb',
+                    '#3a3afb',
+                    '#8416fe'
+                ]
+            }]
+        },
+        // Configuration options go here
+        options: {
+            legend: {
+                display: false
+            },
+            animation: {
+                easing: "easeInOutBack"
+            },
+            scales: {
+                yAxes: [{
+                    display: !1,
+                    ticks: {
+                        fontColor: "#cccccc",
+                        beginAtZero: !0,
+                        padding: 0
+                    },
+                    gridLines: {
+                        zeroLineColor: "transparent"
+                    }
+                }],
+                xAxes: [{
+                    display: !1,
+                    gridLines: {
+                        zeroLineColor: "transparent",
+                        display: !1
+                    },
+                    ticks: {
+                        beginAtZero: !0,
+                        padding: 0,
+                        fontColor: "#cccccc"
+                    }
+                }]
+            }
+        }
+    });
+}
+if ($('#coin_sales44').length) {
+    var ctx = document.getElementById("coin_sales44").getContext('2d');
+    var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'bar',
+        // The data for our dataset
+        data: {
+            labels: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"],
+            datasets: [{
+                label: "Sales",
+                data: [250, 320, 380, 330, 420, 250, 180, 250, 100, 300],
+                backgroundColor: [
+                    '#8416fe',
+                    '#3a3afb',
+                    '#8416fe',
+                    '#3a3afb',
+                    '#8416fe',
+                    '#3a3afb',
+                    '#8416fe',
+                    '#3a3afb',
+                    '#3a3afb',
+                    '#8416fe'
+                ]
+            }]
+        },
+        // Configuration options go here
+        options: {
+            legend: {
+                display: false
+            },
+            animation: {
+                easing: "easeInOutBack"
+            },
+            scales: {
+                yAxes: [{
+                    display: !1,
+                    ticks: {
+                        fontColor: "#cccccc",
+                        beginAtZero: !0,
+                        padding: 0
+                    },
+                    gridLines: {
+                        zeroLineColor: "transparent"
+                    }
+                }],
+                xAxes: [{
+                    display: !1,
+                    gridLines: {
+                        zeroLineColor: "transparent",
+                        display: !1
+                    },
+                    ticks: {
+                        beginAtZero: !0,
+                        padding: 0,
+                        fontColor: "#cccccc"
+                    }
+                }]
+            }
+        }
+    });
+}
+if ($('#coin_sales45').length) {
+    var ctx = document.getElementById("coin_sales45").getContext('2d');
+    var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'bar',
+        // The data for our dataset
+        data: {
+            labels: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"],
+            datasets: [{
+                label: "Sales",
+                data: [250, 320, 380, 330, 420, 250, 180, 250, 100, 300],
+                backgroundColor: [
+                    '#8416fe',
+                    '#3a3afb',
+                    '#8416fe',
+                    '#3a3afb',
+                    '#8416fe',
+                    '#3a3afb',
+                    '#8416fe',
+                    '#3a3afb',
+                    '#3a3afb',
+                    '#8416fe'
+                ]
+            }]
+        },
+        // Configuration options go here
+        options: {
+            legend: {
+                display: false
+            },
+            animation: {
+                easing: "easeInOutBack"
+            },
+            scales: {
+                yAxes: [{
+                    display: !1,
+                    ticks: {
+                        fontColor: "#cccccc",
+                        beginAtZero: !0,
+                        padding: 0
+                    },
+                    gridLines: {
+                        zeroLineColor: "transparent"
+                    }
+                }],
+                xAxes: [{
+                    display: !1,
+                    gridLines: {
+                        zeroLineColor: "transparent",
+                        display: !1
+                    },
+                    ticks: {
+                        beginAtZero: !0,
+                        padding: 0,
+                        fontColor: "#cccccc"
+                    }
+                }]
+            }
+        }
+    });
+}
 
 /*--------------  coin_sales4 bar chart End ------------*/
 

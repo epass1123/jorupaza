@@ -85,3 +85,8 @@
         table-layout: fixed;
   width: 300px;
       }
+
+      #paginationWrapper {
+        display: flex;
+        justify-content: flex-end;
+      }

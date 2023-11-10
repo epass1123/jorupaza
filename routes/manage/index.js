@@ -25,8 +25,9 @@ router.get("/admin/mldata",controller.download);
 
 router.post("/admin/ai",controller.train);
 router.delete("/admin/ai",controller.stopTrain);
+router.get("/admin/aiprocess",controller.trainProcess);
 
-router.get("/admin/reccontent",controller.dispatch);
+router.get("/admin/reccontent/:options",controller.dispatch);
 router.delete("/admin/reccontent",controller.stopDispatch);
 
 router.get('/admin/errlog/:options',controller.errLogGet);

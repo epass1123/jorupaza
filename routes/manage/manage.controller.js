@@ -6,6 +6,8 @@ import { crawlData } from '../../utils/crawl.js';
 import fs from "fs";
 import axios from 'axios';
 import {exec, spawn} from 'node:child_process';
+import chokidar from 'chokidar';
+
 import unzipper from "unzipper";
 
 const __dirname = path.resolve();
@@ -118,18 +120,30 @@ let adminLogout = async(req, res)=>{
 let dashboard = async (req,res)=>{
     let query = `select count(contentsID) as number from specification;`
     let contentsNum = await db.getData(query);
+    let disneyNum = await db.getData(`select count(Offers) as number from specification where Offers like '%disney%'`)
+    let watchaNum = await db.getData(`select count(Offers) as number from specification where Offers like '%watcha%'`)
+    let wavveNum = await db.getData(`select count(Offers) as number from specification where Offers like '%wavve%'`)
+    let netflixNum = await db.getData(`select count(Offers) as number from specification where Offers like '%netflix%'`)
     let CrawlSuccess = await db.getData(`select count(success) as number from crawlLog where success = 1`);
     let CrawlError= await db.getData(`select count(success) as number from crawlLog where success = 0`);
     contentsNum = String(contentsNum[0].number);
     CrawlSuccess = String(CrawlSuccess[0].number);
     CrawlError = String(CrawlError[0].number);
+    disneyNum = String(disneyNum[0].number);
+    watchaNum = String(watchaNum[0].number);
+    wavveNum = String(wavveNum[0].number);
+    netflixNum = String(netflixNum[0].number);
     res.status(200).json({
         "content_type" : "json" ,
         "result_code" : 200 ,
         "result_req" : "request success" ,
         contentsNum, 
         CrawlSuccess, 
-        CrawlError
+        CrawlError,
+        disneyNum,
+        watchaNum,
+        wavveNum,
+        netflixNum
     })
 }
 
@@ -587,7 +601,7 @@ let crawl = async (req,res)=>{
 }
 
 let download = async(req,res)=>{
-    const downloadUrl = 'https://files.grouplens.org/datasets/movielens/ml-latest.zip';
+    const downloadUrl = 'https://files.grouplens.org/datasets/movielens/ml-latest-small.zip';
     const downloadFolder = path.join(__dirname, 'downloads');
 
     if(req.session.admin){
@@ -596,27 +610,36 @@ let download = async(req,res)=>{
             if (!fs.existsSync(downloadFolder)) {
               fs.mkdirSync(downloadFolder);
             }
-        
+            const ml_latest_small = path.join(__dirname,'download','ml_latest_small');
+            let directory = fs.existsSync(ml_latest_small);
+            if(directory){
+                fs.unlinkSync(ml_latest_small);
+                log("renewed file")
+            }
             // 파일 다운로드
-            const response = await axios({
-              method: 'GET',
-              url: downloadUrl,
-              responseType: 'stream'
+            const response = await axios.get(downloadUrl, {
+                responseType: 'stream'
             });
+              
+    
+            await response.data.pipe(unzipper.Extract({ path: downloadFolder })).promise()
+            .then(()=>{
+                console.log('파일 압축 해제 성공')
+            })
+            .catch(err=>{
+                log(err);
+            })
         
-            // ZIP 파일을 다운로드하고 압축 해제하여 저장
-            await response.data.pipe(unzipper.Extract({ path: downloadFolder })).promise();
-        
-            const preprocessed = path.join(__dirname,'ml', 'preprocessed.csv');
-            const directory = fs.existsSync(preprocessed);
+            const preprocessed = path.join(__dirname,'ml-small', 'preprocessed_small.csv');
+            directory = fs.existsSync(preprocessed);
             if(directory){
                 fs.unlinkSync(preprocessed);
                 log("renewed file")
             }
 
-            const cwd = path.join(__dirname,'ml')
+            const cwd = path.join(__dirname,'ml-small')
             // Python 스크립트 실행 (preprocess.py)
-            const pythonProcess = exec('python3 preprocess.py', { cwd: cwd }, (error, stdout, stderr) => {
+            const pythonProcess = exec('python3 preprocess_small.py', { cwd: cwd }, (error, stdout, stderr) => {
                 log("Start Preprocess");
               if (error) {
                 console.error(`Error: ${error.message}`);
@@ -640,16 +663,14 @@ let download = async(req,res)=>{
               console.log(`Python script output: ${stdout}`);
               console.log("File processed successfully")
               
-                
-            const moviescsv = fs.readFileSync("downloads/ml-latest/movies.csv");
-            const links4 = fs.readFileSync("downloads/ml-latest/links.csv");
+            const moviescsv = fs.readFileSync("downloads/ml-latest-small/movies.csv");
+            const links4 = fs.readFileSync("downloads/ml-latest-small/links.csv");
             let movielinks = moviescsv.toString().split('\n');
             let list = links4.toString().split('\n');
-
             let query = `insert into moviecsv (movieid, title, genre, releaseDate, imdbid, tmdbid) values(?,?,?,?,?,?) ON DUPLICATE KEY UPDATE title=VALUES(title),genre=VALUES(genre),releaseDate=VALUES(releaseDate),imdbid=VALUES(imdbid),tmdbid=VALUES(tmdbid)`
             try{
                 for(let i in movielinks){
-                    if(movielinks[i].split(',')[0] !== "0" && movielinks[i].split(',')[0] !== ''){
+                    if(movielinks[i].split(',')[0] !== "\r" && movielinks[i].split(',')[0] !== ''){
                         let title = movielinks[i].split(",");
                         let movieID = title.shift();
                         let genre = title.pop().replace(/\n|\r|\s*/g, '');
@@ -704,7 +725,7 @@ let train = async(req,res)=>{
     const movieID = req.body.movieID;
     const out = fs.openSync('./out.log', 'a');
     const err = fs.openSync('./err.log', 'a');
-    const pythonPath = path.join(__dirname, "ml",'vacs.py');
+    const pythonPath = path.join(__dirname, "ml-small",'vacs_small.py');
     if(req.session.admin){
         
         res.status(200).json({   
@@ -729,18 +750,83 @@ let train = async(req,res)=>{
     }
 }
 
+let trainProcess = async(req,res)=>{
+    let io;
+    const files = ['ml-small/history.txt','ml-small/result.txt']
+    if(req.session.admin){
+        io = req.io;
+        // chokidar를 사용하여 디렉토리와 파일 감시
+        const watcher = chokidar.watch(files);
+
+        watcher.on('change', (filePath) => {
+            console.log(`파일 변경 감지: ${filePath}`);
+
+            const fileName = filePath.split('/').pop();
+            // 변경된 파일의 내용을 클라이언트에 전송
+            fs.readFile(filePath, 'utf-8', (err, data) => {
+            if (err) {
+                console.error('파일 읽기 오류:', err);
+            } else {
+                // 클라이언트에 파일 내용 전송
+                io.emit('fileUpdate', data);
+                io.emit('fileUpdate', `파일 ${fileName}에서 변경되었습니다.`);
+            }
+            });
+        });
+
+        watcher.on('error', (error) => {
+            console.error('파일 감시 중 오류 발생:', error);
+        });
+        res.status(200).json({
+            "content_type": "json",
+            "result_code": 200,
+            "result_req": "OK",
+        });
+    }
+    else{
+        res.status(401).json({   
+            "content_type" : "json" ,
+            "result_code" : 401 ,
+            "result_req" : "Unauthorized" ,
+        })
+    }
+   
+}
+
 let dispatch = async(req,res)=>{
-    const pythonPath = path.join(__dirname, "ml",'dispatch.py');
-    const pickle = path.join(__dirname, "../ml",'encoded_250000.pickle');
+    const options = req.params.options;
+    log(options)
+    const pythonPath = path.join(__dirname, "ml-small",'dispatch_small.py');
+    let pickle;
     const out = fs.openSync('./out.log', 'a');
     const err = fs.openSync('./err.log', 'a');
-    let start = await db.getData(`select count(recCsims) as number from moviecsv`);
+
+    if(options === "100"){
+        pickle = path.join(__dirname, "ml-small",'encoded_100_small.pickle');
+        log(pickle)
+    }
+    else if(options === "200"){
+        pickle = path.join(__dirname, "ml-small",'encoded_200_small.pickle');
+    }
+    else if(options === "300"){
+        pickle = path.join(__dirname, "ml-small",'encoded_300_small.pickle');
+    }
+    else if(options === "400"){
+        pickle = path.join(__dirname, "ml-small",'encoded_400_small.pickle');
+    }
+    else if(options === "500"){
+        pickle = path.join(__dirname, "ml-small",'encoded_500_small.pickle');
+    }
+    else if(options === "600"){
+        pickle = path.join(__dirname, "ml-small",'encoded_600_small.pickle');
+    }
+    let start = await db.getData(`select count(recAsims) as number from moviecsv`);
     start = Number(start[0].number) + 1 ;
     if(req.session.admin){
         res.status(200).json({   
-            "content_type" : "json" ,
-            "result_code" : 200 ,
-            "result_req" : "dispatch on process" ,
+            "content_type" : "json",
+            "result_code" : 200,
+            "result_req" : "dispatch on process",
         })
 
         const pythonProcess = spawn('python3', [pythonPath,pickle,start ],{
@@ -836,4 +922,10 @@ let stopDispatch = async(req,res)=>{
     }
 }
 
-export {manageGet,userSearch, userDelete, adminLogin, adminLogout,dashboard,monitorDate,monitorTime, contentsSearch, updateRow, errLogGet,errlogDelete, moviecsvGet, ottManagePost, crawl,download, train, dispatch,stopTrain,stopDispatch};
+export {
+    manageGet,userSearch, userDelete, adminLogin, 
+    adminLogout,dashboard,monitorDate,monitorTime, 
+    contentsSearch, updateRow, errLogGet,errlogDelete, 
+    moviecsvGet, ottManagePost, crawl,download, train, 
+    dispatch,stopTrain,stopDispatch, trainProcess
+};

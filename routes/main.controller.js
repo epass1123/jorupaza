@@ -363,7 +363,6 @@ let userBehaviorPost = async(req,res)=>{
 
 let markGet = async (req,res)=>{
     const userid = req.params.userid; //userid
-
     if(req.session.user){
         if(!userid){
             res.status(400).json({   
@@ -377,34 +376,59 @@ let markGet = async (req,res)=>{
             let query2 = `SELECT * FROM marked_youvid WHERE userID = "${userid}";`;
             let query3 = `SELECT * FROM marked_ott WHERE userID = "${userid}";`;
             let query4 = `SELECT * FROM marked_streamer WHERE userID = "${userid}";`;
-            
-            let result = {};
             try{
-                db.getData(query1+query2+query3+query4)
-                .then((rows)=>{
-                    if(rows !== undefined){
-                        res.status(200).json({
-                            "content_type" : "json" ,
-                            "result_code" : 200 ,
-                            "result_req" : "request success" ,
-                            "result": {
-                                "marked_channel":rows[0][0]?rows[0][0]:"",
-                                "marked_youvid":rows[1][0]?rows[1][0]:"",
-                                "marked_ott":rows[2][0]?rows[2][0]:"",
-                                "marked_streamer":rows[3][0]?rows[3][0]:""
-                            },
-                        })
+                let marked = await db.getData(query1+query2+query3+query4)
+                log("marked",marked[1][0]);
+                if(marked !== undefined){
+                    let snippet = []
+                    let items = []
+                    if(marked[1][0] !== undefined && marked[1][0].length !== 0){
+                        for(let i of marked[1][0].vID.split("|")){
+                            await db.getData(`SELECT snippet FROM youvid WHERE youtubeID = "${i}";`)
+                            .then(p=>{
+                                if(p.length!==0 && p !== undefined){
+                                    snippet.push(JSON.parse(decodeURIComponent(p[0].snippet)))
+                                }
+                            })
+                        }
+                        marked[1][0].snippet = snippet
+
                     }
-                    else{
-                        res.status(400).json({   
-                            "content_type" : "json" ,
-                            "result_code" : 400 ,
-                            "result_req" : "no data" ,
-                        })
+                    if(marked[0][0] !== undefined && marked[0][0].length !== 0){
+                        for(let i of marked[0][0].channelID.split("|")){
+                            await db.getData(`SELECT items FROM youtubechannel WHERE channelID = "${i}";`)
+                            .then(p=>{
+                                if(p.length!==0 && p !== undefined){
+                                    items.push(JSON.parse(decodeURIComponent(p[0].items)))
+                                }
+                            })
+                        }
+                        marked[0][0].items = items
                     }
-                })
+                    
+                    res.status(200).json({
+                        "content_type" : "json" ,
+                        "result_code" : 200 ,
+                        "result_req" : "request success" ,
+                        "result": {
+                            "marked_channel":marked[0][0]?marked[0][0]:"",
+                            "marked_youvid":marked[1][0]?marked[1][0]:"",
+                            "marked_ott":marked[2][0]?marked[2][0]:"",
+                            "marked_streamer":marked[3][0]?marked[3][0]:""
+                        },
+                    })
+
+                }
+                else{
+                    res.status(400).json({   
+                        "content_type" : "json" ,
+                        "result_code" : 400 ,
+                        "result_req" : "no data" ,
+                    })
+                }
             }
-            catch{
+            catch(err){
+                log(err);
                 res.status(400).json({   
                     "content_type" : "json" ,
                     "result_code" : 400 ,
@@ -670,16 +694,16 @@ let youvidGet = async (req,res)=>{
         try{
             let result = []
             let marked = await db.getData(query,`${userid}`) ;
-            if(marked.length !== 0){
+            log("marked",marked);
+            if(marked.length !== 0 && marked[0].vID !== ""){
                 let youvidID = marked[0].vID.split("|");
                 for(let i of youvidID){
                     let youvid = await db.getData(`select youtubeID, snippet from youvid where youtubeID = ?`,i)
-                    log(youvid)
                     if(youvid.length !== 0){
                         result.push(
                             {
                                 "youtubeID":youvid[0].youtubeID,
-                                "snippet": JSON.parse(youvid[0].snippet)
+                                "snippet": JSON.parse(decodeURIComponent(youvid[0].snippet))
                             }
                         )
                     }
@@ -733,6 +757,7 @@ let youvidGet = async (req,res)=>{
 };
 
 let youvidPost = async (req,res)=>{
+    log(req.body)
     const requserid = req.params.userid; //userid
     const vID = req.body.vidList;
     const groupSet = req.body.settingList;
@@ -747,9 +772,9 @@ let youvidPost = async (req,res)=>{
     //구분 용이하게 하기위해 |로 join
     let values = [requserid, `${vID.join("|")}`, `${groupSet.join("|")}`, now];
     if(req.session.user){
-        for(let i of vID){
-            db.getData(`select * from youvid where youtubeID = ?`,i).then(p=>{
-                try{
+        try{
+            for(let i of vID){
+                db.getData(`select * from youvid where youtubeID = ?`,i).then(p=>{
                     if(p.length === 0){
                         let url = `https://www.googleapis.com/youtube/v3/videos?fields=items(id,snippet(title,tags,thumbnails,publishedAt))&part=snippet&key=${process.env.youtubekey}&id=${i}`
                         axios({
@@ -757,44 +782,38 @@ let youvidPost = async (req,res)=>{
                             url: url,
                             responseType: 'json',
                             }).then(p=>{
-                                db.putData(`insert into youvid (youtubeID, snippet) values (?,?) ON DUPLICATE KEY UPDATE youtubeID=VALUES(youtubeID)`,[p.data.items[0].id,JSON.stringify(p.data.items[0].snippet)]).then(k=>{
-                                db.putData(query, values)
-                                    .then(rows=>{
-                                        if(rows === undefined){
-                                            res.status(400).json({
-                                                "content-type": "json",
-                                                "result_code": 400,
-                                                "result_req": "bad request"
-                                            });
-                                        }
-                                    }); 
-                                })
+                                db.putData(`insert into youvid (youtubeID, snippet) values (?,?) ON DUPLICATE KEY UPDATE snippet=VALUES(snippet)`,[p.data.items[0].id,encodeURIComponent(JSON.stringify(p.data.items[0].snippet))])
                         })
                     }
                     else{
-                        db.putData(query, values)
-                        .then(rows=>{
-                            if(rows === undefined){
-                                res.status(400).json({
-                                    "content-type": "json",
-                                    "result_code": 400,
-                                    "result_req": "bad request"
-                                });
-                            }
-                
-                        }); 
                     }
+                })  
+            }
+            db.putData(query, values)
+            .then(rows=>{
+                if(rows === undefined){
+                    res.status(400).json({
+                        "content-type": "json",
+                        "result_code": 400,
+                        "result_req": "bad request"
+                    });
+                }
+                else{
                     res.status(200).json({
                         "content-type": "json",
                         "result_code": 200,
                         "result_req": "post done"
                     });
                 }
-                catch(err){
-
-                }
-                
-            })
+            }); 
+        }
+        catch(err){
+            log(err)
+            res.status(400).json({
+                "content-type": "json",
+                "result_code": 400,
+                "result_req": "bad request"
+            });
         }
     }
     else{
@@ -900,56 +919,61 @@ let channelGet = async (req,res)=>{
     let query = `SELECT * FROM marked_channel WHERE userID= ?`
 
     if(req.session.user){
-        let i = "UCewitUbsXnyjvJjGgxa0IYw"
-        let url = `https://www.googleapis.com/youtube/v3/search?part=id,snippet&order=date&type=video&key=${process.env.youtubekey}&channelId=${i}`
-        await axios({
-            method: 'get',
-            url: url,
-            responseType: 'json',
-            }).then(p=>{
-                log(p.data)
-                // db.putData(`insert into youvid (youtubeID, snippet) values (?,?) ON DUPLICATE KEY UPDATE youtubeID=VALUES(youtubeID)`,[p.data.items[0].id,JSON.stringify(p.data.items[0].snippet)])
-                //     .then(k=>{
-                //         db.putData(query, values)
-                //             .then(rows=>{
-                //                 if(rows === undefined){
-                //                     res.status(400).json({
-                //                         "content-type": "json",
-                //                         "result_code": 400,
-                //                         "result_req": "bad request"
-                //                     });
-                //                 }
-                //             }); 
-                //     })
-        })
         try{
-            db.getData(query,`${userid}`)
-            .then((rows)=>{
-                if(rows !== undefined){
-                    res.status(200).json({
-                        "content_type" : "json" ,
-                        "result_code" : 200 ,
-                        "result_req" : "request success" ,
-                        "marked_channel": rows,
-                    })
+            let result = []
+            let marked = await db.getData(query,`${userid}`);
+            if(marked.length !== 0 && marked[0].channelID !== ""){
+                let channelID = marked[0].channelID.split("|");
+                for(let i of channelID){
+                    let youtubechannel = await db.getData(`select channelID, items from youtubechannel where channelID = ?`,i)
+                    if(youtubechannel.length !== 0){
+                        log("exists")
+                        result.push(
+                            {
+                                "channelID":youtubechannel[0].channelID,
+                                "items": JSON.parse(decodeURIComponent(youtubechannel[0].items))
+                            }
+                        )
+                    }
+                    else{
+                        let url = `https://www.googleapis.com/youtube/v3/search?part=id,snippet&order=date&type=video&key=${process.env.youtubekey}&channelId=${i}`
+                        await axios({
+                            method: 'get',
+                            url: url,
+                            responseType: 'json',
+                            }).then(p=>{
+                                result.push(
+                                    {
+                                        "channelID":p[0].channelID,
+                                        "items": JSON.parse(p[0].items)
+                                    }
+                                )
+                        })
+                    }
                 }
-                else{
-                    res.status(400).json({   
-                        "content_type" : "json" ,
-                        "result_code" : 400 ,
-                        "result_req" : "no data" ,
-                    })
-                }
-            })
+                res.status(200).json({
+                    "content_type" : "json" ,
+                    "result_code" : 200 ,
+                    "result_req" : "request success" ,
+                    "marked_youvid": result,
+                })
+            }
+            else{
+                res.status(400).json({   
+                    "content_type" : "json" ,
+                    "result_code" : 400 ,
+                    "result_req" : "no data" ,
+                })
+            }
         }
-        catch{
+        catch(err){
+            log(err)
             res.status(400).json({   
                 "content_type" : "json" ,
                 "result_code" : 400 ,
                 "result_req" : "bad request" ,
             })
         }
-
     }
     else{
         res.status(401).json({
@@ -961,6 +985,7 @@ let channelGet = async (req,res)=>{
 };
 
 let channelPost = async (req,res)=>{
+    log(req.body)
     const requserid = req.params.userid; //userid
     const channelID = req.body.cidList;
     const img = req.body.imgList;
@@ -975,55 +1000,44 @@ let channelPost = async (req,res)=>{
 
     let query = `INSERT INTO marked_channel (userID,channelID,title,img,groupSet,timestamp) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE channelID=VALUES(channelID), groupSet=VALUES(groupSet), timestamp=VALUES(timestamp), title=VALUES(title), img=VALUES(img)`
     let values = [requserid, `${channelID.join("|")}`, `${title.join("|")}`,`${img.join("|")}`,`${groupSet.join("|")}`, now];
-
+    log("values",values);
     if(req.session.user){
-        for(let i of channelID){
+        log("channelID",channelID);
             try{
-                db.getData(`select * from youtubechannel where channelID = ?`,i)
-                .then(p=>{
-                    if(p.length === 0){
-                        let url = `https://www.googleapis.com/youtube/v3/search?part=id,snippet&order=date&type=video&key=${process.env.youtubekey}&channelId=${channelID}`
-                        axios({
-                            method: 'get',
-                            url: url,
-                            responseType: 'json',
-                        }).then(p=>{
-                            db.putData(`insert into youtubechannel (channelID, items) values (?,?) ON DUPLICATE KEY UPDATE channelID=VALUES(channelID),items=VALUES(items)`,[i,JSON.stringify(p.data.items)])
-                            .then(k=>{
-                                log(k)
-                            db.putData(query, values)
-                            .then(rows=>{
-                                if(rows === undefined){
-                                    res.status(400).json({
-                                        "content-type": "json",
-                                        "result_code": 400,
-                                        "result_req": "bad request"
-                                    });
-                                }
-                            }); 
+                for(let i of channelID){
+                    db.getData(`select * from youtubechannel where channelID = ?`,i)
+                    .then(p=>{
+                        if(p.length === 0){
+                            let url = `https://www.googleapis.com/youtube/v3/search?part=id,snippet&order=date&type=video&key=${process.env.youtubekey}&channelId=${channelID}`
+                            axios({
+                                method: 'get',
+                                url: url,
+                                responseType: 'json',
+                            }).then(p=>{
+                                db.putData(`insert into youtubechannel (channelID, items, timestamp) values (?,?,?)`,[i,encodeURIComponent(JSON.stringify(p.data.items)),now])
                             })
-                        })
+                        }
+                        else{
+                        }                    
+                    })
+                }
+                db.putData(query, values)
+                .then(rows=>{
+                    if(rows === undefined){
+                        res.status(400).json({
+                            "content-type": "json",
+                            "result_code": 400,
+                            "result_req": "bad request"
+                        });
                     }
                     else{
-                        db.putData(query, values)
-                        .then(rows=>{
-                            if(rows === undefined){
-                                res.status(400).json({
-                                    "content-type": "json",
-                                    "result_code": 400,
-                                    "result_req": "bad request"
-                                });
-                            }
-                
-                        }); 
+                        res.status(200).json({
+                            "content-type": "json",
+                            "result_code": 200,
+                            "result_req": "post done"
+                        });
                     }
-                    res.status(200).json({
-                        "content-type": "json",
-                        "result_code": 200,
-                        "result_req": "post done"
-                    });
-                
-                })
+                });  
             }
             catch(err){
                 res.status(400).json({
@@ -1032,7 +1046,7 @@ let channelPost = async (req,res)=>{
                     "result_req": "bad request"
                 });
             }
-        }
+        
     }
     else{
         res.status(401).json({
