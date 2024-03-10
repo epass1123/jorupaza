@@ -1,5 +1,5 @@
-# jorupaza (크롬확장 프로그램과 머신러닝을 활용한 콘텐츠 통합 관리 서비스
-### Youtube, Netflix와 같은 콘텐츠 플랫폼들을 콘텐츠를 관리해주는 chrome extension 
+# JORUPAZA (크롬확장 프로그램과 머신러닝을 활용한 콘텐츠 통합 관리 서비스)
+### Youtube, Netflix와 같은 콘텐츠 플랫폼의 콘텐츠를 통합 관리해주는 chrome extension 
 
 ## 개발 기간
 2023.09~2023.11
