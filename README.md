@@ -22,3 +22,5 @@
 ### MovieLens 데이터를 이용해 머신러닝으로 벡터를 학습시켜 추천서비스를 개발
 ![image](https://github.com/epass1123/jorupaza/assets/59950506/6eb38481-9c14-41c8-b0e2-5b7f02528182)
 
+![image](https://github.com/epass1123/jorupaza/assets/59950506/b920260d-85dc-4cd6-aaaf-411d5a2ea33e)
+
