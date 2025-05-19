@@ -19,7 +19,7 @@
 ### MovieLens 데이터를 이용해 머신러닝으로 벡터를 학습시켜 추천서비스를 개발
 
 ### 서비스 링크
-[Jorupaza](http://ceprj.gachon.ac.kr:60002/)
+~~[Jorupaza](http://ceprj.gachon.ac.kr:60002/)~~
 
 ### 메인 페이지 & 확장프로그램
 ![image](https://github.com/epass1123/jorupaza/assets/59950506/09de9104-5700-4ceb-97a6-a8a6807e3f8d)
